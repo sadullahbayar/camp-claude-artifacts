@@ -1,6 +1,22 @@
 {
   "brands": [
     {
+      "slug": "cancera",
+      "name": "Cancera",
+      "description": "Cancera marka artifactleri ve raporları",
+      "color": "#2ECDA7",
+      "icon": "🧬",
+      "artifacts": [
+        {
+          "slug": "patient-journey",
+          "name": "Patient Journey",
+          "description": "Cancera hasta yolculuğu haritası",
+          "date": "2026-03-25",
+          "tags": ["journey", "report"]
+        }
+      ]
+    },
+    {
       "slug": "demo",
       "name": "Demo Marka",
       "description": "Örnek marka kartı - test amaçlı",
