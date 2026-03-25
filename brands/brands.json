@@ -38,22 +38,6 @@
           "tags": ["journey", "report"]
         }
       ]
-    },
-    {
-      "slug": "demo",
-      "name": "Demo Marka",
-      "description": "Örnek marka kartı - test amaçlı",
-      "color": "#6366f1",
-      "icon": "🚀",
-      "artifacts": [
-        {
-          "slug": "hosgeldin",
-          "name": "Hoşgeldin Sayfası",
-          "description": "Platform tanıtım sayfası",
-          "date": "2026-03-25",
-          "tags": ["demo"]
-        }
-      ]
     }
   ]
 }
