@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camp Artifacts</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f0f13;
+      color: #e4e4e7;
+      min-height: 100vh;
+    }
+
+    .header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      border-bottom: 1px solid #1e1e2a;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #71717a;
+      font-size: 0.95rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .brands-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .brand-card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      display: block;
+    }
+
+    .brand-card:hover {
+      border-color: #3f3f46;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .brand-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+    }
+
+    .brand-card h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .brand-card p {
+      color: #71717a;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #52525b;
+      font-size: 0.8rem;
+    }
+
+    .brand-meta span {
+      background: #27272a;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 24px;
+      color: #52525b;
+    }
+
+    .empty-state p { font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Camp Artifacts</h1>
+    <p>HTML artifactler, mini appler ve raporlar</p>
+  </div>
+
+  <div class="container">
+    <div class="brands-grid" id="brands-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <p>Henüz marka eklenmemiş.</p>
+    </div>
+  </div>
+
+  <script>
+    async function loadBrands() {
+      try {
+        const res = await fetch('/brands/brands.json');
+        const data = await res.json();
+        const grid = document.getElementById('brands-grid');
+        const empty = document.getElementById('empty-state');
+
+        if (!data.brands || data.brands.length === 0) {
+          empty.style.display = 'block';
+          return;
+        }
+
+        data.brands.forEach(brand => {
+          const count = brand.artifacts ? brand.artifacts.length : 0;
+          const card = document.createElement('a');
+          card.className = 'brand-card';
+          card.href = `/brands/${brand.slug}/`;
+          card.innerHTML = `
+            <div class="brand-icon" style="background: ${brand.color}20; color: ${brand.color}">
+              ${brand.icon || '📦'}
+            </div>
+            <h2>${brand.name}</h2>
+            <p>${brand.description || ''}</p>
+            <div class="brand-meta">
+              <span>${count} artifact</span>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (e) {
+        console.error('brands.json yüklenemedi:', e);
+      }
+    }
+
+    loadBrands();
+  </script>
+</body>
+</html>
