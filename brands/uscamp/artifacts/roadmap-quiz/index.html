@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USCAMP — Kişisel Yol Haritası Testi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy  : #0D1B4B;
+      --blue  : #1A3A8F;
+      --red   : #CC2222;
+      --white : #FFFFFF;
+      --bg    : #F2F5FB;
+      --border: #DDE4F0;
+      --hover : #F5F7FF;
+      --text  : #1C2540;
+      --muted : #6B7799;
+      --light : #EEF1FA;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 28px 14px 48px;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ────────── Widget shell ────────── */
+    .qw {
+      width: 100%;
+      max-width: 680px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow:
+        0 2px 6px  rgba(13,27,75,.07),
+        0 8px 32px rgba(13,27,75,.12);
+    }
+
+    /* ────────── HEADER ────────── */
+    .qw-hd {
+      background: linear-gradient(135deg, #0a1a3e 0%, #06539f 40%, #8b0000 80%, #e31e26 100%);
+      padding: 26px 36px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle radial accents */
+    .qw-hd::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.03);
+      pointer-events: none;
+    }
+    .qw-hd::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; right: 40px;
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      background: rgba(204,34,34,.07);
+      pointer-events: none;
+    }
+
+    /* Logo */
+    .qw-logo {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 18px;
+      text-decoration: none;
+      position: relative;
+      z-index: 1;
+    }
+    .logo-us {
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.2px;
+      line-height: 1;
+    }
+    .logo-tri {
+      /* right-pointing filled triangle */
+      display: inline-block;
+      width: 0; height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 10px solid var(--red);
+      margin: 0 5px;
+      flex-shrink: 0;
+    }
+    .logo-camp {
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.2px;
+      line-height: 1;
+    }
+    .logo-sep {
+      font-size: 11px;
+      color: rgba(255,255,255,.35);
+      font-weight: 400;
+      margin-left: 12px;
+      margin-top: 1px;
+    }
+
+    .qw-hd-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 7px;
+      position: relative;
+      z-index: 1;
+    }
+    .qw-hd-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+      line-height: 1.55;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ────────── PROGRESS ────────── */
+    .qw-prog {
+      background: var(--white);
+      padding: 16px 36px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .qw-prog-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 9px;
+    }
+    .qw-prog-lbl {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      color: var(--muted);
+    }
+    .qw-prog-pct {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--red);
+    }
+    .qw-bar-track {
+      height: 4px;
+      background: #E5EAF5;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 11px;
+    }
+    .qw-bar-fill {
+      height: 100%;
+      background: var(--red);
+      border-radius: 99px;
+      transition: width .45s cubic-bezier(.4,0,.2,1);
+    }
+    .qw-dots { display: flex; gap: 6px; }
+    .qw-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #DCE3F2;
+      transition: background .25s, transform .25s, box-shadow .25s;
+    }
+    .qw-dot.done   { background: rgba(26,58,143,.4); }
+    .qw-dot.active {
+      background: var(--blue);
+      transform: scale(1.45);
+      box-shadow: 0 0 0 2.5px rgba(26,58,143,.18);
+    }
+
+    /* ────────── BODY ────────── */
+    .qw-body {
+      background: var(--white);
+      padding: 30px 36px 22px;
+      min-height: 340px;
+      position: relative;
+    }
+
+    /* ── Question slides ── */
+    .q-slide     { display: none; }
+    .q-slide.on  { display: block; animation: sIn .28s ease both; }
+    .q-slide.out { display: block; animation: sOut .2s ease both; }
+
+    @keyframes sIn  { from { opacity:0; transform:translateX(22px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes sOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(-18px); } }
+
+    /* Eyebrow label */
+    .q-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+    .q-eyebrow-bar {
+      width: 18px; height: 2px;
+      background: var(--red);
+      border-radius: 1px;
+    }
+
+    .q-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.35;
+      margin-bottom: 4px;
+    }
+    .q-hint {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    /* ── Option cards ── */
+    .opts         { display: flex; flex-direction: column; gap: 7px; }
+    .opts.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: var(--white);
+      cursor: pointer;
+      transition: border-color .14s, background .14s, box-shadow .14s, transform .14s;
+      text-align: left;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      user-select: none;
+    }
+    /* keep all children non-interactive so click always lands on the button */
+    .opt > * { pointer-events: none; }
+
+    .opt:hover {
+      border-color: var(--blue);
+      background: var(--hover);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(26,58,143,.09);
+    }
+    .opt.sel {
+      border-color: var(--blue);
+      background: var(--blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(26,58,143,.22);
+    }
+
+    /* Numbered circle */
+    .opt-n {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--light);
+      color: var(--blue);
+      font-size: 11.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background .14s, color .14s;
+    }
+    .opt:hover .opt-n { background: var(--blue); color: #fff; }
+    .opt.sel   .opt-n { background: rgba(255,255,255,.15); color: #fff; }
+
+    .opt-body { flex: 1; min-width: 0; }
+
+    .opt-lbl {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      display: block;
+      transition: color .14s;
+    }
+    .opt:hover .opt-lbl { color: var(--navy); }
+    .opt.sel   .opt-lbl { color: #fff; }
+
+    .opt-sub {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 1px;
+      display: block;
+      line-height: 1.4;
+      transition: color .14s;
+    }
+    .opt.sel .opt-sub { color: rgba(255,255,255,.65); }
+
+    /* Checkmark ring */
+    .opt-ring {
+      width: 17px; height: 17px;
+      border-radius: 50%;
+      border: 1.5px solid #CDD5E8;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .14s;
+    }
+    .opt:hover .opt-ring { border-color: var(--blue); }
+    .opt.sel   .opt-ring { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.18); }
+    .opt.sel   .opt-ring::after {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    /* ────────── FOOTER NAV ────────── */
+    .qw-foot {
+      background: var(--white);
+      padding: 14px 36px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: background .13s, color .13s;
+    }
+    .btn-back:hover:not(:disabled) { background: var(--light); color: var(--text); }
+    .btn-back:disabled { opacity: .3; cursor: not-allowed; }
+
+    .btn-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--blue);
+      border: none;
+      cursor: pointer;
+      padding: 11px 26px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.1px;
+      transition: background .14s, transform .14s, box-shadow .14s;
+    }
+    .btn-next:hover:not(:disabled) {
+      background: var(--navy);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(13,27,75,.24);
+    }
+    .btn-next:disabled { background: #BEC9DF; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ────────── RESULT ────────── */
+    .r-slide     { display: none; }
+    .r-slide.on  { display: block; animation: sIn .38s ease both; }
+
+    /* Navy banner card at top of result */
+    .r-banner {
+      background: var(--navy);
+      border-radius: 10px;
+      padding: 20px 22px 22px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .r-banner::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.03);
+      pointer-events: none;
+    }
+    .r-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -20px; right: 20px;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: rgba(204,34,34,.09);
+      pointer-events: none;
+    }
+
+    .r-class-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.8);
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      padding: 4px 11px;
+      border-radius: 99px;
+      margin-bottom: 11px;
+      position: relative;
+      z-index: 1;
+    }
+    .r-class-tag-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .r-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .r-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,.62);
+      line-height: 1.65;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Section labels */
+    .r-sec-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+      color: #9BAAC7;
+      margin-bottom: 12px;
+    }
+
+    .r-divider { height: 1px; background: #EEF1F8; margin: 20px 0; }
+
+    /* Action list */
+    .act-list { list-style: none; margin-bottom: 6px; }
+
+    .act-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 10px 0;
+      border-bottom: 1px solid #F2F5FB;
+    }
+    .act-item:last-child { border-bottom: none; }
+
+    .act-num {
+      width: 21px; height: 21px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .act-text { font-size: 13.5px; color: #374151; line-height: 1.58; }
+
+    /* Service tags — navy outline style */
+    .svc-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 22px; }
+
+    .svc-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1.5px solid var(--blue);
+      color: var(--blue);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+    }
+    .svc-tag-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    /* CTA box */
+    .r-cta-box {
+      background: #F6F8FD;
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      padding: 20px 22px;
+    }
+    .r-cta-heading {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+    .r-cta-note {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .r-cta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* Primary CTA — red */
+    .btn-consult {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 11px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.1px;
+      transition: background .14s, transform .14s, box-shadow .14s;
+      white-space: nowrap;
+    }
+    .btn-consult:hover {
+      background: #aa1b1b;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(204,34,34,.32);
+    }
+
+    /* Secondary CTA — navy outline */
+    .btn-roadmap {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: transparent;
+      color: var(--blue);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 1.5px solid var(--blue);
+      cursor: pointer;
+      letter-spacing: 0.05px;
+      transition: background .14s, color .14s;
+      white-space: nowrap;
+    }
+    .btn-roadmap:hover { background: var(--light); }
+
+    /* Restart */
+    .r-restart-row { display: flex; justify-content: center; margin-top: 14px; }
+
+    .btn-restart {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: none;
+      border: 1px solid #D5DCF0;
+      cursor: pointer;
+      padding: 7px 16px;
+      border-radius: 7px;
+      font-family: 'Inter', sans-serif;
+      transition: background .13s, border-color .13s;
+    }
+    .btn-restart:hover { background: #F2F5FB; border-color: #BEC9DF; }
+
+    /* ────────── BOTTOM FOOTER BAR ────────── */
+    .qw-bottom {
+      background: var(--navy);
+      padding: 11px 36px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .qw-bottom-txt {
+      font-size: 11px;
+      color: rgba(255,255,255,.35);
+      text-align: center;
+      letter-spacing: 0.1px;
+    }
+    .qw-bottom-txt a {
+      color: rgba(255,255,255,.5);
+      text-decoration: none;
+    }
+    .qw-bottom-txt a:hover { color: rgba(255,255,255,.8); }
+
+    /* ────────── EMAIL CAPTURE ────────── */
+    .email-capture {
+      margin-top: 20px;
+      padding: 20px 22px;
+      background: #F6F8FD;
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+    }
+    .email-capture-heading {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+    .email-capture-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .email-field {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: border-color .15s;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .email-field:focus { border-color: var(--navy); }
+    .btn-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 11px 22px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      letter-spacing: 0.1px;
+      transition: background .14s, transform .14s, box-shadow .14s;
+      margin-top: 4px;
+    }
+    .btn-pdf:hover {
+      background: #aa1b1b;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(204,34,34,.32);
+    }
+    .email-success {
+      display: none;
+      margin-top: 14px;
+      padding: 13px 16px;
+      background: #eaf5ef;
+      border: 1.5px solid #a8d9bb;
+      border-radius: 9px;
+      font-size: 13.5px;
+      color: var(--navy);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .email-success-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+    }
+    .email-success-tick {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      background: #22a85a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .email-success-tick svg { display: block; }
+
+    /* ────────── PRINT ────────── */
+    .print-footer { display: none; }
+
+    @media print {
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+        display: block !important;
+      }
+      .qw {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        max-width: 100% !important;
+      }
+      .qw-hd, #prog-section, .q-slide, #qw-foot, .qw-bottom,
+      .r-restart-row, .r-cta-box, .email-capture { display: none !important; }
+      .qw-body {
+        padding: 24px 32px !important;
+        min-height: auto !important;
+      }
+      .r-slide.on { display: block !important; }
+      .r-banner {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .svc-tag {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .act-num {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .print-footer {
+        display: block !important;
+        margin-top: 28px;
+        padding-top: 14px;
+        border-top: 1px solid #DDE4F0;
+        font-size: 11px;
+        color: #6B7799;
+        text-align: center;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.2px;
+      }
+    }
+
+    /* ────────── Responsive ────────── */
+    @media (max-width: 520px) {
+      body { padding: 0; background: var(--white); }
+      .qw  { border-radius: 0; box-shadow: none; }
+      .qw-hd, .qw-prog, .qw-body, .qw-foot, .qw-bottom { padding-left: 20px; padding-right: 20px; }
+      .opts.two-col { grid-template-columns: 1fr; }
+      .qw-hd-title { font-size: 18px; }
+      .q-title     { font-size: 17px; }
+      .r-title     { font-size: 18px; }
+      .r-cta-row   { flex-direction: column; }
+      .btn-consult, .btn-roadmap { text-align: center; justify-content: center; width: 100%; }
+    }
+  /* Camp Artifacts - Geri Butonu */
+  .camp-back {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 9999;
+    background: rgba(0,0,0,0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: rgba(0,0,0,0.35);
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s ease;
+  }
+  .camp-back:hover {
+    background: rgba(0,0,0,0.08);
+    color: rgba(0,0,0,0.6);
+  }
+  </style>
+</head>
+<body>
+<a href="/brands/uscamp/" class="camp-back">← USCAMP</a>
+
+<div class="qw" id="qw">
+
+  <!-- ── HEADER ────────────────────────── -->
+  <div class="qw-hd">
+    <div class="qw-logo">
+      <img src="uscamp-logo.png" alt="USCAMP" style="height: 40px;">
+    </div>
+    <div class="qw-hd-title">Kişisel ABD Tıp Kariyer Yol Haritanı Keşfet</div>
+    <div class="qw-hd-sub">5 kısa soruyla sana özel adım planını oluştur — ücretsiz &amp; 2 dakika</div>
+  </div>
+
+  <!-- ── PROGRESS ──────────────────────── -->
+  <div class="qw-prog" id="prog-section">
+    <div class="qw-prog-row">
+      <span class="qw-prog-lbl" id="prog-lbl">Soru 1 / 5</span>
+      <span class="qw-prog-pct" id="prog-pct">%0 tamamlandı</span>
+    </div>
+    <div class="qw-bar-track">
+      <div class="qw-bar-fill" id="prog-bar" style="width:0%"></div>
+    </div>
+    <div class="qw-dots" id="prog-dots">
+      <div class="qw-dot active"></div>
+      <div class="qw-dot"></div>
+      <div class="qw-dot"></div>
+      <div class="qw-dot"></div>
+      <div class="qw-dot"></div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ BODY ──────────────────────── -->
+  <div class="qw-body" id="qw-body">
+
+    <!-- Q1: Sınıf -->
+    <div class="q-slide on" id="q0">
+      <div class="q-eyebrow"><span class="q-eyebrow-bar"></span>Soru 1 / 5</div>
+      <div class="q-title">Kaçıncı sınıftasın?</div>
+      <div class="q-hint">Şu anki tıp okulu yılını seç</div>
+      <div class="opts two-col" id="opts0">
+        <button class="opt" data-q="0" data-v="1">
+          <span class="opt-n">1</span>
+          <span class="opt-body"><span class="opt-lbl">1. Sınıf</span><span class="opt-sub">Tıp eğitimine yeni başladım</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="0" data-v="2">
+          <span class="opt-n">2</span>
+          <span class="opt-body"><span class="opt-lbl">2. Sınıf</span><span class="opt-sub">Temel tıp bilimleri</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="0" data-v="3">
+          <span class="opt-n">3</span>
+          <span class="opt-body"><span class="opt-lbl">3. Sınıf</span><span class="opt-sub">Klinik öncesi dönem</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="0" data-v="4">
+          <span class="opt-n">4</span>
+          <span class="opt-body"><span class="opt-lbl">4. Sınıf</span><span class="opt-sub">Klinik rotasyonlar</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="0" data-v="5">
+          <span class="opt-n">5</span>
+          <span class="opt-body"><span class="opt-lbl">5. Sınıf</span><span class="opt-sub">Klinik eğitim yoğunlaşıyor</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="0" data-v="6">
+          <span class="opt-n">6</span>
+          <span class="opt-body"><span class="opt-lbl">6. Sınıf</span><span class="opt-sub">Son sınıf / intörn dönemi</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="0" data-v="7" style="grid-column:1/-1">
+          <span class="opt-n">✓</span>
+          <span class="opt-body"><span class="opt-lbl">Mezun</span><span class="opt-sub">Tıp fakültesini tamamladım</span></span>
+          <span class="opt-ring"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q2: İngilizce -->
+    <div class="q-slide" id="q1">
+      <div class="q-eyebrow"><span class="q-eyebrow-bar"></span>Soru 2 / 5</div>
+      <div class="q-title">İngilizce seviyeni nasıl tanımlarsın?</div>
+      <div class="q-hint">USMLE sınavları ve ABD başvuruları için İngilizce kritik öneme sahip</div>
+      <div class="opts" id="opts1">
+        <button class="opt" data-q="1" data-v="0">
+          <span class="opt-n">A</span>
+          <span class="opt-body"><span class="opt-lbl">Başlangıç</span><span class="opt-sub">Temel düzey, geliştirmem gerekiyor</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="1" data-v="1">
+          <span class="opt-n">B</span>
+          <span class="opt-body"><span class="opt-lbl">Orta</span><span class="opt-sub">Günlük iletişim kurabiliyorum</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="1" data-v="2">
+          <span class="opt-n">C</span>
+          <span class="opt-body"><span class="opt-lbl">İyi</span><span class="opt-sub">Akademik metinleri rahatlıkla anlıyorum</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="1" data-v="3">
+          <span class="opt-n">D</span>
+          <span class="opt-body"><span class="opt-lbl">İleri / OET Hazır</span><span class="opt-sub">Akıcı, sınava hazır seviye</span></span>
+          <span class="opt-ring"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q3: Step -->
+    <div class="q-slide" id="q2">
+      <div class="q-eyebrow"><span class="q-eyebrow-bar"></span>Soru 3 / 5</div>
+      <div class="q-title">USMLE Step sınavları hakkında nerede duruyorsun?</div>
+      <div class="q-hint">Dürüst cevap, sana en doğru yol haritasını çıkarmamızı sağlar</div>
+      <div class="opts" id="opts2">
+        <button class="opt" data-q="2" data-v="0">
+          <span class="opt-n">1</span>
+          <span class="opt-body"><span class="opt-lbl">Bilmiyorum</span><span class="opt-sub">Step nedir, hiç araştırmadım</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="2" data-v="1">
+          <span class="opt-n">2</span>
+          <span class="opt-body"><span class="opt-lbl">Araştırdım</span><span class="opt-sub">Genel bilgim var, nasıl başlayacağımı araştırıyorum</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="2" data-v="2">
+          <span class="opt-n">3</span>
+          <span class="opt-body"><span class="opt-lbl">Step 1 Hazırlığı</span><span class="opt-sub">Aktif olarak çalışıyorum</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="2" data-v="3">
+          <span class="opt-n">4</span>
+          <span class="opt-body"><span class="opt-lbl">Step 1'i Geçtim</span><span class="opt-sub">Step 1 tamam, Step 2 CK önümde</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="2" data-v="4">
+          <span class="opt-n">5</span>
+          <span class="opt-body"><span class="opt-lbl">İkisini de Geçtim</span><span class="opt-sub">Step 1 ve Step 2 CK tamamlandı</span></span>
+          <span class="opt-ring"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q4: Research -->
+    <div class="q-slide" id="q3">
+      <div class="q-eyebrow"><span class="q-eyebrow-bar"></span>Soru 4 / 5</div>
+      <div class="q-title">Araştırma (research) deneyimin ne durumda?</div>
+      <div class="q-hint">Uluslararası yayın ve research deneyimi Match başvurularında önemli bir kriter</div>
+      <div class="opts" id="opts3">
+        <button class="opt" data-q="3" data-v="0">
+          <span class="opt-n">1</span>
+          <span class="opt-body"><span class="opt-lbl">Yok</span><span class="opt-sub">Herhangi bir araştırmaya dahil olmadım</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="3" data-v="1">
+          <span class="opt-n">2</span>
+          <span class="opt-body"><span class="opt-lbl">Başladım</span><span class="opt-sub">Bir projeye dahilim ama somut çıktı yok</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="3" data-v="2">
+          <span class="opt-n">3</span>
+          <span class="opt-body"><span class="opt-lbl">Case Report Var</span><span class="opt-sub">Vaka sunumu veya poster çalışmam mevcut</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="3" data-v="3">
+          <span class="opt-n">4</span>
+          <span class="opt-body"><span class="opt-lbl">Yayın Var</span><span class="opt-sub">Uluslararası dergide en az bir yayınim var</span></span>
+          <span class="opt-ring"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q5: ABD Staj -->
+    <div class="q-slide" id="q4">
+      <div class="q-eyebrow"><span class="q-eyebrow-bar"></span>Soru 5 / 5</div>
+      <div class="q-title">ABD'de klinik staj deneyimin var mı?</div>
+      <div class="q-hint">Amerikan hastanelerinden alınan LoR (tavsiye mektubu) Match için vazgeçilmez</div>
+      <div class="opts" id="opts4">
+        <button class="opt" data-q="4" data-v="0">
+          <span class="opt-n">1</span>
+          <span class="opt-body"><span class="opt-lbl">Yok</span><span class="opt-sub">ABD'de hiç staj yapmadım</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="4" data-v="1">
+          <span class="opt-n">2</span>
+          <span class="opt-body"><span class="opt-lbl">Planlıyorum</span><span class="opt-sub">Araştırıyorum ama henüz başvurmadım</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="4" data-v="2">
+          <span class="opt-n">3</span>
+          <span class="opt-body"><span class="opt-lbl">Observership Yaptım</span><span class="opt-sub">Gözlem amaçlı klinikte bulundum</span></span>
+          <span class="opt-ring"></span>
+        </button>
+        <button class="opt" data-q="4" data-v="3">
+          <span class="opt-n">4</span>
+          <span class="opt-body"><span class="opt-lbl">Elective + LoR Aldım</span><span class="opt-sub">Aktif klinik rotasyon + tavsiye mektubu mevcut</span></span>
+          <span class="opt-ring"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- RESULT (injected by JS) -->
+    <div class="r-slide" id="r-slide"></div>
+
+  </div><!-- /qw-body -->
+
+  <!-- ── FOOTER NAV ──────────────────────── -->
+  <div class="qw-foot" id="qw-foot">
+    <button class="btn-back" id="btn-back" disabled>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      Geri
+    </button>
+    <button class="btn-next" id="btn-next" disabled>
+      Devam
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+
+  <!-- ── BOTTOM BAR ──────────────────────── -->
+  <div class="qw-bottom">
+    <p class="qw-bottom-txt">
+      USCAMP &nbsp;·&nbsp; <a href="https://uscamp.com.tr" target="_blank" rel="noopener">uscamp.com.tr</a> &nbsp;·&nbsp; +90 552 253 03 37
+    </p>
+  </div>
+
+</div><!-- /qw -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── state ── */
+  var cur      = 0;
+  var ans      = [null, null, null, null, null];
+  var TOTAL    = 5;
+  var outTimer = null;
+
+  /* ── DOM ── */
+  var progBar  = document.getElementById('prog-bar');
+  var progLbl  = document.getElementById('prog-lbl');
+  var progPct  = document.getElementById('prog-pct');
+  var progDots = document.getElementById('prog-dots').children;
+  var btnBack  = document.getElementById('btn-back');
+  var btnNext  = document.getElementById('btn-next');
+  var progSec  = document.getElementById('prog-section');
+  var qwFoot   = document.getElementById('qw-foot');
+
+  /* ── Event delegation — one listener per options container ── */
+  for (var _i = 0; _i < TOTAL; _i++) {
+    (function (qIdx) {
+      var wrap = document.getElementById('opts' + qIdx);
+      if (!wrap) return;
+      wrap.addEventListener('click', function (e) {
+        var el = e.target;
+        while (el && el !== wrap) {
+          if (el.classList && el.classList.contains('opt')) {
+            var all = wrap.querySelectorAll('.opt');
+            for (var k = 0; k < all.length; k++) all[k].classList.remove('sel');
+            el.classList.add('sel');
+            ans[qIdx] = parseInt(el.getAttribute('data-v'), 10);
+            btnNext.disabled = false;
+            return;
+          }
+          el = el.parentNode;
+        }
+      });
+    }(_i));
+  }
+
+  /* ── Progress ── */
+  function updateProg() {
+    var pct = Math.round((cur / TOTAL) * 100);
+    progBar.style.width = pct + '%';
+    progLbl.textContent = cur < TOTAL ? ('Soru ' + (cur + 1) + ' / ' + TOTAL) : 'Sonuç';
+    progPct.textContent = '%' + pct + ' tamamlandı';
+    for (var i = 0; i < progDots.length; i++) {
+      progDots[i].classList.remove('active', 'done');
+      if (i < cur)       progDots[i].classList.add('done');
+      else if (i === cur) progDots[i].classList.add('active');
+    }
+    btnBack.disabled = (cur === 0);
+  }
+
+  /* ── Slide helpers ── */
+  function slideOut(idx) {
+    var el = document.getElementById('q' + idx);
+    if (!el) return;
+    el.classList.remove('on');
+    el.classList.add('out');
+    if (outTimer) clearTimeout(outTimer);
+    outTimer = setTimeout(function () {
+      el.classList.remove('out');
+      outTimer = null;
+    }, 240);
+  }
+
+  function slideIn(idx) {
+    var el = document.getElementById('q' + idx);
+    if (!el) return;
+    el.classList.remove('out');
+    el.classList.add('on');
+  }
+
+  function setNextLabel() {
+    var last = (cur === TOTAL - 1);
+    btnNext.innerHTML = last
+      ? 'Sonucu Gör <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'
+      : 'Devam <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+  }
+
+  /* ── Navigation ── */
+  btnNext.addEventListener('click', function () {
+    if (btnNext.disabled) return;
+    if (cur < TOTAL - 1) {
+      slideOut(cur);
+      cur++;
+      slideIn(cur);
+      btnNext.disabled = (ans[cur] === null);
+      setNextLabel();
+      updateProg();
+    } else {
+      showResult();
+    }
+  });
+
+  btnBack.addEventListener('click', function () {
+    if (cur === 0) return;
+    if (cur === TOTAL) {
+      document.getElementById('r-slide').classList.remove('on');
+      progSec.style.display = '';
+      qwFoot.style.display  = '';
+      cur = TOTAL - 1;
+      slideIn(cur);
+      btnNext.disabled = (ans[cur] === null);
+      setNextLabel();
+      updateProg();
+      return;
+    }
+    slideOut(cur);
+    cur--;
+    slideIn(cur);
+    btnNext.disabled = (ans[cur] === null);
+    setNextLabel();
+    updateProg();
+  });
+
+  /* ── Restart ── */
+  window.restartQuiz = function () {
+    ans = [null, null, null, null, null];
+    document.querySelectorAll('.opt.sel').forEach(function (b) { b.classList.remove('sel'); });
+    document.getElementById('r-slide').classList.remove('on');
+    progSec.style.display = '';
+    qwFoot.style.display  = '';
+    for (var i = 0; i < TOTAL; i++) {
+      var q = document.getElementById('q' + i);
+      if (q) q.className = 'q-slide';
+    }
+    cur = 0;
+    slideIn(0);
+    btnNext.disabled = true;
+    setNextLabel();
+    updateProg();
+  };
+
+  /* ── Per-class-year roadmap URLs ── */
+  var roadmapUrls = {
+    1: 'https://uscamp.com.tr/doktor-olma-sureci/tip-fakultesi-1-sinif/',
+    2: 'https://uscamp.com.tr/doktor-olma-sureci/tip-fakultesi-2-sinif/',
+    3: 'https://uscamp.com.tr/doktor-olma-sureci/tip-fakultesi-3-sinif/',
+    4: 'https://uscamp.com.tr/doktor-olma-sureci/tip-fakultesi-4-sinif/',
+    5: 'https://uscamp.com.tr/doktor-olma-sureci/tip-fakultesi-5-sinif/',
+    6: 'https://uscamp.com.tr/doktor-olma-sureci/tip-fakultesi-6-sinif/',
+    7: 'https://uscamp.com.tr/doktor-olma-sureci/mezun/'
+  };
+
+  /* ── Base profiles (exact USCAMP content, keyed by sinif 1–7) ── */
+  var baseProfiles = {
+    1: {
+      badge   : '1. Sınıf',
+      title   : 'Doğru temeller atmak için en iyi zaman!',
+      desc    : 'Tıp fakültesine yeni başladın. Bu yıl ABD\'de doktorluk hayalinin temellerini atma yılı.',
+      actions : [
+        'İngilizceyi geliştirmeye başla: TED Talks izle, tıbbi makaleler oku, TOEFL ve OET hazırlığına yavaş yavaş giriş yap',
+        'Derslerine çok önem ver — GPA, ABD başvurularında kritik bir faktör',
+        'USMLE nedir araştır, Step 1 kaynaklarına ilk kez göz at',
+        'Bir üst sınıftan ağabey/abla yardımıyla case report hazırlama fırsatı ara',
+        'Yaz tatilinde research ve laboratuvar stajı süreçlerine katılmayı düşün'
+      ],
+      services: ['OET Eğitimi & Koçluğu']
+    },
+    2: {
+      badge   : '2. Sınıf',
+      title   : 'USMLE ile ilk temas zamanı!',
+      desc    : 'Artık tıp fakültesinin ritmine alıştın. Bu yıl Step 1 ile tanışma ve research başlangıcı yılı.',
+      actions : [
+        'TOEFL veya OET için deneme sınavlarına gir, İngilizceni ileri seviyeye taşı',
+        'GPA\'ini korumak için düzenli çalışma rutinini sürdür',
+        'Case report\'lardan retrospective study\'lere geç, ekip içinde aktif katkı sağla',
+        'Step 1 için "hafif tempo" çalışmaya başla — First Aid\'den notlar al',
+        'Yaz tatili için ABD\'de observership programlarını araştır, başvuru süreçlerini öğren'
+      ],
+      services: ['OET Eğitimi', 'Step 1 Eğitimi & Koçluğu']
+    },
+    3: {
+      badge   : '3. Sınıf',
+      title   : 'Dönüm noktası — ABD staj ve yoğun Step 1 hazırlığı!',
+      desc    : 'Klinik dersler başladı, zaman yönetimi kritik. Step 1 hazırlığını ciddi tempoya alacaksın.',
+      actions : [
+        'Step 1\'e çok ciddi tempo ile başla — günde düzenli çalışma, First Aid ve UWorld ana kaynakların',
+        'Bir hoca ile retrospective study veya case report projesine dahil ol, abstract/poster hedefle',
+        'Yaz tatilinde kısa süreli observership planla, mentor network\'ü kur',
+        'Klinik derslerle Step 1\'i paralel yürütmek için zaman yönetimi planı yap'
+      ],
+      services: ['Step 1 Eğitimi & Koçluğu', 'Research Programları', 'ABD\'de Staj Ayarlama']
+    },
+    4: {
+      badge   : '4. Sınıf',
+      title   : 'Step 1 Pass sonucunu al!',
+      desc    : 'Yıllardır adını duyduğun Step 1 sınavı artık kapıda. Bu yılın tek hedefi: Pass.',
+      actions : [
+        'Yoğun hazırlık dönemi geçir, yıl ortasında/sonunda Step 1\'i ver',
+        'Research çalışmalarından somut ürünler çıkar: abstract, poster ve makale',
+        'ABD elective başvurularını tamamla (5. sınıfta yapacağın için şimdiden)',
+        'Step 2 CK için hafif tempo çalışmaya başla'
+      ],
+      services: ['Step 1 Eğitimi & Koçluğu', 'ABD\'de Staj Ayarlama']
+    },
+    5: {
+      badge   : '5. Sınıf',
+      title   : 'ABD\'de elective yap ve güçlü LoR\'lar al!',
+      desc    : 'ABD\'de gerçek klinik deneyim zamanı. Bu deneyim MATCH şansını doğrudan etkiler.',
+      actions : [
+        'ABD\'de elective yaparak hasta muayenesi ve klinik karar süreçlerine dahil ol',
+        'Bu süreçte güçlü referans mektupları (LoR) kazan — en az 2-3 ABD LoR hedefle',
+        'Step 2 CK için yoğun hazırlık yap',
+        'Co-author veya first-author olarak makale yayımlamaya odaklan',
+        'Öğrenci topluluklarında liderlik rollerine katılarak CV\'ni çeşitlendir'
+      ],
+      services: ['Step 2 CK Eğitimi & Koçluğu', 'ABD\'de Staj Ayarlama', 'Research Programları']
+    },
+    6: {
+      badge   : '6. Sınıf',
+      title   : 'MATCH başvurusu için son hazırlıklar!',
+      desc    : 'Yıllardır çalıştığın hedef artık çok yakın. MATCH başvurusu için her şeyi eksiksiz tamamla.',
+      actions : [
+        'Yılın başında/ortasında Step 2 CK\'i ver ve skoru al',
+        'Minimum 2-3 güçlü ABD LoR\'unu hazır et',
+        'OET sınavını tamamla',
+        'CV\'ni ABD standardına getir: elective + observership + yayınlar + leadership',
+        'Mentorların yardımıyla MATCH başvurunu yap, röportajlara hazırlan'
+      ],
+      services: ['MATCH Süreci Danışmanlığı', 'OET Eğitimi & Koçluğu', 'Vize Danışmanlığı']
+    },
+    7: {
+      badge   : 'Mezun',
+      title   : 'MATCH\'e güçlü bir profille hazırlan!',
+      desc    : 'Mezun oldun ama MATCH\'e henüz hazır değilsen ya da yerleşemediysen — bu süreç yönetilebilir.',
+      actions : [
+        'ABD\'de research fellowship yap (1 yıl) — daha fazla yayın çıkar, network güçlendir',
+        'Step skorlarını ve eksiklerini gözden geçir',
+        'Daha güçlü CV ile bir sonraki MATCH dönemine hazırlan',
+        'USCAMP mentorlarıyla kişisel strateji belirle'
+      ],
+      services: ['MATCH Süreci Danışmanlığı', 'Research Programları', 'ABD\'de Staj Ayarlama']
+    }
+  };
+
+  /* ── Personalisation layer ── */
+  function buildResult(sinif, eng, step, res) {
+    var b    = baseProfiles[sinif];
+    var svcs = b.services.slice();
+
+    if (eng <= 1 && svcs.indexOf('OET Eğitimi & Koçluğu') === -1) {
+      svcs.unshift('OET Eğitimi & Koçluğu');
+    }
+    if (step === 0 && svcs.indexOf('Step 1 Eğitimi & Koçluğu') === -1) {
+      var pos = svcs.indexOf('OET Eğitimi & Koçluğu');
+      svcs.splice(pos >= 0 ? pos + 1 : 0, 0, 'Step 1 Eğitimi & Koçluğu');
+    }
+    if (res === 0 && svcs.indexOf('Research Programları') === -1) {
+      svcs.push('Research Programları');
+    }
+
+    return { badge: b.badge, title: b.title, desc: b.desc, actions: b.actions, services: svcs.slice(0, 4) };
+  }
+
+  /* ── Render result ── */
+  function showResult() {
+    progSec.style.display = 'none';
+    qwFoot.style.display  = 'none';
+
+    var lastQ = document.getElementById('q' + (TOTAL - 1));
+    if (lastQ) lastQ.className = 'q-slide';
+
+    var sinif = ans[0], eng = ans[1], step = ans[2], res = ans[3];
+    var p     = buildResult(sinif, eng, step, res);
+    var rmUrl = roadmapUrls[sinif] || 'https://uscamp.com.tr/doktor-olma-sureci/';
+
+    /* SVG icons (inline, no external deps) */
+    var ARROW = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+    var ARROW_EXT = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+    var RESET_ICO = '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>';
+
+    var actHtml = p.actions.map(function (a, i) {
+      return '<li class="act-item"><span class="act-num">' + (i + 1) + '</span><span class="act-text">' + a + '</span></li>';
+    }).join('');
+
+    var svcHtml = p.services.map(function (s) {
+      return '<span class="svc-tag"><span class="svc-tag-dot"></span>' + s + '</span>';
+    }).join('');
+
+    var html = ''
+      /* Navy banner */
+      + '<div class="r-banner">'
+      +   '<div class="r-class-tag"><span class="r-class-tag-dot"></span>' + p.badge + '</div>'
+      +   '<div class="r-title">'  + p.title + '</div>'
+      +   '<div class="r-desc">'   + p.desc  + '</div>'
+      + '</div>'
+
+      /* Action steps */
+      + '<div class="r-sec-lbl">Senin için adım planı</div>'
+      + '<ul class="act-list">' + actHtml + '</ul>'
+
+      /* Services */
+      + '<div class="r-divider"></div>'
+      + '<div class="r-sec-lbl">Önerilen USCAMP hizmetleri</div>'
+      + '<div class="svc-grid">' + svcHtml + '</div>'
+
+      /* CTA box */
+      + '<div class="r-cta-box">'
+      +   '<div class="r-cta-heading">Uzmanlarımızla ücretsiz görüşmeni planla</div>'
+      +   '<div class="r-cta-note">Sana özel yol haritanı birlikte detaylandıralım. Kayıt veya ödeme gerekmez.</div>'
+      +   '<div class="r-cta-row">'
+      +     '<a class="btn-consult" href="https://uscamp.com.tr/iletisim/" target="_blank" rel="noopener">Ücretsiz Danışmanlık Al ' + ARROW + '</a>'
+      +     '<a class="btn-roadmap" href="' + rmUrl + '" target="_blank" rel="noopener">Yol Haritama Bak ' + ARROW_EXT + '</a>'
+      +   '</div>'
+      + '</div>'
+
+      /* Restart */
+      + '<div class="r-restart-row">'
+      +   '<button class="btn-restart" onclick="restartQuiz()">' + RESET_ICO + ' Testi Yeniden Başlat</button>'
+      + '</div>'
+
+      /* Email capture */
+      + '<div class="email-capture" id="email-capture">'
+      +   '<div class="email-capture-heading">Yol haritanı e-postana gönderelim</div>'
+      +   '<div class="email-capture-note">Kişisel yol haritanı ücretsiz olarak e-posta adresine gönderiyoruz.</div>'
+      +   '<form id="lead-form" onsubmit="submitLead(event)">'
+      +     '<input class="email-field" id="lead-firstname" type="text" placeholder="Adınız" required>'
+      +     '<input class="email-field" id="lead-lastname" type="text" placeholder="Soyadınız" required>'
+      +     '<input class="email-field" id="lead-email" type="email" placeholder="E-posta adresiniz" required>'
+      +     '<button class="btn-pdf" type="submit">'
+      +       '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'
+      +       'Yol Haritamı Gönder'
+      +     '</button>'
+      +   '</form>'
+      +   '<div class="email-success" id="email-success">'
+      +     '<div class="email-success-inner">'
+      +       '<div class="email-success-tick"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>'
+      +       '<span>Teşekkürler! Yol haritanız en kısa sürede e-posta adresinize gönderilecek.</span>'
+      +     '</div>'
+      +   '</div>'
+      + '</div>'
+
+      /* Print-only footer */
+      + '<div class="print-footer">USCAMP &nbsp;·&nbsp; uscamp.com.tr &nbsp;·&nbsp; +90 552 253 03 37</div>';
+
+    var rSlide = document.getElementById('r-slide');
+    rSlide.innerHTML = html;
+    rSlide.classList.add('on');
+    cur = TOTAL;
+  }
+
+  /* ── Lead submit ── */
+  window.submitLead = function (e) {
+    e.preventDefault();
+    var formEl   = document.getElementById('lead-form');
+    var successEl = document.getElementById('email-success');
+    if (formEl)    formEl.style.display    = 'none';
+    if (successEl) successEl.style.display = 'block';
+  };
+
+  /* ── Init ── */
+  updateProg();
+  setNextLabel();
+
+}());
+</script>
+</body>
+</html>

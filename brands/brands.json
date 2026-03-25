@@ -1,6 +1,29 @@
 {
   "brands": [
     {
+      "slug": "uscamp",
+      "name": "USCAMP",
+      "description": "USCAMP marka artifactleri ve araçları",
+      "color": "#D93025",
+      "icon": "🎓",
+      "artifacts": [
+        {
+          "slug": "match-score-calculator",
+          "name": "MATCH Hazırlık Skoru",
+          "description": "MATCH sınavına hazırlık skor hesaplayıcı",
+          "date": "2026-03-25",
+          "tags": ["calculator", "tool"]
+        },
+        {
+          "slug": "roadmap-quiz",
+          "name": "Kişisel Yol Haritası Testi",
+          "description": "Kişiselleştirilmiş yol haritası quiz uygulaması",
+          "date": "2026-03-25",
+          "tags": ["quiz", "tool"]
+        }
+      ]
+    },
+    {
       "slug": "cancera",
       "name": "Cancera",
       "description": "Cancera marka artifactleri ve raporları",
