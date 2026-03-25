@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USCAMP Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0A0E1A;
+    --surface: #111827;
+    --surface-2: #1A2236;
+    --border: rgba(255,255,255,0.06);
+    --text: #E8ECF4;
+    --text-dim: #7A849B;
+    --accent: #3B82F6;
+    --accent-glow: rgba(59,130,246,0.15);
+    --green: #22C55E;
+    --green-dim: rgba(34,197,94,0.12);
+    --red: #EF4444;
+    --red-dim: rgba(239,68,68,0.12);
+    --amber: #F59E0B;
+    --amber-dim: rgba(245,158,11,0.12);
+    --purple: #A855F7;
+  }
+
+  }
+  .camp-back {
+    position: fixed; top: 16px; left: 16px; z-index: 9999;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s ease;
+  }
+  .camp-back:hover {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .app { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Header */
+  .header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px; padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-area { display: flex; align-items: center; gap: 14px; }
+  .logo-mark {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), #6366F1);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 16px; color: #fff;
+    box-shadow: 0 0 24px var(--accent-glow);
+  }
+  .logo-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-text span { font-size: 12px; color: var(--text-dim); font-weight: 400; }
+
+  .header-meta {
+    display: flex; align-items: center; gap: 20px;
+    font-size: 13px; color: var(--text-dim);
+  }
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+    display: inline-block; margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+  }
+
+  /* Metric Cards */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px;
+    transition: transform 0.2s, border-color 0.3s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .metric-card:nth-child(1) { animation-delay: 0.05s; }
+  .metric-card:nth-child(2) { animation-delay: 0.1s; }
+  .metric-card:nth-child(3) { animation-delay: 0.15s; }
+  .metric-card:nth-child(4) { animation-delay: 0.2s; }
+  .metric-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.12); }
+
+  .metric-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .metric-value { font-size: 32px; font-weight: 700; letter-spacing: -1px; font-family: 'Space Mono', monospace; }
+  .metric-change {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 600; margin-top: 8px; padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .metric-change.up { color: var(--green); background: var(--green-dim); }
+  .metric-change.down { color: var(--red); background: var(--red-dim); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Grid layout */
+  .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: 0.25s;
+  }
+  .card-title {
+    font-size: 14px; font-weight: 600; margin-bottom: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card-title .badge {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: var(--accent-glow); color: var(--accent); font-weight: 500;
+  }
+
+  /* Chart containers */
+  .chart-wrap { position: relative; height: 260px; }
+  .chart-wrap-sm { position: relative; height: 220px; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left; padding: 10px 14px; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--text-dim); border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  .status-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-pill.active { background: var(--green-dim); color: var(--green); }
+  .status-pill.pending { background: var(--amber-dim); color: var(--amber); }
+  .status-pill.inactive { background: var(--red-dim); color: var(--red); }
+
+  .progress-bar {
+    width: 100%; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.06); overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--purple));
+    transition: width 1s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .grid-2, .grid-equal { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 500px) {
+    .metrics { grid-template-columns: 1fr; }
+    .app { padding: 16px 12px; }
+  }
+</style>
+</head>
+<body>
+<a href="/brands/uscamp/" class="camp-back">← USCAMP</a>
+<div class="noise"></div>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-mark">US</div>
+      <div class="logo-text">
+        <h1>USCAMP</h1>
+        <span>Analytics Dashboard — 2025/2026</span>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span><span class="live-dot"></span>Canlı Veri</span>
+      <span>Mart 2026</span>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-label">Toplam Gelir</div>
+      <div class="metric-value">$1.02M</div>
+      <div class="metric-change up">▲ 14.2%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Aktif Öğrenci</div>
+      <div class="metric-value">2,847</div>
+      <div class="metric-change up">▲ 8.5%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Tamamlama Oranı</div>
+      <div class="metric-value">76.3%</div>
+      <div class="metric-change up">▲ 3.1%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Destek Talepleri</div>
+      <div class="metric-value">142</div>
+      <div class="metric-change down">▼ 12%</div>
+    </div>
+  </div>
+
+  <!-- Revenue Chart + Doughnut -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">
+        Aylık Gelir Trendi
+        <span class="badge">Son 12 Ay</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Program Dağılımı</div>
+      <div class="chart-wrap">
+        <canvas id="doughnutChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bar Chart + Table -->
+  <div class="grid-equal">
+    <div class="card">
+      <div class="card-title">
+        Haftalık Kayıt
+        <span class="badge">Bu Ay</span>
+      </div>
+      <div class="chart-wrap-sm">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Son Kayıtlar</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Öğrenci</th><th>Program</th><th>Durum</th><th>İlerleme</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Elif Demir</td><td>Step 1</td>
+              <td><span class="status-pill active">Aktif</span></td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:82%"></div></div></td>
+            </tr>
+            <tr>
+              <td>Ahmet Yılmaz</td><td>Step 2 CK</td>
+              <td><span class="status-pill active">Aktif</span></td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:65%"></div></div></td>
+            </tr>
+            <tr>
+              <td>Selin Kaya</td><td>Step 1</td>
+              <td><span class="status-pill pending">Beklemede</span></td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div></td>
+            </tr>
+            <tr>
+              <td>Burak Çelik</td><td>Step 2 CK</td>
+              <td><span class="status-pill active">Aktif</span></td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:91%"></div></div></td>
+            </tr>
+            <tr>
+              <td>Zeynep Arslan</td><td>Step 1</td>
+              <td><span class="status-pill inactive">Dondurulmuş</span></td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:12%"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Table: Program Performance -->
+  <div class="card" style="animation-delay:0.35s;">
+    <div class="card-title">
+      Program Performansı
+      <span class="badge">2025–2026</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Program</th><th>Öğrenci</th><th>Gelir</th>
+            <th>Tamamlama</th><th>NPS</th><th>Durum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;">USCAMP Step 1</td><td>1,420</td><td>$520K</td>
+            <td>78%</td><td style="color:var(--green)">72</td>
+            <td><span class="status-pill active">Aktif</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">USCAMP Step 2 CK</td><td>890</td><td>$340K</td>
+            <td>74%</td><td style="color:var(--green)">68</td>
+            <td><span class="status-pill active">Aktif</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">Qbank</td><td>1,650</td><td>$95K</td>
+            <td>62%</td><td style="color:var(--amber)">55</td>
+            <td><span class="status-pill active">Aktif</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">Mock Exam</td><td>780</td><td>$45K</td>
+            <td>88%</td><td style="color:var(--green)">80</td>
+            <td><span class="status-pill active">Aktif</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">Video Kurs (Pilot)</td><td>210</td><td>$22K</td>
+            <td>45%</td><td style="color:var(--amber)">48</td>
+            <td><span class="status-pill pending">Pilot</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const fontFamily = "'DM Sans', sans-serif";
+const gridColor = 'rgba(255,255,255,0.04)';
+const tickColor = '#5A6478';
+
+Chart.defaults.font.family = fontFamily;
+Chart.defaults.color = tickColor;
+
+// Revenue Line Chart
+new Chart(document.getElementById('revenueChart'), {
+  type: 'line',
+  data: {
+    labels: ['Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara','Oca','Şub','Mar'],
+    datasets: [{
+      label: 'Gelir ($K)',
+      data: [68, 72, 80, 95, 88, 82, 90, 105, 92, 98, 110, 118],
+      borderColor: '#3B82F6',
+      backgroundColor: 'rgba(59,130,246,0.08)',
+      fill: true,
+      tension: 0.4,
+      borderWidth: 2.5,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: '#3B82F6',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+      y: { grid: { color: gridColor }, ticks: { font: { size: 11 }, callback: v => '$' + v + 'K' },
+           border: { display: false } }
+    },
+    interaction: { intersect: false, mode: 'index' },
+  }
+});
+
+// Doughnut Chart
+new Chart(document.getElementById('doughnutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Step 1', 'Step 2 CK', 'Qbank', 'Mock Exam', 'Video'],
+    datasets: [{
+      data: [520, 340, 95, 45, 22],
+      backgroundColor: ['#3B82F6','#6366F1','#A855F7','#22C55E','#F59E0B'],
+      borderWidth: 0,
+      spacing: 3,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// Bar Chart
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Hafta 1','Hafta 2','Hafta 3','Hafta 4'],
+    datasets: [
+      {
+        label: 'Step 1', data: [32, 45, 28, 51],
+        backgroundColor: '#3B82F6', borderRadius: 6, barPercentage: 0.6,
+      },
+      {
+        label: 'Step 2 CK', data: [18, 22, 15, 30],
+        backgroundColor: '#6366F1', borderRadius: 6, barPercentage: 0.6,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top', align: 'end',
+        labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 11 }, padding: 16 }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+      y: { grid: { color: gridColor }, ticks: { font: { size: 11 } }, border: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -12,14 +12,30 @@
           "name": "MATCH Hazırlık Skoru",
           "description": "MATCH sınavına hazırlık skor hesaplayıcı",
           "date": "2026-03-25",
-          "tags": ["calculator", "tool"]
+          "tags": [
+            "calculator",
+            "tool"
+          ]
         },
         {
           "slug": "roadmap-quiz",
           "name": "Kişisel Yol Haritası Testi",
           "description": "Kişiselleştirilmiş yol haritası quiz uygulaması",
           "date": "2026-03-25",
-          "tags": ["quiz", "tool"]
+          "tags": [
+            "quiz",
+            "tool"
+          ]
+        },
+        {
+          "slug": "dashboard",
+          "name": "USCAMP Dashboard",
+          "description": "USCAMP analytics dashboard — gelir, öğrenci, program performansı",
+          "date": "2026-03-25",
+          "tags": [
+            "dashboard",
+            "analytics"
+          ]
         }
       ]
     },
@@ -35,7 +51,10 @@
           "name": "Patient Journey",
           "description": "Cancera hasta yolculuğu haritası",
           "date": "2026-03-25",
-          "tags": ["journey", "report"]
+          "tags": [
+            "journey",
+            "report"
+          ]
         }
       ]
     }
