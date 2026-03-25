@@ -12,6 +12,10 @@ HTML artifact ve mini app paylaşım platformu. Netlify üzerinde deploy ediliyo
 /brands/brands.json                      → Marka ve artifact metadata
 ```
 
+## Oturum Başlangıcı (Zorunlu)
+
+Her yeni konuşma/oturum açıldığında ilk iş olarak `git pull origin main` çalıştır. Başka biri push etmiş olabilir — eski versiyon üzerine yazma riskini önle.
+
 ## Kurallar
 
 - Backend yok, tamamen statik frontend
@@ -21,6 +25,22 @@ HTML artifact ve mini app paylaşım platformu. Netlify üzerinde deploy ediliyo
 - Netlify'a push ile otomatik deploy olur (main branch)
 - Türkçe karakter içeren isimler slug olarak yazılmalı (ö→o, ş→s vb.)
 - Deploy: `git push origin main`
+
+## Yeni Artifact Oluşturma Workflow'u
+
+Kullanıcı sıfırdan artifact oluşturmamı istediğinde:
+
+1. Dosyayı doğru klasöre oluştur (`brands/{marka}/artifacts/{slug}/index.html`)
+2. `brands.json`'ı güncelle
+3. **Push etme!** Önce kullanıcıya lokal önizleme linki ver:
+   `file:///Users/sadullahbayar/Desktop/ClaudeProjects/camp-artifacts/brands/{marka}/artifacts/{slug}/index.html`
+4. Kullanıcının tarayıcıda açıp onaylamasını bekle
+5. Onay gelince commit + push yap
+6. Push sonrası canlı linki ver:
+   `https://campartifacts.netlify.app/brands/{marka}/artifacts/{slug}/`
+
+Hazır HTML dosyası verildiğinde de aynı şekilde: önce yerleştir, onay al, sonra push et.
+Kullanıcı direkt "deploy et" derse onay beklemeden push yap — push sonrası her durumda canlı linki ver.
 
 ## Artifact Geri Butonu (Zorunlu)
 
