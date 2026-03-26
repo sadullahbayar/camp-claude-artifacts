@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satışçı Takip Paneli — USCAMP</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; min-height: 100vh; }
+  input, select, textarea { font-family: inherit; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CAMP Back Button */
+  .camp-back {
+    position: fixed; top: 16px; left: 16px; z-index: 9999;
+    background: rgba(0,0,0,0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: rgba(0,0,0,0.4);
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s ease;
+  }
+  .camp-back:hover {
+    background: rgba(0,0,0,0.08);
+    color: rgba(0,0,0,0.7);
+  }
+</style>
+</head>
+<body>
+
+<!-- CAMP Geri Butonu -->
+<a href="/brands/uscamp/" class="camp-back">← USCAMP</a>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect } = React;
+
+const SALESPEOPLE = ["Ahmet", "Mehmet", "Ayşe"];
+
+const STATUS_FLOW = {
+  deneme: { label: "Deneme", color: "#f59e0b", bg: "#fef3c7" },
+  aktif_takip: { label: "Aktif Takip", color: "#3b82f6", bg: "#dbeafe" },
+  tahsilat_bekliyor: { label: "Tahsilat Bekliyor", color: "#ef4444", bg: "#fee2e2" },
+  tahsilat_tamam: { label: "Tahsilat Tamam", color: "#10b981", bg: "#d1fae5" },
+  kayip: { label: "Kayıp", color: "#6b7280", bg: "#f3f4f6" },
+};
+
+const generateId = () => Math.random().toString(36).substr(2, 9);
+
+const today = () => {
+  const d = new Date();
+  return d.toISOString().split("T")[0];
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "-";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" });
+};
+
+const daysLeft = (dateStr) => {
+  if (!dateStr) return null;
+  const diff = Math.ceil((new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24));
+  return diff;
+};
+
+const initialStudents = [
+  {
+    id: generateId(), name: "Ali Yılmaz", phone: "0532 111 2233", salesperson: "Ahmet",
+    groupDate: "2026-03-10", trialEnd: "2026-03-24", status: "tahsilat_bekliyor",
+    actions: [
+      { id: generateId(), type: "arama", date: "2026-03-11", note: "Tanışma araması yapıldı" },
+      { id: generateId(), type: "whatsapp", date: "2026-03-15", note: "Ders hatırlatması gönderildi" },
+      { id: generateId(), type: "arama", date: "2026-03-20", note: "Deneme bitiş hatırlatması" },
+    ],
+  },
+  {
+    id: generateId(), name: "Zeynep Kara", phone: "0533 222 3344", salesperson: "Mehmet",
+    groupDate: "2026-03-15", trialEnd: "2026-03-29", status: "deneme",
+    actions: [
+      { id: generateId(), type: "arama", date: "2026-03-16", note: "Hoş geldin araması" },
+    ],
+  },
+  {
+    id: generateId(), name: "Burak Demir", phone: "0535 333 4455", salesperson: "Ayşe",
+    groupDate: "2026-03-05", trialEnd: "2026-03-19", status: "tahsilat_bekliyor",
+    actions: [
+      { id: generateId(), type: "whatsapp", date: "2026-03-06", note: "Gruba eklendi bilgisi" },
+      { id: generateId(), type: "arama", date: "2026-03-12", note: "Memnuniyet araması" },
+    ],
+  },
+  {
+    id: generateId(), name: "Selin Aydın", phone: "0536 444 5566", salesperson: "Ahmet",
+    groupDate: "2026-03-18", trialEnd: "2026-04-01", status: "deneme",
+    actions: [
+      { id: generateId(), type: "whatsapp", date: "2026-03-18", note: "Hoş geldin mesajı" },
+      { id: generateId(), type: "arama", date: "2026-03-21", note: "İlk hafta kontrol" },
+    ],
+  },
+  {
+    id: generateId(), name: "Emre Çelik", phone: "0537 555 6677", salesperson: "Mehmet",
+    groupDate: "2026-03-01", trialEnd: "2026-03-15", status: "kayip",
+    actions: [
+      { id: generateId(), type: "arama", date: "2026-03-02", note: "Tanışma" },
+    ],
+  },
+  {
+    id: generateId(), name: "Deniz Koç", phone: "0538 666 7788", salesperson: "Ayşe",
+    groupDate: "2026-03-12", trialEnd: "2026-03-26", status: "aktif_takip",
+    actions: [
+      { id: generateId(), type: "whatsapp", date: "2026-03-12", note: "Hoş geldin" },
+      { id: generateId(), type: "arama", date: "2026-03-17", note: "Kontrol araması" },
+      { id: generateId(), type: "whatsapp", date: "2026-03-22", note: "Deneme bitiyor hatırlatma" },
+    ],
+  },
+];
+
+// ─── Icon Components ───
+const PhoneIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+  </svg>
+);
+
+const MessageIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+);
+
+const PlusIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+
+const AlertIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+
+const ChevronIcon = ({ open }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ transition: "transform 0.2s", transform: open ? "rotate(90deg)" : "rotate(0)" }}>
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+
+
+// ─── Modal Component ───
+function Modal({ open, onClose, title, children }) {
+  if (!open) return null;
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 1000,
+      background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      animation: "fadeIn 0.2s ease"
+    }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: "#fff", borderRadius: 16, padding: 28, width: "90%", maxWidth: 480,
+        boxShadow: "0 25px 60px rgba(0,0,0,0.3)", maxHeight: "85vh", overflowY: "auto"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#1a1a2e" }}>{title}</h3>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#999", padding: 4 }}>
+            <CloseIcon />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─── Badge ───
+function StatusBadge({ status }) {
+  const s = STATUS_FLOW[status];
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
+      color: s.color, background: s.bg, border: `1px solid ${s.color}22`
+    }}>
+      <span style={{ width: 7, height: 7, borderRadius: "50%", background: s.color }} />
+      {s.label}
+    </span>
+  );
+}
+
+// ─── Action Tag ───
+function ActionTag({ type, count }) {
+  const config = type === "arama"
+    ? { icon: <PhoneIcon />, label: "Arama", color: "#8b5cf6", bg: "#ede9fe" }
+    : { icon: <MessageIcon />, label: "Mesaj", color: "#06b6d4", bg: "#cffafe" };
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 4,
+      padding: "3px 10px", borderRadius: 12, fontSize: 11, fontWeight: 600,
+      color: config.color, background: config.bg
+    }}>
+      {config.icon} {count}
+    </span>
+  );
+}
+
+// ─── Student Row ───
+function StudentRow({ student, onAddAction, onChangeStatus, expanded, onToggle }) {
+  const dl = daysLeft(student.trialEnd);
+  const isOverdue = dl !== null && dl < 0;
+  const isUrgent = dl !== null && dl >= 0 && dl <= 2;
+  const callCount = student.actions.filter(a => a.type === "arama").length;
+  const msgCount = student.actions.filter(a => a.type === "whatsapp").length;
+  const lastAction = student.actions.length > 0
+    ? student.actions[student.actions.length - 1]
+    : null;
+  const daysSinceLastAction = lastAction
+    ? Math.ceil((new Date() - new Date(lastAction.date)) / (1000 * 60 * 60 * 24))
+    : null;
+  const noActionWarning = daysSinceLastAction !== null && daysSinceLastAction > 3;
+
+  return (
+    <div style={{
+      background: "#fff", borderRadius: 12, marginBottom: 8,
+      border: isOverdue ? "2px solid #ef4444" : isUrgent ? "2px solid #f59e0b" : "1px solid #e5e7eb",
+      overflow: "hidden", transition: "all 0.2s"
+    }}>
+      {/* Main Row */}
+      <div onClick={onToggle} style={{
+        display: "grid", gridTemplateColumns: "1fr auto auto auto auto auto",
+        alignItems: "center", gap: 12, padding: "14px 18px", cursor: "pointer",
+        background: expanded ? "#f8fafc" : "transparent"
+      }}>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: 14, color: "#1a1a2e", display: "flex", alignItems: "center", gap: 8 }}>
+            <ChevronIcon open={expanded} />
+            {student.name}
+            {noActionWarning && (
+              <span title="3+ gündür aksiyon yok!" style={{ color: "#ef4444", display: "flex" }}>
+                <AlertIcon />
+              </span>
+            )}
+          </div>
+          <div style={{ fontSize: 12, color: "#888", marginLeft: 26 }}>{student.phone}</div>
+        </div>
+        <div style={{ fontSize: 12, color: "#666", textAlign: "center", minWidth: 70 }}>
+          <div style={{ color: "#aaa", fontSize: 10, marginBottom: 2 }}>Satışçı</div>
+          <strong>{student.salesperson}</strong>
+        </div>
+        <div style={{ display: "flex", gap: 6 }}>
+          <ActionTag type="arama" count={callCount} />
+          <ActionTag type="whatsapp" count={msgCount} />
+        </div>
+        <div style={{ fontSize: 12, textAlign: "center", minWidth: 90 }}>
+          <div style={{ color: "#aaa", fontSize: 10, marginBottom: 2 }}>Deneme Bitiş</div>
+          <span style={{
+            fontWeight: 700,
+            color: isOverdue ? "#ef4444" : isUrgent ? "#f59e0b" : "#333"
+          }}>
+            {formatDate(student.trialEnd)}
+            {isOverdue && <span style={{ display: "block", fontSize: 10, color: "#ef4444" }}>
+              {Math.abs(dl)} gün geçti!
+            </span>}
+            {isUrgent && <span style={{ display: "block", fontSize: 10, color: "#f59e0b" }}>
+              {dl === 0 ? "Bugün!" : `${dl} gün kaldı`}
+            </span>}
+          </span>
+        </div>
+        <StatusBadge status={student.status} />
+      </div>
+
+      {/* Expanded Detail */}
+      {expanded && (
+        <div style={{ padding: "0 18px 18px", borderTop: "1px solid #f0f0f0" }}>
+          <div style={{ display: "flex", gap: 8, margin: "14px 0", flexWrap: "wrap" }}>
+            <button onClick={() => onAddAction("arama")} style={actionBtnStyle("#8b5cf6")}>
+              <PhoneIcon /> Arama Ekle
+            </button>
+            <button onClick={() => onAddAction("whatsapp")} style={actionBtnStyle("#06b6d4")}>
+              <MessageIcon /> Mesaj Ekle
+            </button>
+            <select
+              value={student.status}
+              onChange={e => onChangeStatus(e.target.value)}
+              style={{
+                padding: "8px 12px", borderRadius: 8, border: "1px solid #e0e0e0",
+                fontSize: 12, fontWeight: 600, cursor: "pointer", background: "#f9fafb"
+              }}
+            >
+              {Object.entries(STATUS_FLOW).map(([k, v]) => (
+                <option key={k} value={k}>{v.label}</option>
+              ))}
+            </select>
+          </div>
+          {/* Action Timeline */}
+          <div style={{ position: "relative", paddingLeft: 20, marginTop: 8 }}>
+            <div style={{ position: "absolute", left: 7, top: 4, bottom: 4, width: 2, background: "#e5e7eb", borderRadius: 1 }} />
+            {student.actions.slice().reverse().map((action, i) => (
+              <div key={action.id} style={{
+                position: "relative", paddingBottom: 14, paddingLeft: 16, fontSize: 13
+              }}>
+                <div style={{
+                  position: "absolute", left: -1, top: 4, width: 16, height: 16, borderRadius: "50%",
+                  background: action.type === "arama" ? "#ede9fe" : "#cffafe",
+                  border: `2px solid ${action.type === "arama" ? "#8b5cf6" : "#06b6d4"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center"
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: action.type === "arama" ? "#8b5cf6" : "#06b6d4" }} />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontWeight: 600, color: action.type === "arama" ? "#8b5cf6" : "#06b6d4" }}>
+                    {action.type === "arama" ? "Arama" : "WhatsApp"}
+                  </span>
+                  <span style={{ color: "#aaa", fontSize: 11 }}>{formatDate(action.date)}</span>
+                </div>
+                <div style={{ color: "#666", marginTop: 2 }}>{action.note}</div>
+              </div>
+            ))}
+            {student.actions.length === 0 && (
+              <div style={{ color: "#ccc", fontSize: 13, fontStyle: "italic", paddingLeft: 16 }}>Henüz aksiyon yok</div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const actionBtnStyle = (color) => ({
+  display: "inline-flex", alignItems: "center", gap: 6,
+  padding: "8px 14px", borderRadius: 8, border: `1px solid ${color}33`,
+  background: `${color}11`, color, fontSize: 12, fontWeight: 600, cursor: "pointer"
+});
+
+// ─── Main App ───
+function SalesTracker() {
+  const [students, setStudents] = useState(initialStudents);
+  const [view, setView] = useState("ceo");
+  const [selectedSalesperson, setSelectedSalesperson] = useState(SALESPEOPLE[0]);
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
+  const [actionNote, setActionNote] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [newStudent, setNewStudent] = useState({
+    name: "", phone: "", salesperson: SALESPEOPLE[0], trialEnd: "", trialDays: 7
+  });
+
+  const filtered = useMemo(() => {
+    let list = students;
+    if (view === "salesperson") {
+      list = list.filter(s => s.salesperson === selectedSalesperson);
+    }
+    if (filterStatus !== "all") {
+      list = list.filter(s => s.status === filterStatus);
+    }
+    if (searchTerm) {
+      list = list.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    }
+    return list.sort((a, b) => {
+      const dlA = daysLeft(a.trialEnd) ?? 999;
+      const dlB = daysLeft(b.trialEnd) ?? 999;
+      return dlA - dlB;
+    });
+  }, [students, view, selectedSalesperson, filterStatus, searchTerm]);
+
+  const stats = useMemo(() => {
+    const base = view === "salesperson" ? students.filter(s => s.salesperson === selectedSalesperson) : students;
+    return {
+      total: base.length,
+      deneme: base.filter(s => s.status === "deneme").length,
+      tahsilatBekliyor: base.filter(s => s.status === "tahsilat_bekliyor").length,
+      tahsilatTamam: base.filter(s => s.status === "tahsilat_tamam").length,
+      kayip: base.filter(s => s.status === "kayip").length,
+      overdue: base.filter(s => daysLeft(s.trialEnd) !== null && daysLeft(s.trialEnd) < 0 && s.status !== "tahsilat_tamam").length,
+      noAction3Days: base.filter(s => {
+        const la = s.actions.length > 0 ? s.actions[s.actions.length - 1] : null;
+        if (!la) return true;
+        return Math.ceil((new Date() - new Date(la.date)) / (1000 * 60 * 60 * 24)) > 3;
+      }).length,
+    };
+  }, [students, view, selectedSalesperson]);
+
+  const addStudent = () => {
+    const trialEndDate = new Date();
+    trialEndDate.setDate(trialEndDate.getDate() + (parseInt(newStudent.trialDays) || 7));
+    const s = {
+      id: generateId(),
+      name: newStudent.name,
+      phone: newStudent.phone,
+      salesperson: view === "salesperson" ? selectedSalesperson : newStudent.salesperson,
+      groupDate: today(),
+      trialEnd: trialEndDate.toISOString().split("T")[0],
+      status: "deneme",
+      actions: [],
+    };
+    setStudents(prev => [...prev, s]);
+    setNewStudent({ name: "", phone: "", salesperson: SALESPEOPLE[0], trialEnd: "", trialDays: 7 });
+    setShowAddModal(false);
+  };
+
+  const addAction = () => {
+    if (!showActionModal) return;
+    setStudents(prev => prev.map(s => {
+      if (s.id === showActionModal.studentId) {
+        return {
+          ...s,
+          actions: [...s.actions, {
+            id: generateId(),
+            type: showActionModal.type,
+            date: today(),
+            note: actionNote || (showActionModal.type === "arama" ? "Arama yapıldı" : "Mesaj gönderildi")
+          }]
+        };
+      }
+      return s;
+    }));
+    setActionNote("");
+    setShowActionModal(null);
+  };
+
+  const changeStatus = (studentId, status) => {
+    setStudents(prev => prev.map(s => s.id === studentId ? { ...s, status } : s));
+  };
+
+  return (
+    <div style={{ padding: "16px", maxWidth: 1200, margin: "0 auto" }}>
+
+      {/* Header */}
+      <div style={{
+        background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
+        borderRadius: 16, padding: "24px 28px", marginBottom: 16, color: "#fff"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>
+              Satışçı Takip Paneli
+            </h1>
+            <p style={{ margin: "4px 0 0", fontSize: 13, opacity: 0.7 }}>
+              Öğrenci deneme süreci & tahsilat kontrolü
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{
+              display: "flex", background: "rgba(255,255,255,0.1)", borderRadius: 10, padding: 3
+            }}>
+              <button
+                onClick={() => setView("ceo")}
+                style={{
+                  padding: "8px 16px", borderRadius: 8, border: "none", fontSize: 13, fontWeight: 600,
+                  cursor: "pointer", transition: "all 0.2s",
+                  background: view === "ceo" ? "#fff" : "transparent",
+                  color: view === "ceo" ? "#1a1a2e" : "#fff"
+                }}
+              >
+                CEO Görünümü
+              </button>
+              <button
+                onClick={() => setView("salesperson")}
+                style={{
+                  padding: "8px 16px", borderRadius: 8, border: "none", fontSize: 13, fontWeight: 600,
+                  cursor: "pointer", transition: "all 0.2s",
+                  background: view === "salesperson" ? "#fff" : "transparent",
+                  color: view === "salesperson" ? "#1a1a2e" : "#fff"
+                }}
+              >
+                Satışçı Görünümü
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {view === "salesperson" && (
+          <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+            {SALESPEOPLE.map(sp => (
+              <button key={sp} onClick={() => setSelectedSalesperson(sp)} style={{
+                padding: "8px 20px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)",
+                background: selectedSalesperson === sp ? "#fff" : "transparent",
+                color: selectedSalesperson === sp ? "#1a1a2e" : "#fff",
+                fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.2s"
+              }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <UserIcon /> {sp}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Stats Row */}
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+        gap: 10, marginBottom: 16
+      }}>
+        {[
+          { label: "Toplam", value: stats.total, color: "#6366f1", bg: "#eef2ff" },
+          { label: "Denemede", value: stats.deneme, color: "#f59e0b", bg: "#fef3c7" },
+          { label: "Tahsilat Bekliyor", value: stats.tahsilatBekliyor, color: "#ef4444", bg: "#fee2e2" },
+          { label: "Tahsilat Tamam", value: stats.tahsilatTamam, color: "#10b981", bg: "#d1fae5" },
+          { label: "Süresi Geçen", value: stats.overdue, color: "#dc2626", bg: "#fecaca" },
+          { label: "3+ Gün Sessiz", value: stats.noAction3Days, color: "#9333ea", bg: "#f3e8ff" },
+        ].map(s => (
+          <div key={s.label} style={{
+            background: "#fff", borderRadius: 12, padding: "16px 14px",
+            borderLeft: `4px solid ${s.color}`, boxShadow: "0 1px 3px rgba(0,0,0,0.06)"
+          }}>
+            <div style={{ fontSize: 11, color: "#888", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{s.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: s.color, marginTop: 4 }}>{s.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Toolbar */}
+      <div style={{
+        display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap", alignItems: "center"
+      }}>
+        <input
+          placeholder="Öğrenci ara..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          style={{
+            padding: "10px 16px", borderRadius: 10, border: "1px solid #e0e0e0",
+            fontSize: 13, flex: 1, minWidth: 180, background: "#fff"
+          }}
+        />
+        <select
+          value={filterStatus}
+          onChange={e => setFilterStatus(e.target.value)}
+          style={{
+            padding: "10px 14px", borderRadius: 10, border: "1px solid #e0e0e0",
+            fontSize: 13, fontWeight: 600, background: "#fff", cursor: "pointer"
+          }}
+        >
+          <option value="all">Tüm Durumlar</option>
+          {Object.entries(STATUS_FLOW).map(([k, v]) => (
+            <option key={k} value={k}>{v.label}</option>
+          ))}
+        </select>
+        <button onClick={() => setShowAddModal(true)} style={{
+          display: "flex", alignItems: "center", gap: 6,
+          padding: "10px 20px", borderRadius: 10, border: "none",
+          background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "#fff",
+          fontSize: 13, fontWeight: 700, cursor: "pointer",
+          boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
+        }}>
+          <PlusIcon /> Öğrenci Ekle
+        </button>
+      </div>
+
+      {/* Student List */}
+      <div>
+        {filtered.length === 0 && (
+          <div style={{
+            textAlign: "center", padding: 60, color: "#aaa", fontSize: 14,
+            background: "#fff", borderRadius: 12
+          }}>
+            Kayıt bulunamadı
+          </div>
+        )}
+        {filtered.map(student => (
+          <StudentRow
+            key={student.id}
+            student={student}
+            expanded={expandedId === student.id}
+            onToggle={() => setExpandedId(expandedId === student.id ? null : student.id)}
+            onAddAction={(type) => {
+              setShowActionModal({ studentId: student.id, type });
+              setActionNote("");
+            }}
+            onChangeStatus={(status) => changeStatus(student.id, status)}
+          />
+        ))}
+      </div>
+
+      {/* CEO Scoreboard */}
+      {view === "ceo" && (
+        <div style={{
+          background: "#fff", borderRadius: 14, padding: 22, marginTop: 16,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.06)"
+        }}>
+          <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1a1a2e" }}>
+            Satışçı Performans Özeti
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+            {SALESPEOPLE.map(sp => {
+              const spStudents = students.filter(s => s.salesperson === sp);
+              const totalActions = spStudents.reduce((acc, s) => acc + s.actions.length, 0);
+              const conversions = spStudents.filter(s => s.status === "tahsilat_tamam").length;
+              const pending = spStudents.filter(s => s.status === "tahsilat_bekliyor").length;
+              const overdue = spStudents.filter(s => daysLeft(s.trialEnd) !== null && daysLeft(s.trialEnd) < 0 && s.status !== "tahsilat_tamam").length;
+              const convRate = spStudents.length > 0 ? Math.round((conversions / spStudents.length) * 100) : 0;
+
+              return (
+                <div key={sp} style={{
+                  padding: 18, borderRadius: 12, border: "1px solid #e5e7eb",
+                  background: "linear-gradient(135deg, #fafafa, #fff)"
+                }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: "#1a1a2e", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                    <UserIcon /> {sp}
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 12 }}>
+                    <div>
+                      <div style={{ color: "#888" }}>Öğrenci</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: "#333" }}>{spStudents.length}</div>
+                    </div>
+                    <div>
+                      <div style={{ color: "#888" }}>Aksiyon</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: "#6366f1" }}>{totalActions}</div>
+                    </div>
+                    <div>
+                      <div style={{ color: "#888" }}>Tahsilat</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: "#10b981" }}>{conversions}</div>
+                    </div>
+                    <div>
+                      <div style={{ color: "#888" }}>Bekleyen</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: "#f59e0b" }}>{pending}</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 12 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
+                      <span style={{ color: "#888" }}>Dönüşüm Oranı</span>
+                      <span style={{ fontWeight: 700, color: convRate > 50 ? "#10b981" : convRate > 25 ? "#f59e0b" : "#ef4444" }}>{convRate}%</span>
+                    </div>
+                    <div style={{ background: "#f0f0f0", borderRadius: 6, height: 8, overflow: "hidden" }}>
+                      <div style={{
+                        width: `${convRate}%`, height: "100%", borderRadius: 6, transition: "width 0.5s",
+                        background: convRate > 50 ? "#10b981" : convRate > 25 ? "#f59e0b" : "#ef4444"
+                      }} />
+                    </div>
+                  </div>
+                  {overdue > 0 && (
+                    <div style={{
+                      marginTop: 10, padding: "6px 10px", borderRadius: 8,
+                      background: "#fee2e2", color: "#dc2626", fontSize: 11, fontWeight: 600,
+                      display: "flex", alignItems: "center", gap: 4
+                    }}>
+                      <AlertIcon /> {overdue} süresi geçmiş öğrenci!
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Add Student Modal */}
+      <Modal open={showAddModal} onClose={() => setShowAddModal(false)} title="Yeni Öğrenci Ekle">
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div>
+            <label style={labelStyle}>Öğrenci Adı</label>
+            <input
+              value={newStudent.name}
+              onChange={e => setNewStudent({ ...newStudent, name: e.target.value })}
+              placeholder="Ad Soyad"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Telefon</label>
+            <input
+              value={newStudent.phone}
+              onChange={e => setNewStudent({ ...newStudent, phone: e.target.value })}
+              placeholder="0532 xxx xxxx"
+              style={inputStyle}
+            />
+          </div>
+          {view === "ceo" && (
+            <div>
+              <label style={labelStyle}>Satışçı</label>
+              <select
+                value={newStudent.salesperson}
+                onChange={e => setNewStudent({ ...newStudent, salesperson: e.target.value })}
+                style={inputStyle}
+              >
+                {SALESPEOPLE.map(sp => <option key={sp} value={sp}>{sp}</option>)}
+              </select>
+            </div>
+          )}
+          <div>
+            <label style={labelStyle}>Deneme Süresi (Gün)</label>
+            <input
+              type="number"
+              value={newStudent.trialDays}
+              onChange={e => setNewStudent({ ...newStudent, trialDays: e.target.value })}
+              placeholder="7"
+              min="1"
+              max="90"
+              style={inputStyle}
+            />
+          </div>
+          <button onClick={addStudent} disabled={!newStudent.name} style={{
+            padding: "12px 20px", borderRadius: 10, border: "none",
+            background: newStudent.name ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#e0e0e0",
+            color: "#fff", fontSize: 14, fontWeight: 700, cursor: newStudent.name ? "pointer" : "not-allowed",
+            marginTop: 4
+          }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <CheckIcon /> Öğrenciyi Kaydet
+            </span>
+          </button>
+        </div>
+      </Modal>
+
+      {/* Add Action Modal */}
+      <Modal
+        open={!!showActionModal}
+        onClose={() => setShowActionModal(null)}
+        title={showActionModal?.type === "arama" ? "Arama Kaydı Ekle" : "Mesaj Kaydı Ekle"}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div>
+            <label style={labelStyle}>Not</label>
+            <textarea
+              value={actionNote}
+              onChange={e => setActionNote(e.target.value)}
+              placeholder="Görüşme notu..."
+              rows={3}
+              style={{ ...inputStyle, resize: "vertical" }}
+            />
+          </div>
+          <button onClick={addAction} style={{
+            padding: "12px 20px", borderRadius: 10, border: "none",
+            background: showActionModal?.type === "arama"
+              ? "linear-gradient(135deg, #7c3aed, #8b5cf6)"
+              : "linear-gradient(135deg, #0891b2, #06b6d4)",
+            color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer"
+          }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <CheckIcon /> Kaydet
+            </span>
+          </button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: "#666", marginBottom: 6 };
+const inputStyle = {
+  width: "100%", padding: "10px 14px", borderRadius: 10, border: "1px solid #e0e0e0",
+  fontSize: 14, outline: "none", transition: "border 0.2s"
+};
+
+ReactDOM.render(<SalesTracker />, document.getElementById("root"));
+</script>
+</body>
+</html>

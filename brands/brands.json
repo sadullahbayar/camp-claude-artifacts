@@ -36,6 +36,17 @@
             "dashboard",
             "analytics"
           ]
+        },
+        {
+          "slug": "satisci-takip-paneli",
+          "name": "Satışçı Takip Paneli",
+          "description": "Öğrenci deneme süreci, tahsilat takibi ve satışçı performans paneli",
+          "date": "2026-03-26",
+          "tags": [
+            "dashboard",
+            "sales",
+            "tracker"
+          ]
         }
       ]
     },
