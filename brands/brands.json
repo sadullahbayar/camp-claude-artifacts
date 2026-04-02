@@ -66,6 +66,17 @@
             "journey",
             "report"
           ]
+        },
+        {
+          "slug": "satis-raporu-mart2026",
+          "name": "Satış Analiz Raporu — Mart 2026",
+          "description": "Cancera Mart 2026 satış analiz raporu",
+          "date": "2026-04-02",
+          "tags": [
+            "sales",
+            "report",
+            "analytics"
+          ]
         }
       ]
     }
