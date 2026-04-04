@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USCAMP — İçerik Yönlendirme Ağacı</title>
+<style>
+  :root {
+    --brand:      #1B3A6B;
+    --brand-lt:   #D6E4F5;
+    --brand-mid:  #2563EB;
+    --one:        #16A34A;
+    --one-bg:     #DCFCE7;
+    --one-border: #86EFAC;
+    --arkaya:     #D97706;
+    --arkaya-bg:  #FEF9C3;
+    --kilit:      #DC2626;
+    --kilit-bg:   #FEE2E2;
+    --kilit-brd:  #FCA5A5;
+    --gizle:      #9CA3AF;
+    --gizle-bg:   #F3F4F6;
+    --medcamp:    #7C3AED;
+    --medcamp-bg: #EDE9FE;
+    --research:   #0891B2;
+    --research-bg:#E0F2FE;
+    --upsell:     #DB2777;
+    --upsell-bg:  #FCE7F3;
+    --canvas:     #F0F4F8;
+    --white:      #FFFFFF;
+    --text:       #1E293B;
+    --textlt:     #64748B;
+    --border:     #CBD5E1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .camp-back {
+    position: fixed; top: 16px; left: 16px; z-index: 9999;
+    background: rgba(0,0,0,0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: rgba(0,0,0,0.4);
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s ease;
+  }
+  .camp-back:hover {
+    background: rgba(0,0,0,0.08);
+    color: rgba(0,0,0,0.7);
+  }
+
+  body {
+    font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+    background: var(--canvas);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  .page-header {
+    background: var(--brand);
+    color: #fff;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .page-header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .page-header p  { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+  .header-badge {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .header-badge:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── LEGEND BAR ──────────────────────────── */
+  .legend-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .legend-label { font-weight: 600; color: var(--textlt); margin-right: 4px; }
+  .legend-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .pill-one    { background: var(--one-bg);    color: var(--one);    border: 1px solid var(--one-border); }
+  .pill-arkaya { background: var(--arkaya-bg); color: var(--arkaya); border: 1px solid #FCD34D; }
+  .pill-kilit  { background: var(--kilit-bg);  color: var(--kilit);  border: 1px solid var(--kilit-brd); }
+  .pill-gizle  { background: var(--gizle-bg);  color: var(--gizle);  border: 1px solid #E5E7EB; }
+  .legend-sep  { width: 1px; height: 20px; background: var(--border); }
+
+  /* ── MAIN CANVAS ─────────────────────────── */
+  .canvas {
+    padding: 32px 24px 80px;
+    overflow-x: auto;
+  }
+
+  /* ── INTRO NODE ──────────────────────────── */
+  .intro-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    gap: 0;
+    position: relative;
+  }
+  .intro-node {
+    background: var(--brand);
+    color: #fff;
+    border-radius: 16px;
+    padding: 20px 32px;
+    text-align: center;
+    min-width: 200px;
+    box-shadow: 0 4px 20px rgba(27,58,107,0.3);
+  }
+  .intro-node .emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+  .intro-node h2 { font-size: 15px; font-weight: 700; }
+  .intro-node p  { font-size: 12px; opacity: 0.75; margin-top: 4px; }
+
+  /* ── MAIN QUESTION ───────────────────────── */
+  .main-question {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .main-question .q-bubble {
+    display: inline-block;
+    background: var(--white);
+    border: 2px solid var(--brand);
+    border-radius: 40px;
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--brand);
+    box-shadow: 0 2px 12px rgba(37,99,235,0.12);
+  }
+  .main-question .q-sub {
+    display: block;
+    font-size: 12px;
+    color: var(--textlt);
+    margin-top: 8px;
+  }
+
+  /* ── PATHS GRID ──────────────────────────── */
+  .paths-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  /* ── PATH CARD ───────────────────────────── */
+  .path-card {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    border: 2px solid transparent;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .path-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    transform: translateY(-2px);
+  }
+  .path-card[data-path="a"] { border-color: #60A5FA; }
+  .path-card[data-path="b"] { border-color: #34D399; }
+  .path-card[data-path="c"] { border-color: #F59E0B; }
+  .path-card[data-path="d"] { border-color: #A78BFA; }
+
+  .path-header {
+    padding: 16px 18px;
+    color: #fff;
+    position: relative;
+  }
+  .path-card[data-path="a"] .path-header { background: linear-gradient(135deg, #1D4ED8, #2563EB); }
+  .path-card[data-path="b"] .path-header { background: linear-gradient(135deg, #059669, #10B981); }
+  .path-card[data-path="c"] .path-header { background: linear-gradient(135deg, #D97706, #F59E0B); }
+  .path-card[data-path="d"] .path-header { background: linear-gradient(135deg, #6D28D9, #7C3AED); }
+
+  .path-header .path-num {
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .path-header h3 { font-size: 15px; font-weight: 800; line-height: 1.25; }
+  .path-header .who {
+    font-size: 11.5px;
+    opacity: 0.85;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+  .path-emoji { font-size: 32px; position: absolute; top: 12px; right: 14px; }
+
+  /* ── SECTIONS INSIDE CARD ────────────────── */
+  .path-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--textlt);
+    margin-bottom: 6px;
+  }
+
+  /* ── MODULE LIST ─────────────────────────── */
+  .module-group {
+    border-radius: 12px;
+    padding: 10px 12px;
+    border: 1.5px solid transparent;
+  }
+  .module-group.one    { background: var(--one-bg);    border-color: var(--one-border); }
+  .module-group.arkaya { background: var(--arkaya-bg); border-color: #FCD34D; }
+  .module-group.kilit  { background: var(--kilit-bg);  border-color: var(--kilit-brd);  }
+  .module-group.gizle  { background: var(--gizle-bg);  border-color: #E5E7EB; }
+
+  .module-group-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .module-group-header .status-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .one    .status-dot { background: var(--one); }
+  .arkaya .status-dot { background: var(--arkaya); }
+  .kilit  .status-dot { background: var(--kilit); }
+  .gizle  .status-dot { background: var(--gizle); }
+
+  .module-group-header .status-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .one    .status-label { color: var(--one); }
+  .arkaya .status-label { color: var(--arkaya); }
+  .kilit  .status-label { color: var(--kilit); }
+  .gizle  .status-label { color: var(--gizle); }
+
+  .module-group-header .section-tag {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 10px;
+  }
+  .one    .section-tag { background: var(--one);    color: #fff; }
+  .arkaya .section-tag { background: var(--arkaya); color: #fff; }
+  .kilit  .section-tag { background: var(--kilit);  color: #fff; }
+  .gizle  .section-tag { background: var(--gizle);  color: #fff; }
+
+  .module-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .module-list li {
+    font-size: 11.5px;
+    color: var(--text);
+    padding: 2px 0 2px 14px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .module-list li::before {
+    content: "›";
+    position: absolute;
+    left: 2px;
+    font-weight: 700;
+  }
+  .one    .module-list li::before { color: var(--one); }
+  .arkaya .module-list li::before { color: var(--arkaya); }
+  .kilit  .module-list li::before { color: var(--kilit); }
+  .gizle  .module-list li::before { color: var(--gizle); }
+
+  /* ── BRANCH QUESTIONS ────────────────────── */
+  .branch-section {
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+  }
+  .branch-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .branch-q .bq-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .branch-q .bq-text { font-size: 12px; color: var(--text); font-weight: 600; }
+  .branch-q .bq-sub  { font-size: 11px; color: var(--textlt); margin-top: 2px; line-height: 1.4; }
+
+  /* ── UPSELL CHIPS ────────────────────────── */
+  .upsell-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .upsell-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1.5px solid transparent;
+    cursor: default;
+  }
+  .chip-medcamp   { background: var(--medcamp-bg);  color: var(--medcamp);  border-color: #C4B5FD; }
+  .chip-research  { background: var(--research-bg); color: var(--research); border-color: #7DD3FC; }
+  .chip-upsell    { background: var(--upsell-bg);   color: var(--upsell);   border-color: #F9A8D4; }
+  .chip-medroute  { background: #FFF7ED; color: #C2410C; border-color: #FDBA74; }
+
+  /* ── OUTCOME BADGE ───────────────────────── */
+  .path-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--canvas);
+  }
+  .outcome-label { font-size: 10px; font-weight: 700; color: var(--textlt); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
+  .outcome-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .path-card[data-path="a"] .outcome-badge { background: linear-gradient(90deg, #1D4ED8, #2563EB); }
+  .path-card[data-path="b"] .outcome-badge { background: linear-gradient(90deg, #059669, #10B981); }
+  .path-card[data-path="c"] .outcome-badge { background: linear-gradient(90deg, #D97706, #F59E0B); }
+  .path-card[data-path="d"] .outcome-badge { background: linear-gradient(90deg, #6D28D9, #7C3AED); }
+
+  /* ── SECONDARY QUESTIONS SECTION ────────── */
+  .secondary-questions {
+    max-width: 1320px;
+    margin: 28px auto 0;
+    padding: 0;
+  }
+  .sq-title {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--textlt);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .sq-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .sq-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-left: 4px solid;
+  }
+  .sq-card.sq-english  { border-color: var(--medcamp); }
+  .sq-card.sq-time     { border-color: var(--arkaya); }
+  .sq-card.sq-research { border-color: var(--research); }
+  .sq-card.sq-family   { border-color: #EC4899; }
+  .sq-card.sq-branch   { border-color: var(--brand); }
+  .sq-card.sq-budget   { border-color: #0EA5E9; }
+
+  .sq-card h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .sq-card .sq-q { font-size: 11.5px; color: var(--textlt); margin-bottom: 8px; font-style: italic; }
+
+  .sq-options { display: flex; flex-direction: column; gap: 5px; }
+  .sq-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+  .sq-option .opt-label {
+    flex-shrink: 0;
+    font-weight: 700;
+    min-width: 80px;
+  }
+  .sq-option .opt-desc { color: var(--textlt); }
+
+  /* ── CONTENT MAP SECTION ──────────────────── */
+  .content-map {
+    max-width: 1320px;
+    margin: 28px auto 0;
+  }
+  .cm-title {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--textlt);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .cm-table {
+    width: 100%;
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .cm-table th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  .cm-table th:first-child { background: var(--brand); color: #fff; width: 180px; }
+  .cm-table th.th-a { background: #2563EB; color: #fff; }
+  .cm-table th.th-b { background: #10B981; color: #fff; }
+  .cm-table th.th-c { background: #F59E0B; color: #fff; }
+  .cm-table th.th-d { background: #7C3AED; color: #fff; }
+
+  .cm-table td {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .cm-table td:first-child { font-weight: 600; color: var(--brand); background: #F8FAFF; }
+  .cm-table tr:hover td { background: #F8FAFF; }
+  .cm-table tr:hover td:first-child { background: #EEF2FF; }
+
+  .cm-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .cm-one    { background: var(--one-bg);    color: var(--one); }
+  .cm-arkaya { background: var(--arkaya-bg); color: var(--arkaya); }
+  .cm-kilit  { background: var(--kilit-bg);  color: var(--kilit); }
+  .cm-gizle  { background: var(--gizle-bg);  color: var(--gizle); }
+
+  /* ── CONNECTOR ARROWS (visual between columns) ── */
+  .arrow-row {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0;
+    gap: 8px;
+  }
+  .arrow-down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .arrow-down .line {
+    width: 2px;
+    height: 24px;
+    background: var(--border);
+  }
+  .arrow-down .arrowhead {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid var(--border);
+  }
+
+  /* ── PRINT STYLES ──────────────────────── */
+  @media print {
+    .page-header { position: static; }
+    .path-card { break-inside: avoid; }
+  }
+
+  /* ── FOOTER ──────────────────────────── */
+  .page-footer {
+    background: var(--brand);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 18px;
+    font-size: 12px;
+    margin-top: 40px;
+  }
+
+  /* ── COLLAPSIBLE ─────────────────────── */
+  .collapse-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--brand-mid);
+    font-weight: 600;
+    padding: 4px 0;
+    text-decoration: underline;
+    display: block;
+    margin-top: 6px;
+  }
+  .collapsible { overflow: hidden; transition: max-height 0.3s ease; max-height: 0; }
+  .collapsible.open { max-height: 600px; }
+</style>
+</head>
+<body>
+<a href="/brands/uscamp/" class="camp-back">← USCAMP</a>
+
+<!-- ─── HEADER ──────────────────────────────────────── -->
+<header class="page-header">
+  <div>
+    <h1>USCAMP — İçerik Yönlendirme Ağacı</h1>
+    <p>Kullanıcı profili → Feed kişiselleştirme → Hangi içerikler öne çıkar?</p>
+  </div>
+  <button class="header-badge" onclick="window.print()">🖨️ Yazdır / PDF'e Kaydet</button>
+</header>
+
+<!-- ─── LEGEND ──────────────────────────────────────── -->
+<div class="legend-bar">
+  <span class="legend-label">İçerik Durumları:</span>
+  <span class="legend-pill pill-one">🟢 ÖNE ÇIKIYOR — kullanıcı için kritik, feed'in başında</span>
+  <span class="legend-pill pill-arkaya">🟡 DAHA SONRA — erişilebilir ama şimdilik arka planda</span>
+  <span class="legend-pill pill-kilit">🔴 KİLİTLİ — önce önceki adım tamamlanmalı</span>
+  <span class="legend-pill pill-gizle">⚪ GİZLİ — kullanıcı bu aşamayı geçmiş, gösterilmez</span>
+</div>
+
+<div class="canvas">
+
+  <!-- ─── INTRO ──────────────────────────────────────── -->
+  <div class="intro-wrap">
+    <div class="intro-node">
+      <span class="emoji">👤</span>
+      <h2>Yeni Kullanıcı Platforma Giriyor</h2>
+      <p>7 soruluk hızlı anket dolduruyor</p>
+    </div>
+  </div>
+
+  <div class="arrow-row"><div class="arrow-down"><div class="line"></div><div class="arrowhead"></div></div></div>
+
+  <!-- ─── ANA SORU ──────────────────────────────────── -->
+  <div class="main-question">
+    <span class="q-bubble">🎯 &nbsp; En önemli soru: "USMLE sürecinde neredesin?"</span>
+    <span class="q-sub">Bu yanıt, hangi içeriklerin öne çıkacağını en çok belirleyen faktördür</span>
+  </div>
+
+  <div class="arrow-row"><div class="arrow-down"><div class="line"></div><div class="arrowhead"></div></div></div>
+
+  <!-- ─── 4 PATH CARDS ──────────────────────────────── -->
+  <div class="paths-grid">
+
+    <!-- ╔═══════════════════════════════╗ -->
+    <!-- ║  PATH A — Sıfırdan Başlıyor  ║ -->
+    <!-- ╚═══════════════════════════════╝ -->
+    <div class="path-card" data-path="a">
+      <div class="path-header">
+        <div class="path-num">Yol A</div>
+        <h3>Henüz hiç adım atmadım</h3>
+        <div class="who">USMLE'yi duydum ama kayıt bile olmadım. Süreci merak ediyorum.</div>
+        <span class="path-emoji">🌱</span>
+      </div>
+      <div class="path-body">
+
+        <div>
+          <div class="section-label">Öne çıkan içerikler</div>
+          <div class="module-group one">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">ÖNE ÇIKIYOR</div>
+              <div class="section-tag">B1 · B2 · B3 · B5</div>
+            </div>
+            <ul class="module-list">
+              <li>ABD'de Doktor Olmak: Neden ABD?</li>
+              <li>ABD Sürecine Genel Bakış</li>
+              <li>ECFMG Kaydına Genel Bakış</li>
+              <li>ECFMG ID Nasıl Alınır?</li>
+              <li>Step 1 Nedir? Format ve Puan Sistemi</li>
+              <li>Step 1 için Kaynak Rehberi</li>
+              <li>OET Nedir? ECFMG için Neden Gerekli?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="module-group kilit">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">KİLİTLİ</div>
+              <div class="section-tag">B4 · B8</div>
+            </div>
+            <ul class="module-list">
+              <li>Step 2 CK içerikleri — önce Step 1 geçilmeli</li>
+              <li>MATCH ve ERAS içerikleri — henüz çok erken</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="branch-section">
+          <div class="section-label">Alt sorular & kişiselleştirme</div>
+
+          <div class="branch-q">
+            <span class="bq-icon">🇬🇧</span>
+            <div>
+              <div class="bq-text">İngilizcen nasıl?</div>
+              <div class="bq-sub">Zayıfsa → OET bölümü (B5) daha belirgin, MEDCAMP önerisi çıkar</div>
+            </div>
+          </div>
+
+          <div class="branch-q">
+            <span class="bq-icon">⏰</span>
+            <div>
+              <div class="bq-text">Ne kadar zamanın var?</div>
+              <div class="bq-sub">1 yıl içindeyse → kilit kapılar sıkılaşır, lineer yol zorunlu</div>
+            </div>
+          </div>
+
+          <div class="branch-q">
+            <span class="bq-icon">🏥</span>
+            <div>
+              <div class="bq-text">Hangi branş?</div>
+              <div class="bq-sub">B10'da o branşın videosu ilk sıraya gelir</div>
+            </div>
+          </div>
+
+          <div class="upsell-row">
+            <span class="upsell-chip chip-medcamp">⚡ MEDCAMP upsell</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="path-footer">
+        <div class="outcome-label">Feed adı</div>
+        <span class="outcome-badge">🌱 Başlangıç Feed'i</span>
+      </div>
+    </div><!-- /path-a -->
+
+
+    <!-- ╔══════════════════════════════════╗ -->
+    <!-- ║  PATH B — Step 1 Hazırlıktayım  ║ -->
+    <!-- ╚══════════════════════════════════╝ -->
+    <div class="path-card" data-path="b">
+      <div class="path-header">
+        <div class="path-num">Yol B</div>
+        <h3>Step 1 için çalışıyorum</h3>
+        <div class="who">ECFMG kaydım var, step 1'e hazırlanıyorum. Aktif olarak kaynak çalışıyorum.</div>
+        <span class="path-emoji">📚</span>
+      </div>
+      <div class="path-body">
+
+        <div>
+          <div class="section-label">Öne çıkan içerikler</div>
+          <div class="module-group one">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">ÖNE ÇIKIYOR</div>
+              <div class="section-tag">B3 · B5</div>
+            </div>
+            <ul class="module-list">
+              <li>Step 1 Çalışma Stratejisi</li>
+              <li>En Popüler Kaynaklar: First Aid, Pathoma, UWorld</li>
+              <li>NBME Deneme Sınavları: Puanı Nasıl Yorumlamalı?</li>
+              <li>Soru Bankası Kullanımı</li>
+              <li>OET vs. IELTS: ABD Sürecinde Hangisi?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="module-group arkaya">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">DAHA SONRA</div>
+              <div class="section-tag">B2</div>
+            </div>
+            <ul class="module-list">
+              <li>ECFMG kayıt içerikleri — zaten başladı, geri itilir</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="module-group kilit">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">KİLİTLİ</div>
+              <div class="section-tag">B4 · B8</div>
+            </div>
+            <ul class="module-list">
+              <li>Step 2 CK — önce Step 1 tamamlanmalı</li>
+              <li>MATCH ve ERAS — henüz erken</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="branch-section">
+          <div class="section-label">Alt sorular & kişiselleştirme</div>
+
+          <div class="branch-q">
+            <span class="bq-icon">😰</span>
+            <div>
+              <div class="bq-text">Korku / endişe nedir?</div>
+              <div class="bq-sub">Başarı korkusu → başarı hikayeleri + NBME stratejisi öne çıkar</div>
+            </div>
+          </div>
+
+          <div class="branch-q">
+            <span class="bq-icon">📋</span>
+            <div>
+              <div class="bq-text">Öğrenme stili nedir?</div>
+              <div class="bq-sub">Video seviyorsa → video içerikler başa taşınır, okuma seviyorsa makaleler</div>
+            </div>
+          </div>
+
+          <div class="branch-q">
+            <span class="bq-icon">🏥</span>
+            <div>
+              <div class="bq-text">Hangi branş?</div>
+              <div class="bq-sub">B10'da o branşın videosu ilk sıraya gelir</div>
+            </div>
+          </div>
+
+          <div class="upsell-row">
+            <span class="upsell-chip chip-medcamp">⚡ MEDCAMP upsell</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="path-footer">
+        <div class="outcome-label">Feed adı</div>
+        <span class="outcome-badge">📚 Hazırlık Feed'i</span>
+      </div>
+    </div><!-- /path-b -->
+
+
+    <!-- ╔══════════════════════════════════╗ -->
+    <!-- ║  PATH C — Step 1 Geçtim         ║ -->
+    <!-- ╚══════════════════════════════════╝ -->
+    <div class="path-card" data-path="c">
+      <div class="path-header">
+        <div class="path-num">Yol C</div>
+        <h3>Step 1 geçtim, devam ediyorum</h3>
+        <div class="who">Step 1 skoruм var ama henüz ECFMG sertifikam yok. Klinik deneyim ve Step 2 gündemimde.</div>
+        <span class="path-emoji">⚡</span>
+      </div>
+      <div class="path-body">
+
+        <div>
+          <div class="section-label">Öne çıkan içerikler</div>
+          <div class="module-group one">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">ÖNE ÇIKIYOR</div>
+              <div class="section-tag">B4 · B6 · B7</div>
+            </div>
+            <ul class="module-list">
+              <li>Step 2 CK Nedir? Step 1'den Farkları</li>
+              <li>Step 2 CK Çalışma Stratejisi</li>
+              <li>USCE Nedir ve Neden Önemli?</li>
+              <li>Bireysel Staj Arayışı: Mail Arşivi ve CV</li>
+              <li>USCAMP × Medroute Partnerliği</li>
+              <li>LoR (Letter of Recommendation) Nasıl Alınır?</li>
+              <li>Research Neden Önemli? MATCH'teki Rolü</li>
+              <li>ResearchCamp ile Araştırma Süreci</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="module-group arkaya">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">DAHA SONRA</div>
+              <div class="section-tag">B3 · B5</div>
+            </div>
+            <ul class="module-list">
+              <li>Step 1 içerikleri — geçildi, geri itilir</li>
+              <li>OET içerikleri — artık daha az kritik</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="module-group gizle">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">GİZLİ</div>
+              <div class="section-tag">B2</div>
+            </div>
+            <ul class="module-list">
+              <li>ECFMG kayıt içerikleri — bu aşamayı geçti</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="branch-section">
+          <div class="section-label">Alt sorular & kişiselleştirme</div>
+
+          <div class="branch-q">
+            <span class="bq-icon">🔬</span>
+            <div>
+              <div class="bq-text">Araştırma geçmişin var mı?</div>
+              <div class="bq-sub">Güçlüyse → ResearchCamp içerikleri ÖNE, upsell tetiklenir</div>
+            </div>
+          </div>
+
+          <div class="branch-q">
+            <span class="bq-icon">🏥</span>
+            <div>
+              <div class="bq-text">Hangi branş?</div>
+              <div class="bq-sub">Branş seçimi B6 (USCE) ve B10 içeriklerini kişiselleştirir</div>
+            </div>
+          </div>
+
+          <div class="upsell-row">
+            <span class="upsell-chip chip-research">🔬 ResearchCamp upsell</span>
+            <span class="upsell-chip chip-medroute">🏥 Medroute staj</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="path-footer">
+        <div class="outcome-label">Feed adı</div>
+        <span class="outcome-badge">⚡ Klinik Deneyim Feed'i</span>
+      </div>
+    </div><!-- /path-c -->
+
+
+    <!-- ╔══════════════════════════════════╗ -->
+    <!-- ║  PATH D — ECFMG Belgem Var       ║ -->
+    <!-- ╚══════════════════════════════════╝ -->
+    <div class="path-card" data-path="d">
+      <div class="path-header">
+        <div class="path-num">Yol D</div>
+        <h3>ECFMG belgem var, MATCH'e hazırlanıyorum</h3>
+        <div class="who">Tüm sınavlar tamam. Residency başvurusu gündemde, vize ve yerleşme planlarım başlıyor.</div>
+        <span class="path-emoji">🏆</span>
+      </div>
+      <div class="path-body">
+
+        <div>
+          <div class="section-label">Öne çıkan içerikler</div>
+          <div class="module-group one">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">ÖNE ÇIKIYOR</div>
+              <div class="section-tag">B6 · B7 · B8 · B9</div>
+            </div>
+            <ul class="module-list">
+              <li>USCE — LoR Stratejisi: Kaç, Kimden, Nasıl?</li>
+              <li>MATCH Nedir? ERAS, NRMP ve Süreç Takvimi</li>
+              <li>ERAS CV Hazırlama: Bölüm Bölüm Rehber</li>
+              <li>Personal Statement Yazımı: Yapı ve Tuzaklar</li>
+              <li>Branş Seçimi: IMG Friendly Specialties</li>
+              <li>Mock Interview: Klinik Senaryo ve Etik Sorular</li>
+              <li>Ranking (ROL) Stratejisi</li>
+              <li>J-1 vs. H-1B Vizesi: Hangisi?</li>
+              <li>ABD'ye Taşınma Hazırlığı</li>
+              <li>Green Card Yolları</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="module-group gizle">
+            <div class="module-group-header">
+              <div class="status-dot"></div>
+              <div class="status-label">GİZLİ</div>
+              <div class="section-tag">B2 · B3 · B4 · B5</div>
+            </div>
+            <ul class="module-list">
+              <li>ECFMG, Step 1, Step 2, OET içerikleri — hepsi geçildi, temizlenir</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="branch-section">
+          <div class="section-label">Alt sorular & kişiselleştirme</div>
+
+          <div class="branch-q">
+            <span class="bq-icon">⏰</span>
+            <div>
+              <div class="bq-text">Zaman baskısı var mı?</div>
+              <div class="bq-sub">Acilse → MATCH adımları sıkı sırayla kilitlenir, yol netleşir</div>
+            </div>
+          </div>
+
+          <div class="branch-q">
+            <span class="bq-icon">🏥</span>
+            <div>
+              <div class="bq-text">Hangi branş?</div>
+              <div class="bq-sub">B8 (MATCH) ve B10 içeriklerinde o branşa özel modüller öne alınır</div>
+            </div>
+          </div>
+
+          <div class="branch-q">
+            <span class="bq-icon">👨‍👩‍👧</span>
+            <div>
+              <div class="bq-text">Aile ile mi taşınıyorsun?</div>
+              <div class="bq-sub">B9'da "Aile ile Taşınma" ve vize içerikleri öne çıkar</div>
+            </div>
+          </div>
+
+          <div class="upsell-row">
+            <span class="upsell-chip chip-upsell">🏆 Mentor paketi upsell</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="path-footer">
+        <div class="outcome-label">Feed adı</div>
+        <span class="outcome-badge">🏆 MATCH Feed'i</span>
+      </div>
+    </div><!-- /path-d -->
+
+  </div><!-- /paths-grid -->
+
+
+  <!-- ─── SECONDARY QUESTIONS ────────────────────── -->
+  <div class="secondary-questions">
+    <div class="sq-title">⬇ Her yolda devreye giren ikincil sorular</div>
+    <div class="sq-grid">
+
+      <div class="sq-card sq-english">
+        <h4>🇬🇧 İngilizce Seviyesi</h4>
+        <div class="sq-q">"İngilizceni nasıl değerlendirirsin?"</div>
+        <div class="sq-options">
+          <div class="sq-option">
+            <span class="opt-label">Güçlü →</span>
+            <span class="opt-desc">OET bölümü (B5) arka planda kalır, süreci hızlandır</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">Geliştirmeli →</span>
+            <span class="opt-desc">B5 OET öne çıkar + <strong>MEDCAMP upsell</strong> tetiklenir</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sq-card sq-time">
+        <h4>⏰ Zaman Ufku</h4>
+        <div class="sq-q">"Ne kadar zaman içinde hedefe ulaşmayı planlıyorsun?"</div>
+        <div class="sq-options">
+          <div class="sq-option">
+            <span class="opt-label">1 yıldan az →</span>
+            <span class="opt-desc">Kilit kapılar sıkılaşır, lineer ilerleme zorunlu</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">1–3 yıl →</span>
+            <span class="opt-desc">Standart akış, yol haritası net</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">3+ yıl / bilmiyorum →</span>
+            <span class="opt-desc">Kilit gevşer, kullanıcı serbestçe keşfeder</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sq-card sq-branch">
+        <h4>🏥 Branş Seçimi</h4>
+        <div class="sq-q">"Hangi branşta ihtisas yapmayı düşünüyorsun?"</div>
+        <div class="sq-options">
+          <div class="sq-option">
+            <span class="opt-label">Dahiliye →</span>
+            <span class="opt-desc">B10 "Amerika'da Dahiliye" videosu ilk sıraya</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">Psikiyatri →</span>
+            <span class="opt-desc">B10 "Amerika'da Psikiyatri" videosu ilk sıraya</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">Diğer branşlar →</span>
+            <span class="opt-desc">İlgili branş modülü B10'un başına taşınır (8 branş)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sq-card sq-research">
+        <h4>🔬 Araştırma Geçmişi</h4>
+        <div class="sq-q">"Yayın ya da araştırma deneyimin var mı?"</div>
+        <div class="sq-options">
+          <div class="sq-option">
+            <span class="opt-label">Güçlü →</span>
+            <span class="opt-desc">B7 Research bölümü öne çıkar, ResearchCamp upsell</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">Yok / zayıf →</span>
+            <span class="opt-desc">B7 tanıtım içerikleri görünür, motivasyon mesajı verilir</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sq-card sq-family">
+        <h4>👨‍👩‍👧 Aile / Sosyal Durum</h4>
+        <div class="sq-q">"Yalnız mı yoksa aile ile mi taşınmayı planlıyorsun?"</div>
+        <div class="sq-options">
+          <div class="sq-option">
+            <span class="opt-label">Aile ile →</span>
+            <span class="opt-desc">B9'da "Aile ile Taşınma" ve konut içerikleri öne çıkar, topluluk tonu aktif</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">Yalnız →</span>
+            <span class="opt-desc">Standart vize ve lojistik içerikleri gösterilir</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sq-card sq-budget">
+        <h4>💰 Bütçe / Finansal Endişe</h4>
+        <div class="sq-q">"Sürecin maliyeti seni endişelendiriyor mu?"</div>
+        <div class="sq-options">
+          <div class="sq-option">
+            <span class="opt-label">Evet, çok →</span>
+            <span class="opt-desc">B1 "Bütçe ve Beklentiler" + B9 "Taşınma Hazırlığı" öne çıkar, güven verici ton</span>
+          </div>
+          <div class="sq-option">
+            <span class="opt-label">Hayır →</span>
+            <span class="opt-desc">Standart içerik sırası</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /secondary-questions -->
+
+
+  <!-- ─── CONTENT MAP TABLE ────────────────────────── -->
+  <div class="content-map" style="margin-top: 32px;">
+    <div class="cm-title">📋 Bölüm × Kullanıcı Yolu — Hızlı Referans Tablosu</div>
+    <table class="cm-table">
+      <thead>
+        <tr>
+          <th>Bölüm</th>
+          <th class="th-a">🌱 Yol A<br><small>Sıfırdan Başlayan</small></th>
+          <th class="th-b">📚 Yol B<br><small>Step 1 Hazırlık</small></th>
+          <th class="th-c">⚡ Yol C<br><small>Step 1 Geçti</small></th>
+          <th class="th-d">🏆 Yol D<br><small>ECFMG Var</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>B1 — Giriş &amp; Motivasyon</td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-arkaya">normal</span></td>
+          <td><span class="cm-pill cm-arkaya">normal</span></td>
+        </tr>
+        <tr>
+          <td>B2 — ECFMG Kaydı</td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-arkaya">daha sonra</span></td>
+          <td><span class="cm-pill cm-gizle">gizli</span></td>
+          <td><span class="cm-pill cm-gizle">gizli</span></td>
+        </tr>
+        <tr>
+          <td>B3 — USMLE Step 1</td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-arkaya">daha sonra</span></td>
+          <td><span class="cm-pill cm-gizle">gizli</span></td>
+        </tr>
+        <tr>
+          <td>B4 — USMLE Step 2 CK</td>
+          <td><span class="cm-pill cm-kilit">KİLİTLİ</span></td>
+          <td><span class="cm-pill cm-kilit">KİLİTLİ</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-gizle">gizli</span></td>
+        </tr>
+        <tr>
+          <td>B5 — OET &amp; İngilizce</td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-arkaya">daha sonra</span></td>
+          <td><span class="cm-pill cm-gizle">gizli</span></td>
+        </tr>
+        <tr>
+          <td>B6 — USCE &amp; Klinik Deneyim</td>
+          <td><span class="cm-pill cm-arkaya">daha sonra</span></td>
+          <td><span class="cm-pill cm-arkaya">daha sonra</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+        </tr>
+        <tr>
+          <td>B7 — Araştırma &amp; Akademik</td>
+          <td><span class="cm-pill cm-arkaya">daha sonra</span></td>
+          <td><span class="cm-pill cm-arkaya">daha sonra</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+        </tr>
+        <tr>
+          <td>B8 — MATCH &amp; ERAS</td>
+          <td><span class="cm-pill cm-kilit">KİLİTLİ</span></td>
+          <td><span class="cm-pill cm-kilit">KİLİTLİ</span></td>
+          <td><span class="cm-pill cm-arkaya">normal</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+        </tr>
+        <tr>
+          <td>B9 — Vize &amp; Lojistik</td>
+          <td><span class="cm-pill cm-arkaya">normal</span></td>
+          <td><span class="cm-pill cm-arkaya">normal</span></td>
+          <td><span class="cm-pill cm-arkaya">normal</span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR</span></td>
+        </tr>
+        <tr>
+          <td>B10 — Branşa Özel</td>
+          <td><span class="cm-pill cm-arkaya">normal<br><small style="font-weight:400">(branşa göre sıralama)</small></span></td>
+          <td><span class="cm-pill cm-arkaya">normal<br><small style="font-weight:400">(branşa göre sıralama)</small></span></td>
+          <td><span class="cm-pill cm-arkaya">normal<br><small style="font-weight:400">(branşa göre sıralama)</small></span></td>
+          <td><span class="cm-pill cm-one">ÖNE ÇIKIYOR<br><small style="font-weight:400">(branşa göre sıralama)</small></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /canvas -->
+
+<div class="page-footer">
+  USCAMP İçerik Yönlendirme Ağacı &nbsp;·&nbsp; WorldCamp İç Kullanım &nbsp;·&nbsp; Mart 2026
+</div>
+
+<script>
+  // Collapsible sections (for future expansion)
+  document.querySelectorAll('.collapse-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.nextElementSibling;
+      if (target) {
+        target.classList.toggle('open');
+        btn.textContent = target.classList.contains('open') ? '▲ Gizle' : '▼ Detaylar';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

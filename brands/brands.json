@@ -47,6 +47,18 @@
             "sales",
             "tracker"
           ]
+        },
+        {
+          "slug": "icerik-yonlendirme-agaci",
+          "name": "İçerik Yönlendirme Ağacı",
+          "description": "Kullanıcı profiline göre USCAMP içerik sıralamasını belirleyen yönlendirme ağacı",
+          "date": "2026-04-04",
+          "tags": [
+            "içerik",
+            "strateji",
+            "yönlendirme",
+            "usmle"
+          ]
         }
       ]
     },
