@@ -89,6 +89,18 @@
             "report",
             "analytics"
           ]
+        },
+        {
+          "slug": "b2b-strateji-brief",
+          "name": "B2B Strateji Brief",
+          "description": "Cancera B2B pazarlama strateji brief dokümanı",
+          "date": "2026-04-04",
+          "tags": [
+            "strateji",
+            "b2b",
+            "brief",
+            "pazarlama"
+          ]
         }
       ]
     }

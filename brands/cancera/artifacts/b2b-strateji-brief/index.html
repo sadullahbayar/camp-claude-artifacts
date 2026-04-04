@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancera — B2B Strateji Brief</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #121a14;
+    --forest: #1c3a2a;
+    --sage: #2d6a4f;
+    --mint: #e8f4ed;
+    --cream: #f9f7f3;
+    --warm: #ede9e2;
+    --ember: #c84b31;
+    --ember-light: #fdf0ed;
+    --muted: #6b7c6e;
+    --gold: #b8955a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    background: var(--forest);
+    display: grid;
+    grid-template-rows: 1fr auto;
+    position: relative;
+    overflow: hidden;
+    padding: 80px;
+  }
+
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 80% 20%, rgba(45,106,79,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 10% 80%, rgba(200,75,49,0.15) 0%, transparent 50%);
+  }
+
+  .cover-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 80px;
+    height: 100%;
+    padding-bottom: 60px;
+  }
+
+  .cover-eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(56px, 7vw, 96px);
+    font-weight: 300;
+    line-height: 0.95;
+    color: var(--cream);
+    letter-spacing: -2px;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cover-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 32px;
+  }
+
+  .cover-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(249,247,243,0.7);
+    line-height: 1.5;
+    border-left: 2px solid var(--gold);
+    padding-left: 24px;
+  }
+
+  .cover-targets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cover-target {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: rgba(249,247,243,0.6);
+  }
+
+  .cover-target::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .cover-bottom {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .cover-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--cream);
+    letter-spacing: 2px;
+  }
+
+  .cover-logo span { color: var(--gold); }
+
+  .cover-date {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(249,247,243,0.3);
+    text-transform: uppercase;
+  }
+
+  /* ── LAYOUT ── */
+  .page {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 100px 80px;
+  }
+
+  .page-dark {
+    background: var(--forest);
+    color: var(--cream);
+  }
+
+  .page-dark-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 100px 80px;
+  }
+
+  .page-sage {
+    background: var(--mint);
+  }
+
+  .page-warm {
+    background: var(--warm);
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .eyebrow::after {
+    content: '';
+    width: 48px;
+    height: 1px;
+    background: var(--sage);
+    opacity: 0.3;
+  }
+
+  .eyebrow-light {
+    color: var(--gold);
+  }
+
+  .eyebrow-light::after { background: var(--gold); }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 58px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 48px;
+  }
+
+  h2 em { font-style: italic; color: var(--sage); }
+  .page-dark-inner h2 em { color: var(--gold); }
+  .page-dark-inner h2 { color: var(--cream); }
+
+  .lead {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 640px;
+    line-height: 1.8;
+    margin-bottom: 56px;
+  }
+
+  .lead-light { color: rgba(249,247,243,0.6); }
+
+  /* ── OPPORTUNITY ── */
+  .opp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .opp-card {
+    padding: 48px 36px;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opp-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--sage);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+    transform-origin: left;
+  }
+
+  .opp-card:hover::after { transform: scaleX(1); }
+
+  .opp-stat {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--sage);
+    opacity: 0.25;
+    margin-bottom: 8px;
+  }
+
+  .opp-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .opp-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── SEGMENTS ── */
+  .segment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .segment-row {
+    display: grid;
+    grid-template-columns: 280px 1fr 1fr auto;
+    align-items: center;
+    gap: 32px;
+    padding: 32px 40px;
+    background: var(--cream);
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .segment-row:hover { background: var(--mint); }
+
+  .segment-row.featured {
+    background: var(--forest);
+    color: var(--cream);
+  }
+
+  .segment-row.featured .seg-type,
+  .segment-row.featured .seg-desc,
+  .segment-row.featured .seg-hook { color: rgba(249,247,243,0.65); }
+
+  .segment-row.featured .seg-name { color: var(--cream); }
+
+  .seg-type {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 6px;
+  }
+
+  .seg-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .seg-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .seg-hook {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .seg-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .badge-high { background: var(--sage); color: white; }
+  .badge-med { background: var(--warm); color: var(--ink); border: 1px solid var(--warm); }
+  .badge-prime { background: var(--gold); color: white; }
+
+  /* ── INSURANCE ── */
+  .insurance-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 0;
+  }
+
+  .ins-card {
+    padding: 44px 40px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .ins-card:hover { border-color: rgba(184,149,90,0.4); }
+
+  .ins-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .ins-card:hover::before { opacity: 1; }
+
+  .ins-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .ins-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 14px;
+  }
+
+  .ins-card p {
+    font-size: 13px;
+    color: rgba(249,247,243,0.55);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .ins-value {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+    padding: 12px 16px;
+    background: rgba(184,149,90,0.1);
+    border-left: 2px solid var(--gold);
+  }
+
+  /* ── PARTNERS ── */
+  .partner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-top: 0;
+  }
+
+  .partner-card {
+    background: var(--cream);
+    padding: 44px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+
+  .partner-card:hover { transform: translateY(-4px); }
+
+  .partner-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 3px; height: 100%;
+    background: var(--sage);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s;
+  }
+
+  .partner-card:hover::after { transform: scaleY(1); }
+
+  .p-type {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: 12px;
+  }
+
+  .p-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .p-name em { font-style: italic; }
+
+  .p-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .p-hook {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink);
+    padding: 14px 18px;
+    background: var(--mint);
+    border-left: 2px solid var(--sage);
+  }
+
+  /* ── PRICING ── */
+  .pricing-wrap {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .pricing-explain h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  .pricing-explain p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .pricing-explain .highlight {
+    font-size: 13px;
+    padding: 16px 20px;
+    background: var(--mint);
+    border-left: 2px solid var(--sage);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .pricing-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .tier-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: 24px 32px;
+    background: var(--warm);
+    gap: 24px;
+    transition: background 0.2s;
+  }
+
+  .tier-row:hover { background: var(--mint); }
+
+  .tier-row.tier-top {
+    background: var(--forest);
+    color: var(--cream);
+  }
+
+  .tier-range {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .tier-top .tier-range { color: var(--gold); }
+
+  .tier-model {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .tier-top .tier-model { color: rgba(249,247,243,0.6); }
+
+  .tier-who {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .tier-top .tier-who { color: rgba(249,247,243,0.5); }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+
+  .rm-step {
+    padding: 48px 32px;
+    background: var(--cream);
+    position: relative;
+  }
+
+  .rm-step.now { background: var(--forest); }
+
+  .rm-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--sage);
+    opacity: 0.2;
+    margin-bottom: 12px;
+  }
+
+  .rm-step.now .rm-num { color: var(--gold); opacity: 0.35; }
+
+  .rm-phase {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 8px;
+  }
+
+  .rm-step.now .rm-phase { color: var(--gold); }
+
+  .rm-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .rm-step.now .rm-title { color: var(--cream); }
+
+  .rm-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .rm-items li {
+    font-size: 12px;
+    color: var(--muted);
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .rm-items li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--sage);
+    opacity: 0.5;
+  }
+
+  .rm-step.now .rm-items li { color: rgba(249,247,243,0.55); }
+  .rm-step.now .rm-items li::before { color: var(--gold); }
+
+  /* ── PITCH ── */
+  .pitch-section {
+    background: var(--ember);
+    padding: 100px 80px;
+  }
+
+  .pitch-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .pitch-inner h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 300;
+    color: white;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  .pitch-inner h2 em { font-style: italic; color: rgba(255,255,255,0.65); }
+
+  .pitch-inner p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+  }
+
+  .pitch-points {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pitch-point {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .pitch-point-n {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.3);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .pitch-point-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+  }
+
+  .pitch-point-text strong {
+    display: block;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  /* ── DIVIDER ── */
+  .hr { height: 1px; background: var(--warm); }
+
+  @media (max-width: 900px) {
+    .cover { padding: 48px 32px; }
+    .cover-grid { grid-template-columns: 1fr; gap: 40px; }
+    .page, .page-dark-inner { padding: 60px 32px; }
+    .opp-grid { grid-template-columns: 1fr; }
+    .segment-row { grid-template-columns: 1fr; gap: 12px; padding: 24px 24px; }
+    .insurance-grid { grid-template-columns: 1fr; }
+    .partner-grid { grid-template-columns: 1fr; }
+    .pricing-wrap { grid-template-columns: 1fr; }
+    .roadmap { grid-template-columns: 1fr 1fr; }
+    .pitch-inner { grid-template-columns: 1fr; gap: 40px; }
+    .pitch-section { padding: 60px 32px; }
+  }
+</style>
+</head>
+<body>
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<style>
+.camp-back {
+  position: fixed; top: 16px; left: 16px; z-index: 9999;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.camp-back:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+}
+</style>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-grid">
+    <div>
+      <div class="cover-eyebrow">Cancera · B2B Strateji Brief</div>
+      <div class="cover-title">Kurumsal<br><em>Büyüme</em><br>Planı</div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-tagline">"Çalışanınız hastanede tedavi görüyor. Peki o tedavinin doğru olduğunu kim doğruluyor?"</div>
+      <div class="cover-targets">
+        <div class="cover-target">Özel Sağlık Sigortası Şirketleri</div>
+        <div class="cover-target">Orta & Büyük Ölçekli Şirket CHRO'ları</div>
+        <div class="cover-target">HR-Tech & Yan Haklar Platformları</div>
+        <div class="cover-target">Psikolojik Destek & Sağlık Uygulamaları</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-logo">Cancera<span>.</span></div>
+    <div class="cover-date">2025 · Gizli</div>
+  </div>
+</div>
+
+<!-- FIRSAT -->
+<div class="page-warm">
+  <div class="page">
+    <div class="eyebrow">Neden B2B</div>
+    <h2>Kanser her şirketi<br><em>zaten etkiliyor.</em></h2>
+    <p class="lead">Türkiye'de her yıl 250.000'den fazla yeni kanser tanısı konuluyor. Bu tanıların büyük çoğunluğu aktif çalışan yaşında ya da onların birinci derece yakınlarını etkiliyor. Şirketler bu gerçekle yüzleşmek zorunda — Cancera bu yüzleşmeyi kolaylaştırıyor.</p>
+    <div class="opp-grid">
+      <div class="opp-card">
+        <div class="opp-stat">%68</div>
+        <h3>Tanıda gecikme</h3>
+        <p>Türkiye'de kanser vakalarının büyük bölümü ileri evrede teşhis ediliyor. İkinci görüş bu oranı değiştirir.</p>
+      </div>
+      <div class="opp-card">
+        <div class="opp-stat">2x</div>
+        <h3>Tedavi uyum maliyeti</h3>
+        <p>Yanlış tedaviye başlayan hasta 2 kat daha uzun süre iş gücünden çıkıyor. Şirket için somut kayıp.</p>
+      </div>
+      <div class="opp-card">
+        <div class="opp-stat">0</div>
+        <h3>Mevcut çözüm</h3>
+        <p>Türkiye'de hiçbir sağlık sigortası veya yan haklar paketi kanser özelinde ikinci görüş hizmeti içermiyor.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HEDEF SEGMENTLER -->
+<div class="hr"></div>
+<div class="page">
+  <div class="eyebrow">Hedef Segmentler</div>
+  <h2>Kim için,<br><em>hangi öncelikle.</em></h2>
+
+  <div class="segment-list">
+
+    <div class="segment-row featured">
+      <div>
+        <div class="seg-type">Öncelik 1</div>
+        <div class="seg-name">Özel Sağlık Sigortası</div>
+      </div>
+      <div class="seg-desc">Allianz, Axa, Güneş Sigorta gibi şirketler. Kanser özelinde ikinci görüş hizmeti bugün hiçbir poliçede yok. Cancera bu boşluğu dolduran ilk ve tek çözüm olabilir.</div>
+      <div class="seg-hook">"Poliçenize kanser ikinci görüşü ekleyin — sigortalınız için gerçek fark yaratan tek hizmet."</div>
+      <div><span class="seg-badge badge-prime">En Yüksek Potansiyel</span></div>
+    </div>
+
+    <div class="segment-row">
+      <div>
+        <div class="seg-type">Öncelik 2</div>
+        <div class="seg-name">Orta Segment CHRO</div>
+      </div>
+      <div class="seg-desc">Acibadem/Memorial paketi olmayan, temel özel sigorta veya SGK'lı 100-500 çalışanlı şirketler. Kanser spesifik hizmet boşluğu büyük, giriş engeli düşük.</div>
+      <div class="seg-hook">"Çalışan refahı paketinize en eksik halkayı ekleyin."</div>
+      <div><span class="seg-badge badge-high">Yüksek Öncelik</span></div>
+    </div>
+
+    <div class="segment-row">
+      <div>
+        <div class="seg-type">Öncelik 3</div>
+        <div class="seg-name">HR-Tech Platformlar</div>
+      </div>
+      <div class="seg-desc">HubX, Kolay İK, Yan Haklar gibi platformlar. Tek entegrasyon ile yüzlerce şirkete erişim. LÖSEV gibi sosyal sorumluluk kampanyaları olan platformlar zaten bu zihniyette.</div>
+      <div class="seg-hook">"Platformunuza kanser desteği ekleyin — kullanıcı değeri anında artar."</div>
+      <div><span class="seg-badge badge-high">Yüksek Öncelik</span></div>
+    </div>
+
+    <div class="segment-row">
+      <div>
+        <div class="seg-type">Öncelik 4</div>
+        <div class="seg-name">Büyük Holding CHRO</div>
+      </div>
+      <div class="seg-desc">500+ çalışanlı, yabancı sermayeli veya finans sektörü şirketleri. İkinci görüş kültürü daha yerleşik. Güven zemini oluşturulduktan sonra yaklaşılmalı.</div>
+      <div class="seg-hook">"Global standartta çalışan sağlığı — Türkiye'de ilk."</div>
+      <div><span class="seg-badge badge-med">Orta Vadeli</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SİGORTA -->
+<div class="page-dark">
+  <div class="page-dark-inner">
+    <div class="eyebrow eyebrow-light">Sigorta Segmenti</div>
+    <h2>Sağlık sigortası için<br><em>ikili fırsat.</em></h2>
+    <p class="lead lead-light">Sigorta şirketleri Cancera'yı iki farklı kanaldan değerlendirebilir — ve her ikisi de birbirini güçlendirir.</p>
+    <div class="insurance-grid">
+      <div class="ins-card">
+        <div class="ins-icon">📋</div>
+        <h3>Poliçe Eklentisi</h3>
+        <p>Kanser ikinci görüşü standart poliçeye dahil edilir veya ek rider olarak sunulur. Sigortalı için somut fark yaratan, rakipten ayrışan nadir hizmetlerden biri.</p>
+        <div class="ins-value">Sigorta şirketi için: Differansiyasyon + müşteri sadakati</div>
+      </div>
+      <div class="ins-card">
+        <div class="ins-icon">💼</div>
+        <h3>Kurumsal Grup Poliçesi</h3>
+        <p>Şirketlerin çalışanları için satın aldığı grup sağlık poliçelerine Cancera ikinci görüş modülü eklenir. HR karar vericiye tek paket olarak sunulur.</p>
+        <div class="ins-value">Şirket için: Çalışan refahı + maliyet kontrolü</div>
+      </div>
+      <div class="ins-card">
+        <div class="ins-icon">🔄</div>
+        <h3>Yanlış Tedavi Riski Azaltma</h3>
+        <p>Sigorta şirketi açısından kritik: yanlış kanser tedavisi yüksek tazminat maliyeti yaratır. Cancera ikinci görüş bu riski baştan azaltır.</p>
+        <div class="ins-value">Sigorta için: Hasar maliyeti düşürme argümanı</div>
+      </div>
+      <div class="ins-card">
+        <div class="ins-icon">🤝</div>
+        <h3>Co-brand Fırsat</h3>
+        <p>Sigorta markası ile Cancera'nın ortak görünürlüğü. İkisi birlikte hasta/yakınına ulaşır. Sigorta şirketi "yanında" konumlanır.</p>
+        <div class="ins-value">Her iki marka için: Güven + görünürlük</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORTAKLIK MODELLERİ -->
+<div class="hr"></div>
+<div class="page">
+  <div class="eyebrow">Stratejik Ortaklıklar</div>
+  <h2>Tek başına değil,<br><em>doğru ekosistemin</em> içinde.</h2>
+  <div class="partner-grid">
+
+    <div class="partner-card">
+      <div class="p-type">Psikolojik Destek</div>
+      <div class="p-name">Heltia<br><em>× Cancera</em></div>
+      <p class="p-desc">Heltia online psikolojik destek platformu. Kanser tanısı alan hasta ve yakınına tıbbi ikinci görüş + psikolojik destek birlikte sunulur. İki kritik ihtiyaç, tek akıllı paket.</p>
+      <div class="p-hook">"Bedeninize ve zihninize aynı anda destek."</div>
+    </div>
+
+    <div class="partner-card">
+      <div class="p-type">HR-Tech & Yan Haklar</div>
+      <div class="p-name">HubX<br><em>Modeli</em></div>
+      <p class="p-desc">LÖSEV gibi sosyal sorumluluk kampanyaları da yürüten platformlar bu zihniyete yakın. Tek API entegrasyonu, yüzlerce şirkete erişim. Cancera platformun güveniyle içeri girer.</p>
+      <div class="p-hook">"Yan haklar kataloğunuza en anlamlı eklenti."</div>
+    </div>
+
+    <div class="partner-card">
+      <div class="p-type">Etkinlik & Görünürlük</div>
+      <div class="p-name">Sponsor<em>luk</em><br>Modeli</div>
+      <p class="p-desc">CanceraHub Dayanışma Günü etkinliğine şirket sponsor olur, çalışanlarına indirim kodu verir. Düşük taahhüt, kolay "evet", organik kullanıcı kaynağı.</p>
+      <div class="p-hook">"Çalışanlarınıza anlam taşıyan bir fayda."</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- GELİR MODELİ -->
+<div class="page-sage">
+  <div class="page">
+    <div class="eyebrow">Gelir Modeli</div>
+    <h2>Performansa bağlı<br><em>kurumsal lisans.</em></h2>
+    <div class="pricing-wrap">
+      <div class="pricing-explain">
+        <h3>Risk paylaşımlı model</h3>
+        <p>Şirket önce dener, kullandıkça öder. Giriş engeli düşer, Cancera için öngörülebilir büyüme sağlanır.</p>
+        <p>Sigorta şirketleri için ayrıca poliçe başına lisans modeli kurgulanabilir.</p>
+        <div class="highlight">"Pilot şirketten gelecek ilk 10 aktivasyondan sonra model kendini kanıtlar — referans satışı başlar."</div>
+      </div>
+      <div class="pricing-tiers">
+        <div class="tier-row">
+          <div class="tier-range">0 – 10 / yıl</div>
+          <div class="tier-model">Düşük taban ücret</div>
+          <div class="tier-who">Pilot şirket, ilk deneme</div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-range">11 – 50 / yıl</div>
+          <div class="tier-model">Kademeli artan birim fiyat</div>
+          <div class="tier-who">Orta ölçekli şirket</div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-range">51 – 200 / yıl</div>
+          <div class="tier-model">Kurumsal paket fiyatı</div>
+          <div class="tier-who">Holdingler, büyük yapılar</div>
+        </div>
+        <div class="tier-row tier-top">
+          <div class="tier-range">200+ / yıl</div>
+          <div class="tier-model">Özel anlaşma + öncelikli hizmet</div>
+          <div class="tier-who">Stratejik ortaklar, sigortalar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- YOL HARİTASI -->
+<div class="hr"></div>
+<div class="page">
+  <div class="eyebrow">Yol Haritası</div>
+  <h2>Sırayla gidilmesi<br><em>gereken dört adım.</em></h2>
+  <div class="roadmap">
+    <div class="rm-step now">
+      <div class="rm-num">1</div>
+      <div class="rm-phase">Şimdi · 1-2 Ay</div>
+      <div class="rm-title">Zemin İnşası</div>
+      <ul class="rm-items">
+        <li>Dayanışma Günü etkinliği</li>
+        <li>Influencer kadrosu (juelsbahar, merickeskin)</li>
+        <li>Mevcut 5 müşteri referans hikayesi</li>
+        <li>Sosyal kanıt içerikleri</li>
+      </ul>
+    </div>
+    <div class="rm-step">
+      <div class="rm-num">2</div>
+      <div class="rm-phase">Kısa Vade · 2-3 Ay</div>
+      <div class="rm-title">PR & Görünürlük</div>
+      <ul class="rm-items">
+        <li>Hürriyet Sağlık, NTV, Medimagazin</li>
+        <li>CHRO Google'larken Cancera çıksın</li>
+        <li>LinkedIn otorite içeriği</li>
+      </ul>
+    </div>
+    <div class="rm-step">
+      <div class="rm-num">3</div>
+      <div class="rm-phase">Orta Vade · 3-5 Ay</div>
+      <div class="rm-title">Pilot B2B</div>
+      <ul class="rm-items">
+        <li>1 orta segment şirket pilot</li>
+        <li>Heltia ortaklık görüşmesi</li>
+        <li>HubX / Kolay İK görüşmesi</li>
+        <li>Model test & standartlaştır</li>
+      </ul>
+    </div>
+    <div class="rm-step">
+      <div class="rm-num">4</div>
+      <div class="rm-phase">Uzun Vade · 6+ Ay</div>
+      <div class="rm-title">Sigorta & Ölçek</div>
+      <ul class="rm-items">
+        <li>Sigorta şirketi görüşmeleri</li>
+        <li>CanceraHub topluluğu açılışı</li>
+        <li>Kurumsal lisans ölçekleme</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PITCH -->
+<div class="pitch-section">
+  <div class="pitch-inner">
+    <div>
+      <h2>Neden<br><em>Cancera?</em></h2>
+      <p>Türkiye'de kanser ikinci görüşünü kurumsal dünyaya taşıyan ilk ve tek yapı. Boşluk büyük, rekabet yok, zamanlama doğru.</p>
+    </div>
+    <div class="pitch-points">
+      <div class="pitch-point">
+        <div class="pitch-point-n">01</div>
+        <div class="pitch-point-text">
+          <strong>Rakip yok</strong>
+          Türkiye'de hiçbir sigorta veya CHRO paketi kanser özelinde ikinci görüş içermiyor. İlk giren avantajı.
+        </div>
+      </div>
+      <div class="pitch-point">
+        <div class="pitch-point-n">02</div>
+        <div class="pitch-point-text">
+          <strong>Düşük taahhüt, yüksek değer</strong>
+          Performansa bağlı model — şirket risk almadan başlar, Cancera büyüdükçe gelir artar.
+        </div>
+      </div>
+      <div class="pitch-point">
+        <div class="pitch-point-n">03</div>
+        <div class="pitch-point-text">
+          <strong>Bilimsel zemin</strong>
+          Dr. İlyas Şahin ve Florida Üniversitesi bağlantısı. Scam değil — uluslararası onkoloji ağı.
+        </div>
+      </div>
+      <div class="pitch-point">
+        <div class="pitch-point-n">04</div>
+        <div class="pitch-point-text">
+          <strong>Ekosistem büyümesi</strong>
+          Her B2B ortaklık CanceraHub topluluğunu besler — topluluk büyüdükçe B2B değeri artar.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
