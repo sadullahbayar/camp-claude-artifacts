@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MATCH Hazırlık Skoru | USCAMP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0B1D3A;
+      --red: #D93025;
+      --red-light: #f5e6e5;
+      --green: #1A7F4B;
+      --green-light: #E6F4EC;
+      --orange: #D97706;
+      --orange-light: #FEF3C7;
+      --yellow: #B45309;
+      --yellow-light: #FFFBEB;
+      --blue-light: #EFF6FF;
+      --blue-border: #BFDBFE;
+      --blue-text: #1D4ED8;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-400: #9CA3AF;
+      --gray-600: #4B5563;
+      --gray-800: #1F2937;
+    }
+
+    html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--gray-800); }
+
+    /* ── Progress Bar ── */
+    #progress-bar-wrap { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: rgba(255,255,255,0.15); z-index: 100; }
+    #progress-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.45s cubic-bezier(.4,0,.2,1); }
+
+    /* ── Layout ── */
+    .app { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 270px; min-width: 270px; background: var(--navy); padding: 40px 0 32px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+    .sidebar-logo { padding: 0 28px 28px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-logo .brand { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 0.02em; }
+    .sidebar-logo .brand span { color: var(--red); }
+    .sidebar-logo .tagline { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 3px; letter-spacing: 0.07em; text-transform: uppercase; }
+
+    .sidebar-steps { padding: 20px 0; flex: 1; }
+    .step-item { display: flex; align-items: center; gap: 12px; padding: 8px 28px; cursor: default; transition: background 0.2s; position: relative; }
+    .step-item.active { background: rgba(217,48,37,0.12); }
+    .step-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--red); border-radius: 0 2px 2px 0; }
+
+    .step-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.35); transition: all 0.3s; }
+    .step-item.active .step-num { background: var(--red); border-color: var(--red); color: #fff; }
+    .step-item.done .step-num { background: var(--green); border-color: var(--green); color: #fff; }
+    .step-item.done .step-num::after { content: '✓'; font-size: 12px; }
+    .step-item.done .step-num span { display: none; }
+
+    .step-label { font-size: 12px; color: rgba(255,255,255,0.3); line-height: 1.3; transition: color 0.2s; }
+    .step-item.active .step-label { color: rgba(255,255,255,0.9); font-weight: 500; }
+    .step-item.done .step-label { color: rgba(255,255,255,0.5); }
+
+    .sidebar-footer { padding: 20px 28px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-footer p { font-size: 10px; color: rgba(255,255,255,0.28); line-height: 1.6; }
+    .sidebar-footer a { color: rgba(255,255,255,0.45); text-decoration: none; }
+    .sidebar-footer a:hover { color: var(--red); }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    .content { flex: 1; max-width: 700px; width: 100%; margin: 0 auto; padding: 56px 44px 80px; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Question ── */
+    .q-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 10px; }
+    .q-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; color: var(--gray-800); line-height: 1.3; margin-bottom: 8px; }
+    .q-subtitle { font-size: 14px; color: var(--gray-600); margin-bottom: 28px; line-height: 1.6; }
+
+    /* ── Option Cards ── */
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option-card { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: 2px solid var(--gray-200); border-radius: 12px; background: #fff; cursor: pointer; transition: border-color 0.22s, box-shadow 0.22s, transform 0.15s; position: relative; overflow: hidden; }
+    .option-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--red); transition: width 0.25s cubic-bezier(.4,0,.2,1); }
+    .option-card:hover { border-color: #c0c8d4; box-shadow: 0 4px 14px rgba(11,29,58,0.08); transform: translateY(-1px); }
+    .option-card.selected { border-color: var(--red); box-shadow: 0 4px 18px rgba(217,48,37,0.14); }
+    .option-card.selected::before { width: 4px; }
+
+    .option-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; transition: background 0.2s; }
+    .option-card.selected .option-icon { background: var(--red-light); }
+    .option-text { flex: 1; }
+    .option-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 2px; }
+    .option-desc { font-size: 12px; color: var(--gray-400); line-height: 1.4; }
+    .option-card.selected .option-title { color: var(--red); }
+    .option-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--gray-200); flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+    .option-card.selected .option-check { background: var(--red); border-color: var(--red); }
+    .option-card.selected .option-check::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+
+    /* ── Diğer Input ── */
+    .diger-input-wrap { margin-top: 10px; animation: fadeSlideIn 0.22s ease; }
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .diger-input-wrap input { width: 100%; border: 2px solid var(--red); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--gray-800); background: #fff; outline: none; transition: box-shadow 0.2s; }
+    .diger-input-wrap input:focus { box-shadow: 0 0 0 3px rgba(217,48,37,0.12); }
+    .diger-input-wrap input::placeholder { color: var(--gray-400); }
+
+    /* ── Nav ── */
+    .nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 32px; }
+    .btn-back { font-size: 13px; font-weight: 500; color: var(--gray-400); background: none; border: none; cursor: pointer; padding: 10px 0; transition: color 0.2s; display: flex; align-items: center; gap: 5px; }
+    .btn-back:hover { color: var(--gray-800); }
+    .btn-back.hidden { visibility: hidden; }
+    .step-counter { font-size: 12px; color: var(--gray-400); }
+    .btn-next { background: var(--navy); color: #fff; border: none; border-radius: 10px; padding: 13px 28px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.15s, opacity 0.2s; display: flex; align-items: center; gap: 8px; }
+    .btn-next:hover:not(:disabled) { background: #162d57; transform: translateY(-1px); }
+    .btn-next:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    /* ── Intro ── */
+    .intro-badge { display: inline-flex; align-items: center; gap: 7px; background: var(--red-light); color: var(--red); border-radius: 100px; padding: 6px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 20px; }
+    #screen-intro h1 { font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 800; color: var(--gray-800); line-height: 1.2; margin-bottom: 14px; }
+    #screen-intro h1 em { font-style: normal; color: var(--red); }
+    .intro-desc { font-size: 16px; color: var(--gray-600); line-height: 1.7; max-width: 500px; margin-bottom: 36px; }
+    .intro-stats { display: flex; gap: 28px; margin-bottom: 40px; }
+    .intro-stat { display: flex; flex-direction: column; }
+    .intro-stat .num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); }
+    .intro-stat .lbl { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+    .btn-start { background: var(--red); color: #fff; border: none; border-radius: 12px; padding: 15px 36px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.15s; display: inline-flex; align-items: center; gap: 9px; }
+    .btn-start:hover { background: #c42820; transform: translateY(-2px); }
+    .intro-note { font-size: 12px; color: var(--gray-400); margin-top: 12px; }
+    .intro-sources { font-size: 11px; color: var(--gray-400); margin-top: 8px; }
+
+    /* ── Result ── */
+    #screen-result .result-header { text-align: center; margin-bottom: 36px; }
+    .score-ring-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
+    .score-ring { position: relative; width: 140px; height: 140px; }
+    .score-ring svg { transform: rotate(-90deg); }
+    .score-ring .track { fill: none; stroke: var(--gray-200); stroke-width: 10; }
+    .score-ring .fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
+    .score-ring .score-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .score-ring .score-num .val { font-family: 'Syne', sans-serif; font-size: 34px; font-weight: 800; line-height: 1; }
+    .score-ring .score-num .val-suffix { font-size: 14px; font-weight: 600; margin-top: 1px; }
+    .score-ring .score-num .max { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+
+    .result-badge { display: inline-flex; align-items: center; gap: 7px; border-radius: 100px; padding: 7px 18px; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+    .result-badge.green { background: var(--green-light); color: var(--green); }
+    .result-badge.orange { background: var(--orange-light); color: var(--orange); }
+    .result-badge.yellow { background: var(--yellow-light); color: var(--yellow); }
+    .result-badge.red { background: var(--red-light); color: var(--red); }
+
+    .result-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--gray-800); margin-bottom: 8px; }
+    .result-desc { font-size: 15px; color: var(--gray-600); max-width: 460px; margin: 0 auto; line-height: 1.65; }
+
+    .result-raw-score { font-size: 13px; color: var(--gray-400); margin-top: 10px; }
+
+    /* Status Cards */
+    .status-section { margin-bottom: 36px; }
+    .status-section-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+    .status-cards { display: flex; flex-direction: column; gap: 9px; }
+    .status-card { border-radius: 12px; padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px; }
+    .status-card.s-green { background: var(--green-light); border: 1px solid #b6e0c8; }
+    .status-card.s-orange { background: var(--orange-light); border: 1px solid #fcd34d; }
+    .status-card.s-red { background: var(--red-light); border: 1px solid #f5c6c4; }
+    .status-card.s-blue { background: var(--blue-light); border: 1px solid var(--blue-border); }
+    .status-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .status-body { flex: 1; }
+    .status-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+    .s-green .status-name { color: var(--green); }
+    .s-orange .status-name { color: #92400E; }
+    .s-red .status-name { color: #9B1C1C; }
+    .s-blue .status-name { color: var(--blue-text); }
+    .status-detail { font-size: 12px; line-height: 1.5; color: var(--gray-600); }
+    .btn-action { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; background: var(--red); color: #fff; border: none; border-radius: 7px; padding: 7px 14px; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+    .btn-action:hover { background: #c42820; }
+
+    /* CTA */
+    .cta-row { display: flex; gap: 10px; margin-bottom: 32px; flex-wrap: wrap; }
+    .btn-consult { flex: 1; min-width: 190px; background: var(--navy); color: #fff; border: none; border-radius: 12px; padding: 15px 22px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s, transform 0.15s; }
+    .btn-consult:hover { background: #162d57; transform: translateY(-1px); }
+    .btn-restart { background: none; color: var(--gray-600); border: 2px solid var(--gray-200); border-radius: 12px; padding: 15px 22px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s; }
+    .btn-restart:hover { border-color: var(--gray-400); color: var(--gray-800); }
+
+    /* Email Form */
+    .email-form-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 16px; padding: 26px 28px; }
+    .form-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+    .form-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 20px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 12px; font-weight: 500; color: var(--gray-600); }
+    .form-group input { border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 10px 13px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--gray-800); outline: none; transition: border-color 0.2s; background: var(--gray-50); }
+    .form-group input:focus { border-color: var(--navy); background: #fff; }
+    .btn-submit { width: 100%; margin-top: 14px; background: var(--red); color: #fff; border: none; border-radius: 10px; padding: 13px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-submit:hover { background: #c42820; }
+    .success-msg { display: none; text-align: center; padding: 22px; background: var(--green-light); border-radius: 12px; border: 1px solid #b6e0c8; }
+    .success-msg .check { font-size: 30px; margin-bottom: 7px; }
+    .success-msg p { font-size: 14px; font-weight: 500; color: var(--green); }
+
+    /* ── Responsive ── */
+    @media (max-width: 800px) {
+      .app { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; padding: 20px 0 14px; }
+      .sidebar-steps { padding: 10px 0; display: flex; overflow-x: auto; gap: 0; }
+      .step-item { padding: 6px 16px; white-space: nowrap; }
+      .sidebar-footer { display: none; }
+      .content { padding: 28px 20px 60px; }
+      #screen-intro h1 { font-size: 26px; }
+      .intro-stats { gap: 18px; }
+      .form-row { grid-template-columns: 1fr; }
+      .cta-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="/brands/uscamp/" class="camp-back">← USCAMP</a>
+<style>
+.camp-back {
+  position: fixed; top: 16px; left: 16px; z-index: 9999;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.camp-back:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+}
+@media (max-width: 800px) {
+  .camp-back {
+    background: rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.08);
+    color: rgba(0,0,0,0.4);
+  }
+  .camp-back:hover {
+    background: rgba(0,0,0,0.08);
+    color: rgba(0,0,0,0.7);
+  }
+}
+</style>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<div class="app">
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">US<span>CAMP</span></div>
+      <div class="tagline">Match Hazırlık Analizi</div>
+    </div>
+    <nav class="sidebar-steps">
+      <div class="step-item" id="nav-1"><div class="step-num"><span>1</span></div><div class="step-label">ECFMG & Step 1</div></div>
+      <div class="step-item" id="nav-2"><div class="step-num"><span>2</span></div><div class="step-label">Step 2 CK Skoru</div></div>
+      <div class="step-item" id="nav-3"><div class="step-num"><span>3</span></div><div class="step-label">OET / İngilizce</div></div>
+      <div class="step-item" id="nav-4"><div class="step-num"><span>4</span></div><div class="step-label">USCE Deneyimi</div></div>
+      <div class="step-item" id="nav-5"><div class="step-num"><span>5</span></div><div class="step-label">ABD'li LOR</div></div>
+      <div class="step-item" id="nav-6"><div class="step-num"><span>6</span></div><div class="step-label">Araştırma & Yayın</div></div>
+      <div class="step-item" id="nav-7"><div class="step-num"><span>7</span></div><div class="step-label">Mezuniyet Boşluğu</div></div>
+      <div class="step-item" id="nav-8"><div class="step-num"><span>8</span></div><div class="step-label">Başvuru Sayısı</div></div>
+      <div class="step-item" id="nav-9"><div class="step-num"><span>9</span></div><div class="step-label">Personal Statement</div></div>
+      <div class="step-item" id="nav-10"><div class="step-num"><span>10</span></div><div class="step-label">Hedef Branş</div></div>
+    </nav>
+    <div class="sidebar-footer">
+      <p>© 2025 USCAMP<br/><a href="https://uscamp.com.tr" target="_blank">uscamp.com.tr</a><br/>Kaynak: NRMP 2025 · ECFMG 2026</p>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+    <div class="content">
+
+      <!-- ── Intro ── -->
+      <section class="screen active" id="screen-intro">
+        <div class="intro-badge">🩺 Ücretsiz Analiz · 2025/2026</div>
+        <h1>MATCH'e Ne Kadar<br/><em>Hazırsın?</em></h1>
+        <p class="intro-desc">10 kısa soruyu yanıtla — NRMP 2025 ve ECFMG 2026 verileriyle profilini analiz edelim. Güçlü ve geliştirilmesi gereken alanlarını kişisel skorkartınla öğren.</p>
+        <div class="intro-stats">
+          <div class="intro-stat"><span class="num">10</span><span class="lbl">Soru</span></div>
+          <div class="intro-stat"><span class="num">3 dk</span><span class="lbl">Süre</span></div>
+          <div class="intro-stat"><span class="num">150</span><span class="lbl">Üzerinden Skor</span></div>
+        </div>
+        <button class="btn-start" onclick="startQuiz()">
+          Teste Başla
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <p class="intro-note">Kişisel verileriniz yalnızca analiz için kullanılır.</p>
+        <p class="intro-sources">Kaynak: NRMP Charting Outcomes 2024 · ECFMG Annual Report 2026</p>
+      </section>
+
+      <!-- ── Q1: ECFMG & Step 1 ── -->
+      <section class="screen" id="screen-q1">
+        <div class="q-eyebrow">Adım 1 / 10</div>
+        <h2 class="q-title">ECFMG sertifikasyon süreci ne aşamada?</h2>
+        <p class="q-subtitle">ECFMG sertifikası olmadan MATCH'e katılamazsınız. Step 1 PASS + OET + Pathway tamamlanması gerekir.</p>
+        <div class="options">
+          <div class="option-card" data-q="1" data-val="25" onclick="selectOption(this)">
+            <div class="option-icon">✅</div>
+            <div class="option-text"><div class="option-title">ECFMG sertifikam var</div><div class="option-desc">Step 1 PASS + OET + Pathway — tam sertifikasyon tamamlandı</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="1" data-val="18" onclick="selectOption(this)">
+            <div class="option-icon">📋</div>
+            <div class="option-text"><div class="option-title">Step 1 PASS aldım, Pathway süreci devam ediyor</div><div class="option-desc">OET veya Pathway adımları henüz tamamlanmadı</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="1" data-val="8" onclick="selectOption(this)">
+            <div class="option-icon">📚</div>
+            <div class="option-text"><div class="option-title">Step 1 için hazırlanıyorum</div><div class="option-desc">Aktif çalışıyorum ya da sınav tarihim var</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="1" data-val="0" onclick="selectOption(this)">
+            <div class="option-icon">🔜</div>
+            <div class="option-text"><div class="option-title">Henüz başlamadım</div><div class="option-desc">ECFMG / Step 1 sürecine daha girmedim</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back hidden">← Geri</button>
+          <span class="step-counter">1 / 10</span>
+          <button class="btn-next" id="btn-q1" disabled onclick="nextStep(2)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q2: Step 2 CK ── -->
+      <section class="screen" id="screen-q2">
+        <div class="q-eyebrow">Adım 2 / 10</div>
+        <h2 class="q-title">USMLE Step 2 CK skorun kaç?</h2>
+        <p class="q-subtitle">2024 Charting Outcomes: Matched Non-US IMG ortalaması 245. İç Hastalıkları için ortalama 248.</p>
+        <div class="options">
+          <div class="option-card" data-q="2" data-val="25" onclick="selectOption(this)">
+            <div class="option-icon">🏆</div>
+            <div class="option-text"><div class="option-title">250 ve üzeri</div><div class="option-desc">Tüm branşlarda rekabetçi — en güçlü aralık</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="2" data-val="22" onclick="selectOption(this)">
+            <div class="option-icon">💪</div>
+            <div class="option-text"><div class="option-title">245 – 249</div><div class="option-desc">Matched non-US IMG ortalamasının üstünde</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="2" data-val="18" onclick="selectOption(this)">
+            <div class="option-icon">📊</div>
+            <div class="option-text"><div class="option-title">240 – 244</div><div class="option-desc">Güçlü, çoğu IMG-dostu branş için yeterli</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="2" data-val="10" onclick="selectOption(this)">
+            <div class="option-icon">📈</div>
+            <div class="option-text"><div class="option-title">230 – 239</div><div class="option-desc">Orta düzey — geliştirme önerilir</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="2" data-val="4" onclick="selectOption(this)">
+            <div class="option-icon">📝</div>
+            <div class="option-text"><div class="option-title">230 altı veya henüz vermedim</div><div class="option-desc">Öncelikli gelişim alanı — resit veya ilk sınav planı gerekli</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(1)">← Geri</button>
+          <span class="step-counter">2 / 10</span>
+          <button class="btn-next" id="btn-q2" disabled onclick="nextStep(3)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q3: OET ── -->
+      <section class="screen" id="screen-q3">
+        <div class="q-eyebrow">Adım 3 / 10</div>
+        <h2 class="q-title">OET Medicine sınavını geçtin mi?</h2>
+        <p class="q-subtitle">2026 MATCH için ECFMG, tüm başvuruculardan OET skoru istiyor — anadil İngilizce olsa bile.</p>
+        <div class="options">
+          <div class="option-card" data-q="3" data-val="15" onclick="selectOption(this)">
+            <div class="option-icon">✅</div>
+            <div class="option-text"><div class="option-title">OET'i geçtim, skonum ECFMG'ye iletildi</div><div class="option-desc">İngilizce yeterliliği tamamlandı</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="3" data-val="8" onclick="selectOption(this)">
+            <div class="option-icon">📝</div>
+            <div class="option-text"><div class="option-title">OET sınavına girdim, sonuç bekliyorum</div><div class="option-desc">Süreç devam ediyor</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="3" data-val="3" onclick="selectOption(this)">
+            <div class="option-icon">📚</div>
+            <div class="option-text"><div class="option-title">Hazırlanıyorum, henüz girmedim</div><div class="option-desc">OET çalışmaya devam ediyorum</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="3" data-val="0" onclick="selectOption(this)">
+            <div class="option-icon">❓</div>
+            <div class="option-text"><div class="option-title">OET'ten haberim yoktu</div><div class="option-desc">Bu gereklilikten henüz haberdar değildim</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(2)">← Geri</button>
+          <span class="step-counter">3 / 10</span>
+          <button class="btn-next" id="btn-q3" disabled onclick="nextStep(4)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q4: USCE ── -->
+      <section class="screen" id="screen-q4">
+        <div class="q-eyebrow">Adım 4 / 10</div>
+        <h2 class="q-title">ABD'de klinik deneyimin (USCE) var mı?</h2>
+        <p class="q-subtitle">Program direktörlerinin %76'sı USCE'yi kritik faktör olarak değerlendiriyor. (NRMP 2024)</p>
+        <div class="options">
+          <div class="option-card" data-q="4" data-val="20" onclick="selectOption(this)">
+            <div class="option-icon">🏥</div>
+            <div class="option-text"><div class="option-title">3 veya daha fazla rotasyon — en az 1'i hedef branşımda</div><div class="option-desc">Kapsamlı ve hedefe yönelik klinik deneyim</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="4" data-val="15" onclick="selectOption(this)">
+            <div class="option-icon">🩺</div>
+            <div class="option-text"><div class="option-title">2 – 3 rotasyon</div><div class="option-desc">Güçlü klinik geçmiş, hedef branşta da tercih edilir</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="4" data-val="8" onclick="selectOption(this)">
+            <div class="option-icon">🔬</div>
+            <div class="option-text"><div class="option-title">1 rotasyon (observership veya elective)</div><div class="option-desc">Başlangıç düzeyinde klinik deneyim</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="4" data-val="0" onclick="selectOption(this)">
+            <div class="option-icon">✈️</div>
+            <div class="option-text"><div class="option-title">Hiç yok</div><div class="option-desc">Henüz ABD'de klinik deneyimim bulunmuyor</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(3)">← Geri</button>
+          <span class="step-counter">4 / 10</span>
+          <button class="btn-next" id="btn-q4" disabled onclick="nextStep(5)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q5: LOR ── -->
+      <section class="screen" id="screen-q5">
+        <div class="q-eyebrow">Adım 5 / 10</div>
+        <h2 class="q-title">ABD'li hekimden referans mektubu (LOR) aldın mı?</h2>
+        <p class="q-subtitle">İdeal profil: 2–3 güçlü ABD LOR'u, en az 1'i hedef branştan. (NRMP Program Director Survey 2024)</p>
+        <div class="options">
+          <div class="option-card" data-q="5" data-val="20" onclick="selectOption(this)">
+            <div class="option-icon">📬</div>
+            <div class="option-text"><div class="option-title">2–3 güçlü ABD LOR'um var, biri hedef branşımdan</div><div class="option-desc">Optimum referans profili — tam güç</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="5" data-val="14" onclick="selectOption(this)">
+            <div class="option-icon">📩</div>
+            <div class="option-text"><div class="option-title">2 ABD LOR'um var</div><div class="option-desc">Güçlü, hedef branş LOR'u eklenirse daha iyi</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="5" data-val="7" onclick="selectOption(this)">
+            <div class="option-icon">📄</div>
+            <div class="option-text"><div class="option-title">1 ABD LOR'um var</div><div class="option-desc">Başlangıç, ek rotasyonlarla güçlendirilmeli</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="5" data-val="0" onclick="selectOption(this)">
+            <div class="option-icon">📭</div>
+            <div class="option-text"><div class="option-title">ABD'li hekimden LOR'um yok</div><div class="option-desc">Kritik eksik — USCE ile birlikte planlanmalı</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(4)">← Geri</button>
+          <span class="step-counter">5 / 10</span>
+          <button class="btn-next" id="btn-q5" disabled onclick="nextStep(6)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q6: Research ── -->
+      <section class="screen" id="screen-q6">
+        <div class="q-eyebrow">Adım 6 / 10</div>
+        <h2 class="q-title">Araştırma ve yayın deneyimin var mı?</h2>
+        <p class="q-subtitle">NRMP 2024: Matched Non-US IMGs ortalaması 2.9 araştırma deneyimi ve 8.3 abstract/yayın.</p>
+        <div class="options">
+          <div class="option-card" data-q="6" data-val="15" onclick="selectOption(this)">
+            <div class="option-icon">📄</div>
+            <div class="option-text"><div class="option-title">Birden fazla yayınlanmış makale (PubMed)</div><div class="option-desc">Güçlü akademik profil — araştırma odaklı programlar için büyük avantaj</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="6" data-val="12" onclick="selectOption(this)">
+            <div class="option-icon">📋</div>
+            <div class="option-text"><div class="option-title">1 yayınlanmış makale</div><div class="option-desc">İyi başlangıç — CV'nizi öne çıkaran önemli bir katkı</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="6" data-val="8" onclick="selectOption(this)">
+            <div class="option-icon">🗂️</div>
+            <div class="option-text"><div class="option-title">Abstract / poster / konferans sunumu</div><div class="option-desc">Akademik aktivite var, makaleye dönüştürmek değer katacak</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="6" data-val="4" onclick="selectOption(this)">
+            <div class="option-icon">🔬</div>
+            <div class="option-text"><div class="option-title">Araştırma projesindeyim, yayın yok</div><div class="option-desc">Süreç devam ediyor — sonuç yayınlamak hedef olmalı</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="6" data-val="0" onclick="selectOption(this)">
+            <div class="option-icon">❌</div>
+            <div class="option-text"><div class="option-title">Hiç araştırma deneyimim yok</div><div class="option-desc">Case report veya review makaleyle başlanabilir</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(5)">← Geri</button>
+          <span class="step-counter">6 / 10</span>
+          <button class="btn-next" id="btn-q6" disabled onclick="nextStep(7)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q7: Gap Year ── -->
+      <section class="screen" id="screen-q7">
+        <div class="q-eyebrow">Adım 7 / 10</div>
+        <h2 class="q-title">Mezuniyetin ile başvuru yılın arasında kaç yıl var?</h2>
+        <p class="q-subtitle">Program direktörleri mezuniyet yılına dikkat eder. 5+ yıl boşluk ek açıklama ve güçlü aktif CV gerektirir.</p>
+        <div class="options">
+          <div class="option-card" data-q="7" data-val="10" onclick="selectOption(this)">
+            <div class="option-icon">🎓</div>
+            <div class="option-text"><div class="option-title">Henüz mezun olmadım / Bu yıl mezun oluyorum</div><div class="option-desc">Taze mezun — zaman avantajı var</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="7" data-val="10" onclick="selectOption(this)">
+            <div class="option-icon">📅</div>
+            <div class="option-text"><div class="option-title">1 – 2 yıl</div><div class="option-desc">İdeal aralık — program direktörleri için tercih edilen</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="7" data-val="7" onclick="selectOption(this)">
+            <div class="option-icon">📅</div>
+            <div class="option-text"><div class="option-title">3 – 5 yıl</div><div class="option-desc">Kabul edilebilir — güçlü PS ve aktif CV ile dengelenebilir</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="7" data-val="3" onclick="selectOption(this)">
+            <div class="option-icon">⚠️</div>
+            <div class="option-text"><div class="option-title">5 yıldan fazla</div><div class="option-desc">Güçlü gerekçe, recent USCE ve aktif akademik çalışma zorunlu</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(6)">← Geri</button>
+          <span class="step-counter">7 / 10</span>
+          <button class="btn-next" id="btn-q7" disabled onclick="nextStep(8)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q8: Application Count ── -->
+      <section class="screen" id="screen-q8">
+        <div class="q-eyebrow">Adım 8 / 10</div>
+        <h2 class="q-title">Kaç programa başvurmayı planlıyorsun?</h2>
+        <p class="q-subtitle">Non-US IMGs için önerilen minimum: 80–120 program. Kısa listeler MATCH şansını önemli ölçüde düşürür.</p>
+        <div class="options">
+          <div class="option-card" data-q="8" data-val="10" onclick="selectOption(this)">
+            <div class="option-icon">🎯</div>
+            <div class="option-text"><div class="option-title">100'den fazla programa başvuracağım</div><div class="option-desc">Önerilen strateji — maksimum fırsat penceresi</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="8" data-val="8" onclick="selectOption(this)">
+            <div class="option-icon">📋</div>
+            <div class="option-text"><div class="option-title">70 – 100 program</div><div class="option-desc">Yeterli aralık, doğru program seçimiyle etkili</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="8" data-val="4" onclick="selectOption(this)">
+            <div class="option-icon">📄</div>
+            <div class="option-text"><div class="option-title">40 – 70 program</div><div class="option-desc">Riskli — profil çok güçlü değilse şans düşer</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="8" data-val="0" onclick="selectOption(this)">
+            <div class="option-icon">❓</div>
+            <div class="option-text"><div class="option-title">Henüz düşünmedim / 40'tan az</div><div class="option-desc">Strateji belirlenmeli — USCAMP danışmanlığı önerilir</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(7)">← Geri</button>
+          <span class="step-counter">8 / 10</span>
+          <button class="btn-next" id="btn-q8" disabled onclick="nextStep(9)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q9: Personal Statement ── -->
+      <section class="screen" id="screen-q9">
+        <div class="q-eyebrow">Adım 9 / 10</div>
+        <h2 class="q-title">Personal statement'ın hazır mı?</h2>
+        <p class="q-subtitle">PS, programların sizi filtrelerken baktığı ilk yazılı materyaldir. Özgün ve revize edilmiş olması kritik fark yaratır.</p>
+        <div class="options">
+          <div class="option-card" data-q="9" data-val="10" onclick="selectOption(this)">
+            <div class="option-icon">✅</div>
+            <div class="option-text"><div class="option-title">Hazır ve revize edildi, bir uzman gözden geçirdi</div><div class="option-desc">Profesyonel düzeyde — başvuruya hazır</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="9" data-val="6" onclick="selectOption(this)">
+            <div class="option-icon">📝</div>
+            <div class="option-text"><div class="option-title">Taslak var ama henüz revize edilmedi</div><div class="option-desc">İyi başlangıç — uzman gözden geçirmesi önerilir</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="9" data-val="0" onclick="selectOption(this)">
+            <div class="option-icon">💭</div>
+            <div class="option-text"><div class="option-title">Yazmaya başlamadım</div><div class="option-desc">ERAS açılmadan önce hazır olması gerekiyor</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(8)">← Geri</button>
+          <span class="step-counter">9 / 10</span>
+          <button class="btn-next" id="btn-q9" disabled onclick="nextStep(10)">Devam Et <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ── Q10: Specialty ── -->
+      <section class="screen" id="screen-q10">
+        <div class="q-eyebrow">Adım 10 / 10</div>
+        <h2 class="q-title">Hangi uzmanlık dalını hedefliyorsun?</h2>
+        <p class="q-subtitle">Branş seçimi, başvuru stratejini ve MATCH şansını doğrudan belirler. (NRMP 2025 verileri)</p>
+        <div class="options">
+          <div class="option-card" data-q="10" data-val="0" data-specialty="ic-hastaliklari" onclick="selectOption(this)">
+            <div class="option-icon">🫀</div>
+            <div class="option-text"><div class="option-title">İç Hastalıkları</div><div class="option-desc">5.015 IMG yerleşti — Non-US IMG %30 — 12.952 toplam pozisyon</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="aile-hekimligi" onclick="selectOption(this)">
+            <div class="option-icon">👨‍⚕️</div>
+            <div class="option-text"><div class="option-title">Aile Hekimliği</div><div class="option-desc">1.427 IMG — Non-US IMG %17 — En kısa residency (3 yıl)</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="psikiyatri" onclick="selectOption(this)">
+            <div class="option-icon">🧠</div>
+            <div class="option-text"><div class="option-title">Psikiyatri</div><div class="option-desc">343 IMG — Non-US IMG %8 — Hızla büyüyen alan</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="noroloji" onclick="selectOption(this)">
+            <div class="option-icon">⚡</div>
+            <div class="option-text"><div class="option-title">Nöroloji</div><div class="option-desc">326 IMG — Non-US IMG %24 — Araştırma kritik</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="pediatri" onclick="selectOption(this)">
+            <div class="option-icon">👶</div>
+            <div class="option-text"><div class="option-title">Pediatri</div><div class="option-desc">877 IMG — Non-US IMG %18 — IMG-dostu programlar</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="patoloji" onclick="selectOption(this)">
+            <div class="option-icon">🔬</div>
+            <div class="option-text"><div class="option-title">Patoloji</div><div class="option-desc">225 IMG — Yüksek IMG oranı — Lab odaklı çalışma</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="acil-tip" onclick="selectOption(this)">
+            <div class="option-icon">🚨</div>
+            <div class="option-text"><div class="option-title">Acil Tıp</div><div class="option-desc">446 IMG — Non-US IMG %4 — Artış gösteriyor</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="anesteziyoloji" onclick="selectOption(this)">
+            <div class="option-icon">💉</div>
+            <div class="option-text"><div class="option-title">Anesteziyoloji</div><div class="option-desc">158 IMG — Non-US IMG %5 — Stabil rekabet, iyi maaş</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="genel-cerrahi" onclick="selectOption(this)">
+            <div class="option-icon">✂️</div>
+            <div class="option-text"><div class="option-title">Genel Cerrahi</div><div class="option-desc">542 IMG — Non-US IMG %14 — Rekabetçi, güçlü profil gerekli</div></div>
+            <div class="option-check"></div>
+          </div>
+          <div class="option-card" data-q="10" data-val="0" data-specialty="diger" onclick="selectOption(this)">
+            <div class="option-icon">⚕️</div>
+            <div class="option-text"><div class="option-title">Diğer (Dermatoloji, Ortopedi, Radyoloji vb.)</div><div class="option-desc">Lütfen branşınızı belirtin</div></div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+        <div id="diger-input-wrap" style="display:none; margin-top:10px; animation: fadeSlideIn 0.22s ease;">
+          <input type="text" id="diger-brans-input" placeholder="Hedef branşınızı yazın (örn: Dermatoloji, Ortopedi, Radyoloji...)" oninput="onDigerInput()" style="width:100%;border:2px solid var(--red);border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-800);background:#fff;outline:none;" />
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goBack(9)">← Geri</button>
+          <span class="step-counter">10 / 10</span>
+          <button class="btn-next" id="btn-q10" disabled onclick="showResult()">
+            Skoru Hesapla
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ── Result ── -->
+      <section class="screen" id="screen-result">
+        <div class="result-header">
+          <div class="score-ring-wrap">
+            <div class="score-ring">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+                <circle class="track" cx="70" cy="70" r="60"/>
+                <circle class="fill" id="score-circle" cx="70" cy="70" r="60" stroke-dasharray="376.99" stroke-dashoffset="376.99"/>
+              </svg>
+              <div class="score-num">
+                <span class="val" id="score-val">0</span>
+                <span class="val-suffix" id="score-suffix">%</span>
+                <span class="max" id="score-raw"></span>
+              </div>
+            </div>
+          </div>
+          <div id="result-badge" class="result-badge"></div>
+          <div class="result-title" id="result-title"></div>
+          <p class="result-desc" id="result-desc"></p>
+        </div>
+
+        <div class="status-section">
+          <div class="status-section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Alan Bazlı Değerlendirme
+          </div>
+          <div class="status-cards" id="status-cards"></div>
+        </div>
+
+        <div class="cta-row">
+          <a href="https://uscamp.com.tr/iletisim/" target="_blank" class="btn-consult">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            Ücretsiz Danışmanlık Al
+          </a>
+          <button class="btn-restart" onclick="restartQuiz()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+            Testi Yeniden Başlat
+          </button>
+        </div>
+
+        <div class="email-form-wrap">
+          <div class="form-title">Kişisel Yol Haritanı Al</div>
+          <p class="form-sub">Skoruna özel hazırlık planını e-posta adresinize gönderelim.</p>
+          <div id="email-form">
+            <div class="form-row">
+              <div class="form-group"><label>Ad</label><input type="text" id="field-firstname" placeholder="Adınız" /></div>
+              <div class="form-group"><label>Soyad</label><input type="text" id="field-lastname" placeholder="Soyadınız" /></div>
+              <div class="form-group full"><label>E-posta Adresi</label><input type="email" id="field-email" placeholder="ornek@email.com" /></div>
+            </div>
+            <button class="btn-submit" onclick="submitForm()">Yol Haritamı Gönder →</button>
+          </div>
+          <div class="success-msg" id="success-msg">
+            <div class="check">✓</div>
+            <p>Teşekkürler! Yol haritanız en kısa sürede gönderilecek.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const answers = {};
+  let currentStep = 0;
+  const TOTAL_STEPS = 10;
+  const MAX_SCORE = 150;
+
+  // ── Status detail definitions per question ──
+  const statusDetails = {
+    1: {
+      label: 'ECFMG & Step 1',
+      max: 25,
+      entries: [
+        { vals: [25], type: 'green', icon: '✅', title: 'ECFMG Sertifikası Tam', detail: 'Mükemmel — Step 1, OET ve Pathway tamamlandı. En kritik engel aşıldı.' },
+        { vals: [18], type: 'orange', icon: '⚠️', title: 'Kısmi — Pathway Devam Ediyor', detail: 'Step 1 geçildi; OET veya Pathway adımlarını önceliklendirin. Sertifika tamamlanmadan başvuru yapılamaz.' },
+        { vals: [8],  type: 'orange', icon: '⚠️', title: 'Step 1 Hazırlık Aşamasında', detail: "Step 1'i geçmek tüm sürecin kapısını açar. Sınav tarihinizi belirleyin ve OET çalışmasına paralel başlayın." },
+        { vals: [0],  type: 'red',    icon: '❌', title: 'Kritik Eksik — Henüz Başlanmadı', detail: 'ECFMG sertifikası olmadan MATCH başvurusu yapılamaz. Bir an önce USCAMP ile yol haritası oluşturun.' }
+      ]
+    },
+    2: {
+      label: 'Step 2 CK Skoru',
+      max: 25,
+      entries: [
+        { vals: [25], type: 'green',  icon: '✅', title: '250+ — Üst Düzey Skor', detail: 'Tüm branşlarda rekabetçi aralıkta yer alıyorsunuz.' },
+        { vals: [22], type: 'green',  icon: '✅', title: '245–249 — Ortalamanın Üstünde', detail: 'Matched non-US IMG ortalamasının (245) üzerinde — güçlü profil.' },
+        { vals: [18], type: 'green',  icon: '✅', title: '240–244 — Güçlü Skor', detail: 'Çoğu IMG-dostu branş için yeterli. Hedef branşınıza göre değerlendirin.' },
+        { vals: [10], type: 'orange', icon: '⚠️', title: '230–239 — Geliştirilebilir', detail: 'Resit değerlendirin. Matched ortalaması 245 — bu aralıkta rekabet güçleşiyor.' },
+        { vals: [4],  type: 'red',    icon: '❌', title: '230 Altı veya Verilmedi', detail: 'Öncelikli gelişim alanı. Skor olmadan ya da düşük skorla başvurular elenebilir. USCAMP Step 2 koçluğu alın.' }
+      ]
+    },
+    3: {
+      label: 'OET / İngilizce Yeterliliği',
+      max: 15,
+      entries: [
+        { vals: [15], type: 'green',  icon: '✅', title: 'OET Tamamlandı', detail: "ECFMG'ye iletildi — ingilizce yeterliliği tamamlandı." },
+        { vals: [8],  type: 'orange', icon: '⚠️', title: 'Sonuç Bekleniyor', detail: "Sınava girdiniz. Sonucu ECFMG'ye iletmeyi unutmayın." },
+        { vals: [3],  type: 'orange', icon: '⚠️', title: 'Hazırlık Aşamasında', detail: "OET'i bir an önce tamamlayın. 2026 MATCH için zorunlu bir gerekliliktir." },
+        { vals: [0],  type: 'red',    icon: '❌', title: 'Kritik Eksik — OET Bilinmiyor', detail: '2026 MATCH için OET zorunlu. ECFMG kayıt ve sınav süreçleri için hemen USCAMP ile iletişime geçin.' }
+      ]
+    },
+    4: {
+      label: 'USCE Deneyimi',
+      max: 20,
+      entries: [
+        { vals: [20], type: 'green',  icon: '✅', title: '3+ Rotasyon — Güçlü USCE', detail: 'Hedef branş dahil 3+ rotasyon ile çok güçlü klinik profil. Program direktörlerine açık mesaj veriyor.' },
+        { vals: [15], type: 'green',  icon: '✅', title: '2–3 Rotasyon', detail: 'İyi USCE profili. Hedef branşa yönelik ek rotasyon eklenirse mükemmel olur.' },
+        { vals: [8],  type: 'orange', icon: '⚠️', title: '1 Rotasyon — Geliştirilmeli', detail: "Başlangıç var; ancak %76 PD USCE'yi kritik görüyor. En az 2-3'e çıkarmayı hedefleyin." },
+        { vals: [0],  type: 'red',    icon: '❌', title: 'USCE Yok — Kritik Eksik', detail: "USCE yokluğu interview şansını ciddi düşürür. USCAMP'ın rotasyon programlarına başvurun." }
+      ]
+    },
+    5: {
+      label: 'ABD\'li LOR',
+      max: 20,
+      entries: [
+        { vals: [20], type: 'green',  icon: '✅', title: '2–3 ABD LOR — Optimum', detail: 'Hedef branş dahil 2–3 güçlü LOR ile referans portföyünüz mükemmel.' },
+        { vals: [14], type: 'green',  icon: '✅', title: '2 ABD LOR', detail: 'Güçlü. Hedef branştan bir LOR eklenirse profil daha da güçlenir.' },
+        { vals: [7],  type: 'orange', icon: '⚠️', title: '1 ABD LOR', detail: "Başlangıç; ancak yetersiz. Ek USCE rotasyonlarıyla 2-3'e ulaşmayı hedefleyin." },
+        { vals: [0],  type: 'red',    icon: '❌', title: 'ABD LOR Yok — Kritik Eksik', detail: 'LOR olmadan başvurular değerlendirmeye alınmayabilir. USCE ve LOR planı için hemen harekete geçin.' }
+      ]
+    },
+    6: {
+      label: 'Araştırma & Yayın',
+      max: 15,
+      entries: [
+        { vals: [15], type: 'green',  icon: '✅', title: 'Çok Sayıda Makale — Güçlü Profil', detail: 'Araştırma odaklı programlar için büyük avantaj. Matched ortalaması (8.3) üzerinde.' },
+        { vals: [12], type: 'green',  icon: '✅', title: '1 Makale — İyi Başlangıç', detail: "CV'nizi öne çıkaran katkı. Ek makale veya abstract eklenirse daha da güçlenir." },
+        { vals: [8],  type: 'orange', icon: '⚠️', title: 'Abstract/Poster', detail: "Akademik aktivite var. Abstract'i tam makaleye dönüştürmeye odaklanın." },
+        { vals: [4],  type: 'orange', icon: '⚠️', title: 'Araştırma Süreci Devam Ediyor', detail: "Yayın hedefleyin. Sonuç çıkmayan araştırma CV'de zayıf görünebilir." },
+        { vals: [0],  type: 'orange', icon: '⚠️', title: 'Araştırma Deneyimi Yok', detail: 'Case report veya review makaleyle başlayabilirsiniz. USCAMP akademik danışmanlığıyla hızlı ilerleme mümkün.' }
+      ]
+    },
+    7: {
+      label: 'Mezuniyet Boşluğu',
+      max: 10,
+      entries: [
+        { vals: [10], type: 'green',  icon: '✅', title: 'İdeal Zaman Dilimi', detail: '0–2 yıllık boşluk program direktörleri tarafından en çok tercih edilen aralık.' },
+        { vals: [7],  type: 'orange', icon: '⚠️', title: '3–5 Yıl — Açıklama Gerekli', detail: "Kabul edilebilir; ancak PS'de ve görüşmelerde bu süreyi güçlü gerekçeyle açıklamanız beklenir." },
+        { vals: [3],  type: 'red',    icon: '❌', title: '5+ Yıl — Güçlü Gerekçe Zorunlu', detail: "Recent USCE, aktif araştırma ve güçlü PS ile dengelenebilir. USCAMP'ın strateji desteğinden yararlanın." }
+      ]
+    },
+    8: {
+      label: 'Başvuru Sayısı Planı',
+      max: 10,
+      entries: [
+        { vals: [10], type: 'green',  icon: '✅', title: '100+ Program — Önerilen Strateji', detail: 'Maksimum fırsat penceresi. Non-US IMGs için en etkili yaklaşım.' },
+        { vals: [8],  type: 'green',  icon: '✅', title: '70–100 Program — Yeterli', detail: 'Doğru program seçimiyle etkili bir liste. USCAMP program eşleştirmesi önerilir.' },
+        { vals: [4],  type: 'orange', icon: '⚠️', title: '40–70 Program — Riskli', detail: "Profil çok güçlü değilse match şansı düşer. Liste 80+'e genişletilmeli." },
+        { vals: [0],  type: 'red',    icon: '❌', title: 'Strateji Belirsiz — Kritik', detail: "Başvuru stratejisi belirsiz. USCAMP'ın program listesi hizmetinden yararlanın." }
+      ]
+    },
+    9: {
+      label: 'Personal Statement',
+      max: 10,
+      entries: [
+        { vals: [10], type: 'green',  icon: '✅', title: 'PS Hazır ve Revize Edildi', detail: 'Uzman onaylı, başvuruya hazır. Güçlü bir ilk izlenim bırakacaksınız.' },
+        { vals: [6],  type: 'orange', icon: '⚠️', title: 'Taslak Var — Revize Edilmeli', detail: "İyi başlangıç. Uzman gözden geçirmesi PS'yi interview aşamasına taşıyan kritik fark yaratır." },
+        { vals: [0],  type: 'red',    icon: '❌', title: 'PS Yazılmadı — Kritik Eksik', detail: 'ERAS açılmadan hazır olması gerekiyor. USCAMP PS yazım ve revize hizmetinden yararlanın.' }
+      ]
+    }
+  };
+
+  const specialtyComments = {
+    'ic-hastaliklari': { icon: '🫀', comment: 'İç Hastalıkları, Non-US IMGs için en fazla pozisyon sunan branştır. 2025\'te 5.015 IMG yerleşti ve toplam 12.952 pozisyon mevcut — en erişilebilir ve stratejik seçeneklerden biri.' },
+    'aile-hekimligi':  { icon: '👨‍⚕️', comment: 'Aile Hekimliği, 3 yıllık kısa residency ve IMG-dostu program yapısıyla öne çıkıyor. 2025\'te 1.427 IMG yerleşti; iş-yaşam dengesi en yüksek branşlardan biri.' },
+    'psikiyatri':      { icon: '🧠', comment: 'Psikiyatri hızla büyüyen ve IMG kabulünü artıran bir alan. 2025\'te 343 IMG yerleşti; ruh sağlığı talebinin artmasıyla birlikte pozisyon sayısı her yıl yükseliyor.' },
+    'noroloji':        { icon: '⚡', comment: 'Nöroloji, Non-US IMG oranı %24 ile oldukça erişilebilir. Araştırma deneyimi ve güçlü Step 2 CK skoru bu branşta belirleyici faktörler arasında.' },
+    'pediatri':        { icon: '👶', comment: 'Pediatri, IMG-dostu program yapısı ve yüksek pozisyon sayısıyla öne çıkıyor. 2025\'te 877 IMG yerleşti; çocuk sağlığına odaklanan adaylar için stratejik bir seçenek.' },
+    'patoloji':        { icon: '🔬', comment: 'Patoloji, yüksek IMG kabul oranı ve lab odaklı çalışma temposuyla dikkat çekiyor. 2025\'te 225 IMG yerleşti; esnek lokasyon seçenekleri mevcut.' },
+    'acil-tip':        { icon: '🚨', comment: 'Acil Tıp\'ta IMG oranı hâlâ düşük (%4); ancak her yıl artıyor. USCE ve güçlü referanslar bu rekabetçi branşta belirleyici faktörlerdir.' },
+    'anesteziyoloji':  { icon: '💉', comment: 'Anesteziyoloji, stabil rekabet ortamı ve yüksek maaş potansiyeliyle tercih edilen bir branş. 2025\'te 158 IMG yerleşti; iyi bir USMLE skoru kritik öneme sahip.' },
+    'genel-cerrahi':   { icon: '✂️', comment: 'Genel Cerrahi rekabetçi olmakla birlikte 2025\'te 542 IMG pozisyon aldı. Bu branşta başarı için çok güçlü bir USMLE skoru, USCE ve araştırma profili gerekiyor.' },
+    'diger':           { icon: '⚕️', comment: '' }
+  };
+
+  // ── Helper: find entry for a given value ──
+  function getEntry(qNum, val) {
+    const def = statusDetails[qNum];
+    if (!def) return null;
+    for (const e of def.entries) {
+      if (e.vals.includes(val)) return e;
+    }
+    return def.entries[def.entries.length - 1];
+  }
+
+  // ── selectOption ──
+  function selectOption(el) {
+    const q = el.dataset.q;
+    document.querySelectorAll(`.option-card[data-q="${q}"]`).forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[q] = parseInt(el.dataset.val);
+
+    if (q === '10') {
+      const sp = el.dataset.specialty;
+      answers['specialty'] = sp;
+      const wrap = document.getElementById('diger-input-wrap');
+      if (sp === 'diger') {
+        wrap.style.display = 'block';
+        document.getElementById('diger-brans-input').focus();
+        document.getElementById('btn-q10').disabled = true;
+        return;
+      } else {
+        wrap.style.display = 'none';
+        document.getElementById('diger-brans-input').value = '';
+        answers['specialtyLabel'] = el.querySelector('.option-title').textContent;
+      }
+    }
+
+    const btn = document.getElementById(`btn-q${q}`);
+    if (btn) btn.disabled = false;
+  }
+
+  function onDigerInput() {
+    const val = document.getElementById('diger-brans-input').value.trim();
+    answers['specialtyLabel'] = val;
+    document.getElementById('btn-q10').disabled = val.length === 0;
+  }
+
+  // ── Navigation ──
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateSidebar(step) {
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const item = document.getElementById(`nav-${i}`);
+      item.classList.remove('active', 'done');
+      if (i < step) item.classList.add('done');
+      else if (i === step) item.classList.add('active');
+    }
+    const pct = step > 0 ? (step / TOTAL_STEPS) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  }
+
+  function startQuiz() {
+    currentStep = 1;
+    showScreen('screen-q1');
+    updateSidebar(1);
+  }
+
+  function nextStep(to) {
+    currentStep = to;
+    showScreen(`screen-q${to}`);
+    updateSidebar(to);
+    document.getElementById('progress-bar').style.width = (to / TOTAL_STEPS * 100) + '%';
+  }
+
+  function goBack(to) {
+    currentStep = to;
+    showScreen(`screen-q${to}`);
+    updateSidebar(to);
+    document.getElementById('progress-bar').style.width = (to / TOTAL_STEPS * 100) + '%';
+  }
+
+  // ── Score ──
+  function calcScore() {
+    let total = 0;
+    for (let q = 1; q <= 9; q++) total += (answers[String(q)] || 0);
+    return Math.min(total, MAX_SCORE);
+  }
+
+  // ── Show Result ──
+  function showResult() {
+    const raw = calcScore();
+    const pct = Math.round((raw / MAX_SCORE) * 100);
+
+    showScreen('screen-result');
+    document.getElementById('progress-bar').style.width = '100%';
+    updateSidebar(TOTAL_STEPS + 1);
+
+    // Animate number
+    const scoreEl = document.getElementById('score-val');
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      scoreEl.textContent = Math.round(ease * pct);
+      if (t < 1) requestAnimationFrame(tick);
+      else scoreEl.textContent = pct;
+    }
+    requestAnimationFrame(tick);
+
+    document.getElementById('score-raw').textContent = raw + ' / ' + MAX_SCORE + ' puan';
+
+    // Animate ring
+    const circle = document.getElementById('score-circle');
+    const circumference = 376.99;
+    setTimeout(() => { circle.style.strokeDashoffset = circumference - (pct / 100) * circumference; }, 100);
+
+    // Tier
+    let tier;
+    if (pct >= 75) {
+      tier = { badge: '🟢 MATCH\'e Hazırsın', title: 'MATCH\'e Hazırsın!', color: 'green', stroke: '#1A7F4B',
+               desc: 'Profiliniz güçlü ve rekabetçi. Hedef programlarınıza odaklanarak stratejik başvuru yapmanın tam zamanı.' };
+    } else if (pct >= 50) {
+      tier = { badge: '🟠 İyi Yoldasın — Birkaç Adım Kaldı', title: 'İyi Yoldasın', color: 'orange', stroke: '#D97706',
+               desc: 'Sağlam bir temel var. Birkaç kritik alanı kapatarak MATCH şansınızı önemli ölçüde artırabilirsiniz.' };
+    } else if (pct >= 25) {
+      tier = { badge: '🟡 Temel Hazırlığı Tamamla', title: 'Temel Hazırlığı Tamamla', color: 'yellow', stroke: '#B45309',
+               desc: 'Eksiklikler net görünüyor fakat her biri çözülebilir. Adım adım hazırlık planıyla kısa sürede ilerleme kaydedebilirsiniz.' };
+    } else {
+      tier = { badge: '🔴 Yolculuğun Daha Başında', title: 'Yolculuğun Daha Başında', color: 'red', stroke: '#D93025',
+               desc: 'Temel adımlar henüz atılmamış. Şimdi başlamak için geç değil — uzman rehberliğiyle süreci doğru yönetebilirsiniz.' };
+    }
+
+    circle.style.stroke = tier.stroke;
+    scoreEl.style.color = tier.stroke;
+    document.getElementById('score-suffix').style.color = tier.stroke;
+
+    const badge = document.getElementById('result-badge');
+    badge.className = `result-badge ${tier.color}`;
+    badge.textContent = tier.badge;
+    document.getElementById('result-title').textContent = tier.title;
+    document.getElementById('result-desc').textContent = tier.desc;
+
+    // Status cards for Q1–Q9
+    const container = document.getElementById('status-cards');
+    container.innerHTML = '';
+
+    for (let q = 1; q <= 9; q++) {
+      const val = answers[String(q)] || 0;
+      const def = statusDetails[q];
+      const e = getEntry(q, val);
+      if (!e || !def) continue;
+
+      const card = document.createElement('div');
+      card.className = `status-card s-${e.type}`;
+      let actionHtml = '';
+      if (e.type === 'red') {
+        actionHtml = `<a class="btn-action" href="https://uscamp.com.tr/iletisim/" target="_blank">Destek Al →</a>`;
+      }
+      const maxLabel = def.max ? ` <span style="opacity:.6;font-weight:400">(${val}/${def.max} puan)</span>` : '';
+      card.innerHTML = `
+        <div class="status-icon">${e.icon}</div>
+        <div class="status-body">
+          <div class="status-name">${def.label} — ${e.title}${maxLabel}</div>
+          <div class="status-detail">${e.detail}</div>
+          ${actionHtml}
+        </div>`;
+      container.appendChild(card);
+    }
+
+    // Branş card
+    const sp = answers['specialty'] || 'diger';
+    const spLabel = answers['specialtyLabel'] || 'Belirtilmemiş';
+    const spInfo = specialtyComments[sp] || specialtyComments['diger'];
+    let spComment = spInfo.comment;
+    if (sp === 'diger') {
+      spComment = `"${spLabel}" branşı için USCAMP danışmanlarımız size özel strateji ve hedef program listesi hazırlayabilir. Detaylı analiz için iletişime geçin.`;
+    }
+    const bransCard = document.createElement('div');
+    bransCard.className = 'status-card s-blue';
+    bransCard.innerHTML = `
+      <div class="status-icon">${spInfo.icon}</div>
+      <div class="status-body">
+        <div class="status-name">Hedef Branş — ${spLabel}</div>
+        <div class="status-detail">${spComment}</div>
+      </div>`;
+    container.appendChild(bransCard);
+  }
+
+  // ── Restart ──
+  function restartQuiz() {
+    for (const k in answers) delete answers[k];
+    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.btn-next').forEach(b => b.disabled = true);
+    document.getElementById('email-form').style.display = 'block';
+    document.getElementById('success-msg').style.display = 'none';
+    document.getElementById('field-firstname').value = '';
+    document.getElementById('field-lastname').value = '';
+    document.getElementById('field-email').value = '';
+    document.getElementById('diger-input-wrap').style.display = 'none';
+    document.getElementById('diger-brans-input').value = '';
+    currentStep = 0;
+    showScreen('screen-intro');
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const item = document.getElementById(`nav-${i}`);
+      item.classList.remove('active', 'done');
+    }
+    document.getElementById('progress-bar').style.width = '0%';
+  }
+
+  // ── Submit Form ──
+  function submitForm() {
+    const fn = document.getElementById('field-firstname').value.trim();
+    const ln = document.getElementById('field-lastname').value.trim();
+    const em = document.getElementById('field-email').value.trim();
+    if (!fn || !ln || !em) { alert('Lütfen tüm alanları doldurun.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { alert('Geçerli bir e-posta adresi girin.'); return; }
+    document.getElementById('email-form').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'block';
+  }
+</script>
+</body>
+</html>

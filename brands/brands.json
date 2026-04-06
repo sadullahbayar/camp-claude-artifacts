@@ -59,6 +59,18 @@
             "yönlendirme",
             "usmle"
           ]
+        },
+        {
+          "slug": "match-score",
+          "name": "MATCH Hazırlık Skoru",
+          "description": "10 soruluk quiz ile MATCH hazırlık seviyenizi ölçün — NRMP 2025 & ECFMG 2026 verilerine dayalı kişisel skorlama.",
+          "date": "2026-04-06",
+          "tags": [
+            "quiz",
+            "match",
+            "skor",
+            "hazırlık"
+          ]
         }
       ]
     },
