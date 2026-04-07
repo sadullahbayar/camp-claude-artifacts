@@ -113,6 +113,17 @@
             "brief",
             "pazarlama"
           ]
+        },
+        {
+          "slug": "haftalik-marketing-raporu",
+          "name": "Haftalık Marketing Raporu",
+          "description": "Cancera haftalık marketing performans raporu",
+          "date": "2026-04-07",
+          "tags": [
+            "marketing",
+            "report",
+            "weekly"
+          ]
         }
       ]
     }

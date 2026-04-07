@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancera — Haftalık Marketing Raporu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B0E11;
+  --card: #141820;
+  --card-border: #1E2530;
+  --text: #E8ECF1;
+  --text-muted: #7A8599;
+  --accent: #FF4D6A;
+  --accent2: #4DACFF;
+  --accent3: #36D399;
+  --accent4: #FFB84D;
+  --accent5: #A78BFA;
+  --danger: #FF4D4D;
+  --success: #36D399;
+  --warning: #FFB84D;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; padding:24px; min-height:100vh; }
+.header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:16px; }
+.header h1 { font-family:'Instrument Serif',serif; font-size:clamp(28px,4vw,42px); font-weight:400; letter-spacing:-0.5px; }
+.header h1 span { color:var(--accent); }
+.header .date { color:var(--text-muted); font-size:14px; background:var(--card); padding:8px 16px; border-radius:20px; border:1px solid var(--card-border); }
+.section-title { font-family:'Instrument Serif',serif; font-size:22px; margin:32px 0 16px; color:var(--text-muted); font-weight:400; }
+.grid { display:grid; gap:16px; }
+.grid-4 { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+.grid-3 { grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+.grid-2 { grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); }
+.card { background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:24px; position:relative; overflow:hidden; }
+.card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.card.red::before { background:linear-gradient(90deg,var(--accent),transparent); }
+.card.blue::before { background:linear-gradient(90deg,var(--accent2),transparent); }
+.card.green::before { background:linear-gradient(90deg,var(--accent3),transparent); }
+.card.yellow::before { background:linear-gradient(90deg,var(--accent4),transparent); }
+.card.purple::before { background:linear-gradient(90deg,var(--accent5),transparent); }
+.kpi-label { font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:8px; }
+.kpi-value { font-size:36px; font-weight:700; line-height:1; }
+.kpi-sub { font-size:13px; color:var(--text-muted); margin-top:8px; display:flex; align-items:center; gap:6px; }
+.kpi-sub .up { color:var(--success); }
+.kpi-sub .down { color:var(--danger); }
+.badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+.badge-red { background:rgba(255,77,106,0.15); color:var(--accent); }
+.badge-green { background:rgba(54,211,153,0.15); color:var(--success); }
+.badge-blue { background:rgba(77,172,255,0.15); color:var(--accent2); }
+.badge-yellow { background:rgba(255,184,77,0.15); color:var(--accent4); }
+.chart-container { position:relative; width:100%; }
+.bar-chart { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+.bar-row { display:flex; align-items:center; gap:12px; }
+.bar-label { width:100px; font-size:13px; color:var(--text-muted); text-align:right; flex-shrink:0; }
+.bar-track { flex:1; height:28px; background:rgba(255,255,255,0.04); border-radius:6px; overflow:hidden; position:relative; }
+.bar-fill { height:100%; border-radius:6px; display:flex; align-items:center; padding:0 10px; font-size:12px; font-weight:600; transition:width 1s ease; min-width:fit-content; }
+.bar-value { font-size:13px; font-weight:600; width:50px; text-align:left; flex-shrink:0; }
+.donut-wrapper { display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap; padding:16px 0; }
+.donut-legend { display:flex; flex-direction:column; gap:8px; }
+.legend-item { display:flex; align-items:center; gap:8px; font-size:13px; }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.funnel { margin-top:16px; }
+.funnel-step { display:flex; align-items:center; gap:16px; margin-bottom:8px; }
+.funnel-bar { height:40px; border-radius:8px; display:flex; align-items:center; padding:0 16px; font-size:13px; font-weight:600; transition:width 1s ease; }
+.funnel-info { font-size:12px; color:var(--text-muted); white-space:nowrap; }
+.daily-chart { display:flex; align-items:flex-end; gap:8px; height:160px; margin-top:16px; padding-bottom:28px; position:relative; }
+.daily-bar-wrapper { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+.daily-bar { width:100%; border-radius:6px 6px 0 0; transition:height 1s ease; position:relative; min-height:4px; cursor:pointer; }
+.daily-bar:hover { filter:brightness(1.3); }
+.daily-bar-val { font-size:11px; font-weight:600; text-align:center; }
+.daily-label { font-size:10px; color:var(--text-muted); position:absolute; bottom:0; }
+.insight-box { background:rgba(255,77,106,0.06); border:1px solid rgba(255,77,106,0.15); border-radius:12px; padding:20px; margin-top:16px; }
+.insight-box h4 { color:var(--accent); font-size:14px; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.insight-box p { font-size:13px; color:var(--text-muted); line-height:1.6; }
+.insight-box.blue { background:rgba(77,172,255,0.06); border-color:rgba(77,172,255,0.15); }
+.insight-box.blue h4 { color:var(--accent2); }
+.insight-box.green { background:rgba(54,211,153,0.06); border-color:rgba(54,211,153,0.15); }
+.insight-box.green h4 { color:var(--success); }
+.table-wrap { overflow-x:auto; margin-top:16px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:10px 12px; color:var(--text-muted); font-weight:500; font-size:11px; text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--card-border); }
+td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.03); }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.tabs { display:flex; gap:4px; margin-bottom:16px; }
+.tab { padding:8px 16px; border-radius:8px; font-size:13px; cursor:pointer; border:1px solid var(--card-border); background:transparent; color:var(--text-muted); transition:all 0.2s; }
+.tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.tab:hover:not(.active) { background:rgba(255,255,255,0.05); }
+.hidden { display:none; }
+.comparison { display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center; margin-top:16px; }
+.comp-col { text-align:center; }
+.comp-vs { color:var(--text-muted); font-size:12px; font-weight:600; }
+.comp-val { font-size:28px; font-weight:700; }
+.comp-label { font-size:11px; color:var(--text-muted); margin-top:4px; }
+@media(max-width:768px) {
+  body { padding:16px; }
+  .kpi-value { font-size:28px; }
+  .bar-label { width:70px; font-size:11px; }
+}
+</style>
+</head>
+<body>
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<style>
+.camp-back {
+  position: fixed; top: 16px; left: 16px; z-index: 9999;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.camp-back:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+}
+</style>
+
+<div class="header">
+  <h1><span>Cancera</span> — Haftalık Rapor</h1>
+  <div class="date">31 Mart – 7 Nisan 2026</div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="grid grid-4">
+  <div class="card red">
+    <div class="kpi-label">Toplam Lead (Hafta)</div>
+    <div class="kpi-value">105</div>
+    <div class="kpi-sub"><span class="down">▼ 19.8%</span> geçen haftaya göre (131)</div>
+  </div>
+  <div class="card blue">
+    <div class="kpi-label">Günlük Ortalama</div>
+    <div class="kpi-value">15</div>
+    <div class="kpi-sub">lead/gün (7 Nisan hariç)</div>
+  </div>
+  <div class="card green">
+    <div class="kpi-label">Aranma Oranı</div>
+    <div class="kpi-value">88.6%</div>
+    <div class="kpi-sub">93 / 105 lead arandı</div>
+  </div>
+  <div class="card yellow">
+    <div class="kpi-label">Yüksek Potansiyel</div>
+    <div class="kpi-value">8</div>
+    <div class="kpi-sub"><span class="up">▲ %7.6</span> oranla pipeline'da</div>
+  </div>
+</div>
+
+<!-- SECTION: Günlük Dağılım -->
+<div class="section-title">Günlük Lead Akışı</div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <div>
+      <span style="font-weight:600;">Günlük Dağılım</span>
+      <span style="color:var(--text-muted);font-size:13px;margin-left:8px;">Lead Sheet + CRM birleşik</span>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);"><div style="width:12px;height:12px;border-radius:3px;background:var(--accent2);"></div>Lead Sheet</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);"><div style="width:12px;height:12px;border-radius:3px;background:var(--accent);"></div>CRM Export</div>
+    </div>
+  </div>
+  <div class="daily-chart">
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">9</div>
+      <div class="daily-bar" style="height:53%;background:var(--accent2);width:45%;margin-right:2px;display:inline-block;border-radius:6px 0 0 0;"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">12</div>
+      <div class="daily-bar" style="height:71%;background:var(--accent);width:45%;margin-left:2px;display:inline-block;border-radius:0 6px 0 0;"></div>
+      <div class="daily-label">31 Mar</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">10</div>
+      <div class="daily-bar" style="height:59%;background:var(--accent2);"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">14</div>
+      <div class="daily-bar" style="height:82%;background:var(--accent);"></div>
+      <div class="daily-label">1 Nis</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">13</div>
+      <div class="daily-bar" style="height:76%;background:var(--accent2);"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">12</div>
+      <div class="daily-bar" style="height:71%;background:var(--accent);"></div>
+      <div class="daily-label">2 Nis</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">17</div>
+      <div class="daily-bar" style="height:100%;background:var(--accent2);"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">17</div>
+      <div class="daily-bar" style="height:100%;background:var(--accent);"></div>
+      <div class="daily-label">3 Nis</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">16</div>
+      <div class="daily-bar" style="height:94%;background:var(--accent2);"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">17</div>
+      <div class="daily-bar" style="height:100%;background:var(--accent);"></div>
+      <div class="daily-label">4 Nis</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">11</div>
+      <div class="daily-bar" style="height:65%;background:var(--accent2);"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">15</div>
+      <div class="daily-bar" style="height:88%;background:var(--accent);"></div>
+      <div class="daily-label">5 Nis</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">10</div>
+      <div class="daily-bar" style="height:59%;background:var(--accent2);"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">14</div>
+      <div class="daily-bar" style="height:82%;background:var(--accent);"></div>
+      <div class="daily-label">6 Nis</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val" style="color:var(--accent2)">3</div>
+      <div class="daily-bar" style="height:18%;background:var(--accent2);"></div>
+      <div class="daily-bar-val" style="color:var(--accent)">4</div>
+      <div class="daily-bar" style="height:24%;background:var(--accent);"></div>
+      <div class="daily-label">7 Nis*</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">* 7 Nisan gün sonu değil, veriler eksik olabilir. En yoğun günler: Perşembe-Cuma (3-4 Nisan).</div>
+</div>
+
+<!-- SECTION: Platform & Kaynak -->
+<div class="section-title">Platform & Kaynak Analizi</div>
+<div class="grid grid-2">
+  <div class="card blue">
+    <div style="font-weight:600;margin-bottom:4px;">Platform Dağılımı (Son Hafta — Lead Sheet)</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Facebook vs Instagram performansı</div>
+    <div class="comparison">
+      <div class="comp-col">
+        <div class="comp-val" style="color:var(--accent);">64</div>
+        <div style="font-size:24px;font-weight:700;color:var(--accent);">71.9%</div>
+        <div class="comp-label">Instagram</div>
+      </div>
+      <div class="comp-vs">VS</div>
+      <div class="comp-col">
+        <div class="comp-val" style="color:var(--accent2);">25</div>
+        <div style="font-size:24px;font-weight:700;color:var(--accent2);">28.1%</div>
+        <div class="comp-label">Facebook</div>
+      </div>
+    </div>
+    <div class="insight-box blue" style="margin-top:20px;">
+      <h4>💡 Platform Yorumu</h4>
+      <p>Instagram açık ara lider (%72). Sağlık sektöründe Instagram'ın görsel ağırlıklı formatı (infografik, kısa video) hasta ve hasta yakınlarına daha kolay ulaşıyor. Sektör ortalaması sağlık markaları için genellikle %50-60 Instagram ağırlığında; Cancera bu ortalamanın üzerinde.</p>
+    </div>
+  </div>
+  <div class="card red">
+    <div style="font-weight:600;margin-bottom:4px;">CRM Kaynak Dağılımı (Son Hafta)</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Lead'ler nereden geliyor?</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Instagram</div>
+        <div class="bar-track"><div class="bar-fill" style="width:89.5%;background:linear-gradient(90deg,var(--accent),#ff6b8a);">94</div></div>
+        <div class="bar-value">%89.5</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Website</div>
+        <div class="bar-track"><div class="bar-fill" style="width:10.5%;background:linear-gradient(90deg,var(--accent2),#6bc0ff);">11</div></div>
+        <div class="bar-value">%10.5</div>
+      </div>
+    </div>
+    <div class="insight-box" style="margin-top:20px;">
+      <h4>📊 Kaynak Karşılaştırma</h4>
+      <p>Tüm zamanlarda Instagram %83, Website %15 oranında. Bu hafta Website payı %10.5'e düşmüş. Website form dönüşüm oranını artırmak için CTA'lar güçlendirilebilir. Bununla birlikte, Website'den gelen lead'lerin conversion kalitesi daha yüksek (tüm zamanlarda 2 başarılı / 148 = %1.35 vs Instagram 3/824 = %0.36).</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: Satış Hunisi -->
+<div class="section-title">Satış Hunisi & Dönüşüm</div>
+<div class="grid grid-2">
+  <div class="card purple">
+    <div style="font-weight:600;margin-bottom:4px;">Bu Haftanın Hunisi</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">105 lead'in satış yolculuğu</div>
+    <div class="funnel">
+      <div class="funnel-step">
+        <div class="funnel-bar" style="width:100%;background:linear-gradient(90deg,var(--accent2),#6bc0ff);">105 Lead</div>
+        <div class="funnel-info">%100</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-bar" style="width:88.6%;background:linear-gradient(90deg,var(--accent5),#b9a0fc);">93 Arandı</div>
+        <div class="funnel-info">%88.6</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-bar" style="width:64.8%;background:linear-gradient(90deg,var(--accent4),#ffc870);">68 Cevaplandı</div>
+        <div class="funnel-info">%64.8</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-bar" style="width:28.6%;background:linear-gradient(90deg,var(--accent3),#5ce0b0);">30 Takipte</div>
+        <div class="funnel-info">%28.6</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-bar" style="width:7.6%;background:linear-gradient(90deg,var(--success),#2dbd87);">8 Yüksek Pot.</div>
+        <div class="funnel-info">%7.6</div>
+      </div>
+    </div>
+  </div>
+  <div class="card green">
+    <div style="font-weight:600;margin-bottom:4px;">Tüm Zamanlar — Genel Dönüşüm</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">993 toplam lead üzerinden</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Başarısız</div>
+        <div class="bar-track"><div class="bar-fill" style="width:60.4%;background:var(--danger);">600</div></div>
+        <div class="bar-value">%60.4</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Takipte</div>
+        <div class="bar-track"><div class="bar-fill" style="width:23.9%;background:var(--accent4);">237</div></div>
+        <div class="bar-value">%23.9</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Yeni Lead</div>
+        <div class="bar-track"><div class="bar-fill" style="width:14%;background:var(--accent2);">139</div></div>
+        <div class="bar-value">%14.0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Yüksek Pot.</div>
+        <div class="bar-track"><div class="bar-fill" style="width:3%;background:var(--accent5);">12</div></div>
+        <div class="bar-value">%1.2</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Başarılı</div>
+        <div class="bar-track"><div class="bar-fill" style="width:1.5%;background:var(--success);">5</div></div>
+        <div class="bar-value">%0.5</div>
+      </div>
+    </div>
+    <div class="insight-box green" style="margin-top:20px;">
+      <h4>🏥 Sağlık Sektörü Karşılaştırma</h4>
+      <p><strong>%0.5 conversion rate oldukça düşük.</strong> Sağlık sektöründe ortalama lead-to-customer dönüşüm oranı %3-8 arasındadır. Ancak "ikinci görüş" gibi niş ve yüksek değerli bir hizmet için daha düşük dönüşüm beklenir. Yine de %60.4 başarısız oranı, ya lead kalitesinde ya da takip sürecinde iyileştirme potansiyeli olduğuna işaret ediyor.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: Arama Performansı -->
+<div class="section-title">Arama & İletişim Performansı</div>
+<div class="grid grid-3">
+  <div class="card blue">
+    <div style="font-weight:600;margin-bottom:16px;">Arama Durumu (Son Hafta)</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Cevaplandı</div>
+        <div class="bar-track"><div class="bar-fill" style="width:73.1%;background:var(--success);">68</div></div>
+        <div class="bar-value">%73.1</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Cevaplanmadı</div>
+        <div class="bar-track"><div class="bar-fill" style="width:19.4%;background:var(--accent4);">18</div></div>
+        <div class="bar-value">%19.4</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Aranmamış</div>
+        <div class="bar-track"><div class="bar-fill" style="width:12.9%;background:var(--text-muted);">12</div></div>
+        <div class="bar-value">%11.4</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Meşgul</div>
+        <div class="bar-track"><div class="bar-fill" style="width:6.5%;background:var(--danger);">6</div></div>
+        <div class="bar-value">%6.5</div>
+      </div>
+    </div>
+  </div>
+  <div class="card red">
+    <div style="font-weight:600;margin-bottom:16px;">Arama Sonucu (Son Hafta)</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Başarısız</div>
+        <div class="bar-track"><div class="bar-fill" style="width:59.1%;background:var(--danger);">55</div></div>
+        <div class="bar-value">%59.1</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Yeniden Plan.</div>
+        <div class="bar-track"><div class="bar-fill" style="width:39.8%;background:var(--accent4);">37</div></div>
+        <div class="bar-value">%39.8</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Sonuç Yok</div>
+        <div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--text-muted);">1</div></div>
+        <div class="bar-value">%1.1</div>
+      </div>
+    </div>
+  </div>
+  <div class="card yellow">
+    <div style="font-weight:600;margin-bottom:16px;">Kaybetme Nedenleri (Tüm Zamanlar)</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Neden belirtilen 57 / 600 başarısız lead</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Kişisel</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent);">17</div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Mali</div>
+        <div class="bar-track"><div class="bar-fill" style="width:76.5%;background:var(--accent4);">13</div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">İletişimsizlik</div>
+        <div class="bar-track"><div class="bar-fill" style="width:76.5%;background:var(--accent2);">13</div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Program Uyum.</div>
+        <div class="bar-track"><div class="bar-fill" style="width:52.9%;background:var(--accent5);">9</div></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:var(--text-muted);">⚠️ 543 başarısız lead'de neden belirtilmemiş (%90.5)</div>
+  </div>
+</div>
+
+<!-- SECTION: Yakınlık & Kanser Türleri -->
+<div class="section-title">Hasta Profili Analizi</div>
+<div class="grid grid-2">
+  <div class="card red">
+    <div style="font-weight:600;margin-bottom:4px;">Yakınlık Derecesi (Son Hafta)</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Başvuranların hastaya yakınlığı</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Kendisi</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,var(--accent),#ff6b8a);">32</div></div>
+        <div class="bar-value">%36.0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Anne/Baba</div>
+        <div class="bar-track"><div class="bar-fill" style="width:71.9%;background:linear-gradient(90deg,var(--accent2),#6bc0ff);">23</div></div>
+        <div class="bar-value">%25.8</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Eşi</div>
+        <div class="bar-track"><div class="bar-fill" style="width:59.4%;background:linear-gradient(90deg,var(--accent4),#ffc870);">19</div></div>
+        <div class="bar-value">%21.3</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Kardeş</div>
+        <div class="bar-track"><div class="bar-fill" style="width:21.9%;background:linear-gradient(90deg,var(--accent5),#b9a0fc);">7</div></div>
+        <div class="bar-value">%7.9</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Yakın Akraba</div>
+        <div class="bar-track"><div class="bar-fill" style="width:18.8%;background:linear-gradient(90deg,var(--accent3),#5ce0b0);">6</div></div>
+        <div class="bar-value">%6.7</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Diğer</div>
+        <div class="bar-track"><div class="bar-fill" style="width:6.3%;background:var(--text-muted);">2</div></div>
+        <div class="bar-value">%2.2</div>
+      </div>
+    </div>
+    <div class="insight-box" style="margin-top:16px;">
+      <h4>👤 Profil Yorumu</h4>
+      <p>Hastaların %36'sı kendisi başvuruyor — bu, hastalığın farkındalık aşamasında ikinci görüş arayışının güçlü olduğunu gösteriyor. %64 hasta yakını başvurusu, içerik stratejisinde "yakınınız için yapabileceğiniz en önemli şey" mesajının etkili olduğuna işaret eder.</p>
+    </div>
+  </div>
+  <div class="card purple">
+    <div style="font-weight:600;margin-bottom:4px;">En Sık Kanser Türleri (Son Hafta)</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">105 lead'in teşhis dağılımı</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Akciğer</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent);">13</div></div>
+        <div class="bar-value">%12.4</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Meme</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent2);">13</div></div>
+        <div class="bar-value">%12.4</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Mide</div>
+        <div class="bar-track"><div class="bar-fill" style="width:61.5%;background:var(--accent4);">8</div></div>
+        <div class="bar-value">%7.6</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Kolorektal</div>
+        <div class="bar-track"><div class="bar-fill" style="width:53.8%;background:var(--accent3);">7</div></div>
+        <div class="bar-value">%6.7</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Pankreas</div>
+        <div class="bar-track"><div class="bar-fill" style="width:53.8%;background:var(--accent5);">7</div></div>
+        <div class="bar-value">%6.7</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Larinks</div>
+        <div class="bar-track"><div class="bar-fill" style="width:30.8%;background:#FF8FA3;">4</div></div>
+        <div class="bar-value">%3.8</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Hematolojik</div>
+        <div class="bar-track"><div class="bar-fill" style="width:30.8%;background:#7DD3FC;">4</div></div>
+        <div class="bar-value">%3.8</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Tiroid</div>
+        <div class="bar-track"><div class="bar-fill" style="width:23.1%;background:#FDE68A;">3</div></div>
+        <div class="bar-value">%2.9</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Karaciğer</div>
+        <div class="bar-track"><div class="bar-fill" style="width:23.1%;background:#C4B5FD;">3</div></div>
+        <div class="bar-value">%2.9</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Over</div>
+        <div class="bar-track"><div class="bar-fill" style="width:23.1%;background:#6EE7B7;">3</div></div>
+        <div class="bar-value">%2.9</div>
+      </div>
+    </div>
+    <div class="insight-box blue" style="margin-top:16px;">
+      <h4>🔬 Klinik Yorum</h4>
+      <p>Akciğer ve meme kanseri birlikte %25 ile en yoğun segment. Bu, Türkiye'deki genel kanser insidans verileriyle uyumlu (TÜİK: akciğer erkeklerde #1, meme kadınlarda #1). Pankreas kanseri (%6.7) oranı dikkat çekici — bu tür genelde geç evrede teşhis alıyor ve ikinci görüş ihtiyacı yüksek.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: Haftalık Trend -->
+<div class="section-title">Haftalık Trend (Son 8 Hafta)</div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+    <span style="font-weight:600;">Haftalık Lead Hacmi</span>
+    <span class="badge badge-red">WoW: -19.8%</span>
+  </div>
+  <div class="daily-chart" style="height:180px;">
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">124</div>
+      <div class="daily-bar" style="height:95%;background:linear-gradient(180deg,var(--accent2),rgba(77,172,255,0.3));"></div>
+      <div class="daily-label">16 Şub</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">128</div>
+      <div class="daily-bar" style="height:98%;background:linear-gradient(180deg,var(--accent2),rgba(77,172,255,0.3));"></div>
+      <div class="daily-label">23 Şub</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">73</div>
+      <div class="daily-bar" style="height:56%;background:linear-gradient(180deg,var(--accent4),rgba(255,184,77,0.3));"></div>
+      <div class="daily-label">2 Mar</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">131</div>
+      <div class="daily-bar" style="height:100%;background:linear-gradient(180deg,var(--accent3),rgba(54,211,153,0.3));"></div>
+      <div class="daily-label">9 Mar</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">127</div>
+      <div class="daily-bar" style="height:97%;background:linear-gradient(180deg,var(--accent2),rgba(77,172,255,0.3));"></div>
+      <div class="daily-label">16 Mar</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">115</div>
+      <div class="daily-bar" style="height:88%;background:linear-gradient(180deg,var(--accent2),rgba(77,172,255,0.3));"></div>
+      <div class="daily-label">23 Mar</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">131</div>
+      <div class="daily-bar" style="height:100%;background:linear-gradient(180deg,var(--accent5),rgba(167,139,250,0.3));"></div>
+      <div class="daily-label">30 Mar</div>
+    </div>
+    <div class="daily-bar-wrapper">
+      <div class="daily-bar-val">105*</div>
+      <div class="daily-bar" style="height:80%;background:linear-gradient(180deg,var(--accent),rgba(255,77,106,0.3));border:1px dashed var(--accent);"></div>
+      <div class="daily-label">6 Nis</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">* Bu hafta 7 Nisan henüz kapanmamış. 2 Mart haftasındaki düşüş (%43) muhtemelen reklam bütçesi veya kampanya değişikliğiyle ilişkili.</div>
+</div>
+
+<!-- SECTION: Sektör Karşılaştırma -->
+<div class="section-title">Sektörel Değerlendirme & Öneriler</div>
+<div class="grid grid-3">
+  <div class="card red">
+    <div style="font-weight:600;margin-bottom:12px;">📊 Conversion Rate</div>
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <span style="font-size:32px;font-weight:700;color:var(--danger);">%0.5</span>
+      <span style="font-size:14px;color:var(--text-muted);">Cancera</span>
+    </div>
+    <div style="margin-top:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Sağlık sektörü benchmark</div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Genel sağlık</span><span style="color:var(--accent3);">%3-8</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>İkinci görüş (niş)</span><span style="color:var(--accent4);">%1-3</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;"><span>Cancera (mevcut)</span><span style="color:var(--danger);">%0.5</span></div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:var(--text-muted);line-height:1.6;">Niş hizmet olsa bile hedef en az %1.5-2 olmalı. Lead kalitesi ve takip süreci iyileştirilmeli.</div>
+  </div>
+  <div class="card green">
+    <div style="font-weight:600;margin-bottom:12px;">📞 Aranma Oranı</div>
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <span style="font-size:32px;font-weight:700;color:var(--success);">%88.6</span>
+      <span style="font-size:14px;color:var(--text-muted);">Bu hafta</span>
+    </div>
+    <div style="margin-top:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Değerlendirme</div>
+      <div style="font-size:13px;color:var(--success);margin-bottom:4px;">✅ İyi seviyede</div>
+      <div style="font-size:12px;color:var(--text-muted);">Sağlık sektöründe %80+ aranma oranı kabul edilebilir. %88.6 güçlü bir operasyonel performans.</div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:var(--text-muted);line-height:1.6;">Ancak cevaplama oranı %73 — kaçan %27'ye SMS/WhatsApp ile 2. temas denenebilir.</div>
+  </div>
+  <div class="card yellow">
+    <div style="font-weight:600;margin-bottom:12px;">⚡ Aksiyon Önerileri</div>
+    <div style="font-size:13px;line-height:2;">
+      <div>🔴 <strong>Kaybetme nedenlerini kaydedin</strong> — %90.5 neden yok</div>
+      <div>🟡 <strong>Mali sebep → taksit seçeneği</strong> sunun</div>
+      <div>🟢 <strong>Cevaplanmayan lead'lere</strong> WhatsApp follow-up</div>
+      <div>🔵 <strong>Website conversion</strong> için landing page A/B test</div>
+      <div>🟣 <strong>Akciğer & meme kanseri</strong> içerik ağırlığını artırın</div>
+      <div>🟠 <strong>Perşembe-Cuma</strong> reklam bütçesini artırın</div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--card-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+  <div style="font-size:12px;color:var(--text-muted);">Cancera Marketing Dashboard — Otomatik oluşturuldu</div>
+  <div style="font-size:12px;color:var(--text-muted);">Veri kaynakları: Lead Sheet (instant form 2.1) + CRM Lead Export (7 Nisan 2026)</div>
+</div>
+
+</body>
+</html>
