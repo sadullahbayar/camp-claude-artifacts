@@ -124,6 +124,18 @@
             "report",
             "weekly"
           ]
+        },
+        {
+          "slug": "nisan-2-8-lead-raporu",
+          "name": "Nisan 2–8 Lead Raporu",
+          "description": "Cancera haftalık lead analiz raporu — 2-8 Nisan 2026",
+          "date": "2026-04-09",
+          "tags": [
+            "lead",
+            "report",
+            "weekly",
+            "analytics"
+          ]
         }
       ]
     }

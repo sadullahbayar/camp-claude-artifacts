@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancera — Nisan 2–8 Lead Raporu</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--g:#EAF3DE;--gt:#27500A;--y:#FAEEDA;--yt:#633806;--b:#E6F1FB;--bt:#0C447C;--r:#FCEBEB;--rt:#791F1F}
+body{background:#f5f5f3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:16px}
+.wrap{padding:1rem 0;max-width:960px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;padding:12px 16px;background:#fff;border-radius:12px;border:0.5px solid #e0e0e0}
+.topbar label{font-size:12px;color:#555}
+.period-badge{font-size:12px;padding:4px 12px;border-radius:20px;background:#E6F1FB;color:#0C447C;font-weight:500}
+.slide{border-radius:12px;border:0.5px solid #e0e0e0;background:#fff;margin-bottom:16px;overflow:hidden}
+.slide-header{padding:12px 20px;border-bottom:0.5px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center}
+.slide-num{font-size:11px;color:#aaa;font-weight:500;letter-spacing:.05em}
+.slide-title{font-size:16px;font-weight:500;color:#1a1a1a}
+.slide-body{padding:16px 20px}
+.slide-note{padding:10px 20px 14px;border-top:0.5px solid #e0e0e0;font-size:12px;color:#666;background:#fafafa;line-height:1.6}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.kpi{border-radius:8px;padding:14px 12px;border-left:3px solid transparent}
+.kpi.toplam{background:#F1EFE8;border-left-color:#888780}
+.kpi.basarili{background:#EAF3DE;border-left-color:#639922}
+.kpi.yuksek{background:#E6F1FB;border-left-color:#378ADD}
+.kpi.takip{background:#FAEEDA;border-left-color:#BA7517}
+.kpi.basarisiz{background:#FCEBEB;border-left-color:#E24B4A}
+.kpi-label{font-size:11px;margin-bottom:4px}
+.kpi.toplam .kpi-label{color:#5F5E5A}
+.kpi.basarili .kpi-label{color:#3B6D11}
+.kpi.yuksek .kpi-label{color:#185FA5}
+.kpi.takip .kpi-label{color:#854F0B}
+.kpi.basarisiz .kpi-label{color:#A32D2D}
+.kpi-val{font-size:26px;font-weight:500}
+.kpi.toplam .kpi-val{color:#2C2C2A}
+.kpi.basarili .kpi-val{color:#27500A}
+.kpi.yuksek .kpi-val{color:#0C447C}
+.kpi.takip .kpi-val{color:#633806}
+.kpi.basarisiz .kpi-val{color:#791F1F}
+.kpi-pct{font-size:11px;margin-top:2px}
+.kpi.toplam .kpi-pct{color:#888780}
+.kpi.basarili .kpi-pct{color:#3B6D11}
+.kpi.yuksek .kpi-pct{color:#185FA5}
+.kpi.takip .kpi-pct{color:#854F0B}
+.kpi.basarisiz .kpi-pct{color:#A32D2D}
+.src-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bucket-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.bucket{border-radius:12px;border:0.5px solid #e0e0e0;overflow:hidden}
+.bhead{padding:9px 12px;font-size:12px;font-weight:500;display:flex;justify-content:space-between}
+.bhead.basarili{background:var(--g);color:var(--gt)}
+.bhead.yuksek{background:var(--b);color:var(--bt)}
+.bhead.takip{background:var(--y);color:var(--yt)}
+.bhead.basarisiz{background:var(--r);color:var(--rt)}
+.bbody{max-height:220px;overflow-y:auto}
+.bitem{padding:7px 12px;font-size:12px;border-bottom:0.5px solid #e0e0e0}
+.bitem:last-child{border-bottom:none}
+.bitem-name{font-weight:500;color:#1a1a1a}
+.bitem-meta{font-size:11px;color:#888;margin-top:1px}
+.bitem-reason{font-size:11px;color:#A32D2D;margin-top:1px}
+.bempty{padding:16px;text-align:center;font-size:12px;color:#bbb}
+.big-count{padding:20px;text-align:center}
+.big-num{font-size:36px;font-weight:500}
+.big-lbl{font-size:12px;margin-top:4px;color:#888}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-box{border-radius:12px;border:0.5px solid #e0e0e0;padding:14px}
+.chart-label{font-size:12px;font-weight:500;color:#555;margin-bottom:8px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
+.leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.sebep-list{display:flex;flex-direction:column;gap:7px}
+.srow{display:flex;align-items:center;gap:8px}
+.slabel{min-width:130px;color:#666;font-size:11px}
+.sbar-w{flex:1;background:#f0f0f0;border-radius:20px;height:8px;overflow:hidden}
+.sbar{height:8px;border-radius:20px;background:#E24B4A}
+.scount{min-width:20px;text-align:right;font-weight:500;color:#791F1F;font-size:12px}
+.funnel-step{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.funnel-label{min-width:140px;font-size:12px;color:#666;text-align:right}
+.funnel-bar-wrap{flex:1;background:#f0f0f0;border-radius:4px;height:40px;overflow:hidden}
+.funnel-bar{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:12px}
+.funnel-bar span{font-size:13px;font-weight:500;color:#fff;white-space:nowrap}
+
+/* Back button */
+.camp-back {
+  position: fixed; top: 16px; left: 16px; z-index: 9999;
+  background: rgba(0,0,0,0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: rgba(0,0,0,0.4);
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.camp-back:hover {
+  background: rgba(0,0,0,0.08);
+  color: rgba(0,0,0,0.7);
+}
+</style>
+</head>
+<body>
+
+<a class="camp-back" href="/brands/cancera/">← Cancera</a>
+
+<div class="wrap">
+
+<div class="topbar">
+  <label style="font-weight:500;color:#1a1a1a">Dönem:</label>
+  <span class="period-badge">2 Nisan – 8 Nisan 2026</span>
+  <span style="font-size:12px;color:#aaa;margin-left:8px">PDF verisi baz alındı · Yeni Lead statüsü hariç</span>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">SLAYT 01</span>
+    <span class="slide-title">Haftalık özet</span>
+    <span class="period-badge">2–8 Nisan 2026</span>
+  </div>
+  <div class="slide-body">
+    <div class="kpi-grid">
+      <div class="kpi toplam"><div class="kpi-label">Toplam lead</div><div class="kpi-val" id="k-top">—</div><div class="kpi-pct">Bu dönem</div></div>
+      <div class="kpi basarili"><div class="kpi-label">Başarılı</div><div class="kpi-val" id="k-bas">—</div><div class="kpi-pct" id="k-bas-p">—</div></div>
+      <div class="kpi yuksek"><div class="kpi-label">Yüksek potansiyel</div><div class="kpi-val" id="k-yuk">—</div><div class="kpi-pct" id="k-yuk-p">—</div></div>
+      <div class="kpi takip"><div class="kpi-label">Takipte</div><div class="kpi-val" id="k-tak">—</div><div class="kpi-pct" id="k-tak-p">—</div></div>
+      <div class="kpi basarisiz"><div class="kpi-label">Başarısız</div><div class="kpi-val" id="k-bsz">—</div><div class="kpi-pct" id="k-bsz-p">—</div></div>
+    </div>
+    <div class="src-row">
+      <div class="kpi takip" style="border-left-color:#185FA5;background:#E6F1FB"><div class="kpi-label" style="color:#185FA5">Instagram</div><div class="kpi-val" id="k-ig" style="color:#0C447C">—</div><div class="kpi-pct" style="color:#185FA5">Kaynak</div></div>
+      <div class="kpi takip" style="border-left-color:#0F6E56;background:#E1F5EE"><div class="kpi-label" style="color:#0F6E56">Website</div><div class="kpi-val" id="k-web" style="color:#085041">—</div><div class="kpi-pct" style="color:#0F6E56">Kaynak</div></div>
+    </div>
+  </div>
+  <div class="slide-note" id="note-s1"></div>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">SLAYT 02</span>
+    <span class="slide-title">Durum analizi</span>
+  </div>
+  <div class="slide-body">
+    <div class="bucket-grid">
+      <div class="bucket"><div class="bhead basarili"><span>Başarılı</span><span id="bc-bas">0</span></div><div class="bbody" id="bb-bas"><div class="bempty">—</div></div></div>
+      <div class="bucket"><div class="bhead yuksek"><span>Yüksek potansiyel</span><span id="bc-yuk">0</span></div><div class="bbody" id="bb-yuk"><div class="bempty">—</div></div></div>
+      <div class="bucket"><div class="bhead takip"><span>Takipte</span><span id="bc-tak">0</span></div><div class="bbody" id="bb-tak"><div class="bempty">—</div></div></div>
+      <div class="bucket"><div class="bhead basarisiz"><span>Başarısız</span><span id="bc-bsz">0</span></div><div class="bbody" id="bb-bsz"><div class="bempty">—</div></div></div>
+    </div>
+  </div>
+  <div class="slide-note" id="note-s2"></div>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">SLAYT 03</span>
+    <span class="slide-title">Grafik analizi</span>
+  </div>
+  <div class="slide-body">
+    <div class="chart-row">
+      <div class="chart-box">
+        <div class="chart-label">Durum dağılımı</div>
+        <div class="legend" id="leg-pie"></div>
+        <div style="position:relative;height:200px"><canvas id="chart-pie" role="img" aria-label="Durum dağılımı">Lead durum dağılımı</canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Başarısızlık sebepleri</div>
+        <div class="sebep-list" id="sebep-bars"></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-note" id="note-s3"></div>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">SLAYT 04</span>
+    <span class="slide-title">Günlük lead akışı</span>
+  </div>
+  <div class="slide-body">
+    <div style="position:relative;height:240px"><canvas id="chart-gunluk" role="img" aria-label="Günlük lead akışı">Günlük lead akışı</canvas></div>
+  </div>
+  <div class="slide-note" id="note-s4"></div>
+</div>
+
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">SLAYT 05</span>
+    <span class="slide-title">Dönüşüm hunisi</span>
+  </div>
+  <div class="slide-body" id="funnel-body"></div>
+  <div class="slide-note" id="note-s5"></div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const LEADS = [
+  {isim:'Isil Dizman',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-08',tanis:'Tıbbi görüntü değerlendirme'},
+  {isim:'OKYAY BAYRAK',kaynak:'Website',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-08',tanis:'Rektum'},
+  {isim:'Bahar Gül',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-08',tanis:'Pankreas 4. evre'},
+  {isim:'Büşra Alıcı Nane',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-08',tanis:'HCC kanseri'},
+  {isim:'Özgür barış Polat',kaynak:'Website',durum:'takip',sebep:'',tarih:'2026-04-08',tanis:'Kolon'},
+  {isim:'Nazım Yazıcı',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-08',tanis:'Akciğer kanseri'},
+  {isim:'Yunus Pazarbaşı',kaynak:'Website',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-08',tanis:'Pankreas'},
+  {isim:'Çağatay Taşkın Yamen',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-08',tanis:'Genel kanser'},
+  {isim:'Ayşe-mehmet Aksoy',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-08',tanis:'Rahim kanseri'},
+  {isim:'Mehmet Çabuk',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-08',tanis:'Ependimom'},
+  {isim:'Yağmur Aslan',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-08',tanis:'Nüks kitle'},
+  {isim:'halime ozbeg',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-08',tanis:'Pankreas 4. evre'},
+  {isim:'[Ekstra Başarılı]',kaynak:'Instagram',durum:'basarili',sebep:'',tarih:'2026-04-08',tanis:'—'},
+  {isim:'Oğuz Kızıltepe',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Yumuşak doku tümörü'},
+  {isim:'Ayşe Çoban Vardar',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-07',tanis:'Akciğer 4. evre'},
+  {isim:'Nimet Gül',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Nöroendokrin akciğer'},
+  {isim:'Nevin Aslancı',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Meme ca evre 2b'},
+  {isim:'Mücahit Nezir',kaynak:'Website',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Over'},
+  {isim:'elif bilen',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-07',tanis:'Tiroit papiller'},
+  {isim:'Demir Efe',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-07',tanis:'Meme kanseri'},
+  {isim:'Tuğba Soyer',kaynak:'Website',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Meme'},
+  {isim:'Gökhan Bölükbaş',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Akciğer nöroendokrin'},
+  {isim:'Okan Kaygısız',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Meme kanseri kemo'},
+  {isim:'Olfa kahveci',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Akciğer kanseri'},
+  {isim:'Mutlu Görmüşler',kaynak:'Website',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'2. Görüş'},
+  {isim:'Kemal Akkuş',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-07',tanis:'Mesane kanseri'},
+  {isim:'Zübeyde Kişi Akpınar',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-07',tanis:'Kolon ca'},
+  {isim:'Ali Yilmazturk',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Gırtlak kanseri'},
+  {isim:'Çayir Pen Adem Çayir',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-07',tanis:'Beyin kitle'},
+  {isim:'Serdar Çorbacı',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-06',tanis:'Rektum kanseri'},
+  {isim:'Lokman Gürgen',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-06',tanis:'Biyopsi sorusu'},
+  {isim:'İdealar dünyası',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-06',tanis:'Kanser süreci'},
+  {isim:'Seyid Mehmed Parlak',kaynak:'Instagram',durum:'basarisiz',sebep:'Yanlış numara',tarih:'2026-04-06',tanis:'Pankreas'},
+  {isim:'Murat',kaynak:'Instagram',durum:'basarisiz',sebep:'Yanlış numara',tarih:'2026-04-06',tanis:'Tedavi protokolü'},
+  {isim:'Pelin Akbuga',kaynak:'Website',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-06',tanis:'Mide'},
+  {isim:'Abdurrahman Oymak',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-06',tanis:'Prostat'},
+  {isim:'Sevim Çekim',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-06',tanis:'Tiroit 4. evre'},
+  {isim:'ÖZLEM GİRGİÇ',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-06',tanis:'Glioblastoma 4'},
+  {isim:'Ahmet Gökmen',kaynak:'Website',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-06',tanis:'Pankreas'},
+  {isim:'Emir Celal Çolak',kaynak:'Website',durum:'yuksek',sebep:'',tarih:'2026-04-06',tanis:'Akciğer'},
+  {isim:'Melih Sabuncu',kaynak:'Website',durum:'yuksek',sebep:'',tarih:'2026-04-06',tanis:'Kolon'},
+  {isim:'Hatice Veral',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-06',tanis:'Kolon ca'},
+  {isim:'Fatih Tekkol',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-05',tanis:'Mide kanseri'},
+  {isim:'Satılmış Emir',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-05',tanis:'Yumuşak doku'},
+  {isim:'Süheyla Kaymak',kaynak:'Website',durum:'yuksek',sebep:'',tarih:'2026-04-05',tanis:'Serviks'},
+  {isim:'Sude Sude Kaya',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-05',tanis:'Menengioma'},
+  {isim:'Begum Dumlupinar',kaynak:'Website',durum:'takip',sebep:'',tarih:'2026-04-05',tanis:'Akciğer'},
+  {isim:'Zeynep Teacher',kaynak:'Instagram',durum:'yuksek',sebep:'',tarih:'2026-04-05',tanis:'Meme kemik met'},
+  {isim:'Zülfikar Arslan Kırcı',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-05',tanis:'Kolon'},
+  {isim:'Sevgi Çakır',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-05',tanis:'Kemoterapi'},
+  {isim:'Ömer Karbuzoğlu',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-05',tanis:'Kemoterapi'},
+  {isim:'Hatice Öztürk',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-05',tanis:'Tiroit'},
+  {isim:'Esra özdemir bayır',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-05',tanis:'Over ca'},
+  {isim:'Mehmet Demir',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-05',tanis:'Klatskin tümör'},
+  {isim:'Betül Yılmaz',kaynak:'Instagram',durum:'yuksek',sebep:'',tarih:'2026-04-05',tanis:'Lenfoma'},
+  {isim:'Öz Al',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-05',tanis:'Tümör'},
+  {isim:'ergin meracı',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-05',tanis:'Meme kanseri'},
+  {isim:'Ayşegül Kurt',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Meme karaciğer met'},
+  {isim:'Kadir Düzgün',kaynak:'Website',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Larinks'},
+  {isim:'ben kedim ve kahyası',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-04',tanis:'Pankreas'},
+  {isim:'tunadursun',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Pankreas'},
+  {isim:'Aydın Ejderoğlu',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Meme 2. evre'},
+  {isim:'Cengiz Bayram',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Kolon'},
+  {isim:'senayyrb',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Meme'},
+  {isim:'sinem zehra soysal',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Mide ca 4. evre'},
+  {isim:'Aysel Özekin',kaynak:'Website',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Meme'},
+  {isim:'Münzevi Nehir Seyyah',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-04',tanis:'Safrayolu kanseri'},
+  {isim:'serap maraşlı',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Mide ca nüks'},
+  {isim:'Emine Kaya',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Tanı'},
+  {isim:'Dilek Dügme',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-04',tanis:'Ses teli kanseri'},
+  {isim:'Figen Altınbaş Demir',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Pankreas'},
+  {isim:'Ahmet Tamer Emir',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Böbrek kanseri'},
+  {isim:'Hüseyin Hidirbozan',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Akciğer 2. evre'},
+  {isim:'fatmaispir',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-04',tanis:'Tiroit'},
+  {isim:'Özlem Tıraş',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Mesane kanseri'},
+  {isim:'me_sa_yag',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Over ca'},
+  {isim:'Kazım Baburhan',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-03',tanis:'Kemik metastaz'},
+  {isim:'Nuray Kalendir',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Tomografi'},
+  {isim:'BI',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Kolon 4. evre'},
+  {isim:'Nilüfer Aydemir',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Safra karaciğer'},
+  {isim:'Adem Adam Aydın',kaynak:'Instagram',durum:'basarisiz',sebep:'Mali sebepler',tarih:'2026-04-03',tanis:'Karaciğer'},
+  {isim:'Süleyman Şadi Gür',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Akciğer'},
+  {isim:'Dilber Arslan',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Meme CA'},
+  {isim:'Hamza Yıldız',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Meme kemik met'},
+  {isim:'Ergül Şahin',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-03',tanis:'Miyelofibrozis'},
+  {isim:'Yasemin çoban',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-03',tanis:'Meme beyin met'},
+  {isim:'haticeoltulu',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Tükürük bezi'},
+  {isim:'Serpil Dalamanli Par',kaynak:'Instagram',durum:'basarisiz',sebep:'Program uyumsuzluğu',tarih:'2026-04-03',tanis:'Vulvar CA'},
+  {isim:'Mesut İhtiyar',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-03',tanis:'Akciğer'},
+  {isim:'OĞUZ ÖZSOY',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-03',tanis:'Lösemi'},
+  {isim:'Emine Serter',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-03',tanis:'Tedavi'},
+  {isim:'Tülay Aktaş Aydınbaş',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Akciğer 4. evre'},
+  {isim:'Dr. Kudbettin Kaya',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-02',tanis:'Alternatif tedavi'},
+  {isim:'Aida Genç',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-02',tanis:'Prostat'},
+  {isim:'Batuhan Çetin',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Akciğer metastaz'},
+  {isim:'Fatma Koç',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Meme 4. evre'},
+  {isim:'Sultan Türkmen',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Meme ca'},
+  {isim:'Yasar Yuksel',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Akciğer'},
+  {isim:'Nihat özen',kaynak:'Instagram',durum:'takip',sebep:'',tarih:'2026-04-02',tanis:'Kemoterapi'},
+  {isim:'Hasan Kaymakçı',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Pankreas karaciğer'},
+  {isim:'Senem Seven',kaynak:'Website',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Mide'},
+  {isim:'Hacı Tugay',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Pankreas'},
+  {isim:'İLKNUR T',kaynak:'Instagram',durum:'basarisiz',sebep:'Genel',tarih:'2026-04-02',tanis:'Tedavi sorgusu'},
+];
+
+function pct(n,t){return t?Math.round(n/t*100)+'%':'0%';}
+
+const grp={basarili:[],yuksek:[],takip:[],basarisiz:[]};
+let ig=0,web=0;
+LEADS.forEach(l=>{
+  if(grp[l.durum])grp[l.durum].push(l);
+  if(l.kaynak==='Instagram')ig++;
+  if(l.kaynak==='Website')web++;
+});
+const t=LEADS.length;
+
+document.getElementById('k-top').textContent=t;
+document.getElementById('k-bas').textContent=grp.basarili.length;
+document.getElementById('k-bas-p').textContent=pct(grp.basarili.length,t);
+document.getElementById('k-yuk').textContent=grp.yuksek.length;
+document.getElementById('k-yuk-p').textContent=pct(grp.yuksek.length,t);
+document.getElementById('k-tak').textContent=grp.takip.length;
+document.getElementById('k-tak-p').textContent=pct(grp.takip.length,t);
+document.getElementById('k-bsz').textContent=grp.basarisiz.length;
+document.getElementById('k-bsz-p').textContent=pct(grp.basarisiz.length,t);
+document.getElementById('k-ig').textContent=ig;
+document.getElementById('k-web').textContent=web;
+
+const igPct=Math.round(ig/t*100);
+document.getElementById('note-s1').textContent=
+  `2–8 Nisan döneminde toplam ${t} lead işlendi. Leadlerin %${igPct}'i Instagram, geri kalanı Website üzerinden geldi. `+
+  `${grp.basarisiz.length} lead başarısıza dönerken ${grp.takip.length} lead hâlâ takip sürecinde. 8 Nisan'da 1 başarılı lead kaydedildi.`;
+
+['bas','yuk','tak','bsz'].forEach((k,i)=>{
+  const g=['basarili','yuksek','takip','basarisiz'][i];
+  document.getElementById('bc-'+k).textContent=grp[g].length;
+  const el=document.getElementById('bb-'+k);
+  if(!grp[g].length){el.innerHTML='<div class="bempty">Bu dönemde yok</div>';return;}
+  if(g==='basarili'||g==='yuksek'){
+    el.innerHTML=`<div class="big-count"><div class="big-num" style="color:${g==='basarili'?'#27500A':'#0C447C'}">${grp[g].length}</div><div class="big-lbl">${g==='basarili'?'başarılı lead':'yüksek potansiyel lead'}</div></div>`;
+    return;
+  }
+  el.innerHTML=grp[g].map(l=>`<div class="bitem"><div class="bitem-name">${l.isim}</div><div class="bitem-meta">${l.kaynak}${l.tanis?' · '+l.tanis:''}</div>${l.sebep?`<div class="bitem-reason">${l.sebep}</div>`:''}</div>`).join('');
+});
+
+document.getElementById('note-s2').textContent=
+  `Yüksek potansiyel grubundaki ${grp.yuksek.length} lead öncelikli takip gerektiriyor. `+
+  `Başarısız leadlerin büyük çoğunluğu genel kategoriyle kaydedilmiş; sebep detaylandırması yapılması önerilir.`;
+
+const colors=['#639922','#378ADD','#BA7517','#E24B4A'];
+const labels=['Başarılı','Yüksek potansiyel','Takipte','Başarısız'];
+const vals=[grp.basarili.length,grp.yuksek.length,grp.takip.length,grp.basarisiz.length];
+document.getElementById('leg-pie').innerHTML=labels.map((l,i)=>`<span class="leg-item"><span class="leg-sq" style="background:${colors[i]}"></span>${l} (${vals[i]})</span>`).join('');
+
+let pieChart=null;
+if(t>0){pieChart=new Chart(document.getElementById('chart-pie'),{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+' ('+pct(c.raw,t)+')'}}}}});}
+
+const sebepMap={};
+grp.basarisiz.forEach(l=>{const s=l.sebep&&l.sebep.trim()?l.sebep.trim():'Genel';sebepMap[s]=(sebepMap[s]||0)+1;});
+const sebs=Object.entries(sebepMap).sort((a,b)=>b[1]-a[1]);
+const maxS=sebs.length?sebs[0][1]:0;
+document.getElementById('sebep-bars').innerHTML=sebs.map(([s,n])=>`<div class="srow"><span class="slabel">${s}</span><div class="sbar-w"><div class="sbar" style="width:${Math.round(n/maxS*100)}%"></div></div><span class="scount">${n}</span></div>`).join('');
+
+document.getElementById('note-s3').textContent=
+  `En yoğun başarısızlık sebebi "Genel" — ${sebepMap['Genel']||0} lead bu kategoride. `+
+  `Yanlış numara ${sebepMap['Yanlış numara']||0}, mali sebepler ${sebepMap['Mali sebepler']||0} lead. Daha spesifik sebep takibi dönüşüm kalitesini artırabilir.`;
+
+const dailyMap={
+  '2026-04-02':0,'2026-04-03':0,'2026-04-04':0,
+  '2026-04-05':0,'2026-04-06':0,'2026-04-07':0,'2026-04-08':0
+};
+LEADS.forEach(l=>{if(dailyMap[l.tarih]!==undefined)dailyMap[l.tarih]++;});
+const dates=Object.keys(dailyMap);
+const dvals=dates.map(d=>dailyMap[d]);
+const maxD=Math.max(...dvals);
+const peakIdx=dvals.indexOf(maxD);
+const dayLabels=['02.04 Per','03.04 Cum','04.04 Cmt','05.04 Paz','06.04 Pts','07.04 Sal','08.04 Çar'];
+
+new Chart(document.getElementById('chart-gunluk'),{
+  type:'bar',
+  data:{labels:dayLabels,datasets:[{data:dvals,backgroundColor:dvals.map((v,i)=>i===peakIdx?'#378ADD':'#B5D4F4'),borderWidth:0,borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+' lead'}}},scales:{x:{ticks:{font:{size:11}},grid:{display:false}},y:{ticks:{stepSize:1,font:{size:11}},grid:{color:'rgba(128,128,128,0.08)'}}}}
+});
+
+const avg=(t/7).toFixed(1);
+document.getElementById('note-s4').textContent=
+  `En yoğun gün ${dayLabels[peakIdx]} — ${maxD} lead. Günlük ortalama ${avg} lead. `+
+  `Hafta genelinde yükleme oldukça dengeli seyretmiş; hafta ortası ve başında yoğunluk gözlemleniyor.`;
+
+const fSteps=[
+  {label:'Toplam lead',val:t,color:'#888780'},
+  {label:'Takipte',val:grp.takip.length,color:'#BA7517'},
+  {label:'Yüksek potansiyel',val:grp.yuksek.length,color:'#378ADD'},
+  {label:'Başarılı',val:grp.basarili.length,color:'#639922'},
+];
+const maxV=fSteps[0].val||1;
+document.getElementById('funnel-body').innerHTML=`<div style="display:flex;flex-direction:column;gap:10px;max-width:560px;margin:0 auto">`+
+  fSteps.map(s=>{
+    const w=Math.round(s.val/maxV*100);
+    const p=pct(s.val,t);
+    return`<div class="funnel-step"><div class="funnel-label">${s.label}</div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${w}%;background:${s.color}"><span>${s.val} <span style="font-size:11px;opacity:.8">(${p})</span></span></div></div></div>`;
+  }).join('')+`</div>`;
+
+const convRate=Math.round(grp.basarili.length/t*100);
+const potRate=Math.round((grp.basarili.length+grp.yuksek.length)/t*100);
+document.getElementById('note-s5').textContent=
+  `Genel dönüşüm oranı %${convRate}. Başarılı ve yüksek potansiyel birlikte değerlendirildiğinde olumlu oran %${potRate}'e çıkıyor. `+
+  `Takipte kalan ${grp.takip.length} lead aktif yönetilirse bu oranın artması bekleniyor.`;
+</script>
+</body>
+</html>
