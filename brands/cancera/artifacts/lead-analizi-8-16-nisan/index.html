@@ -1,0 +1,287 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.pres{width:100%;max-width:900px;margin:0 auto;padding:1rem 0}
+.slide{display:none;width:100%;aspect-ratio:16/9;position:relative;overflow:hidden;border-radius:12px}
+.slide.active{display:block}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 0;max-width:900px;margin:0 auto}
+.nav button{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);color:var(--color-text-primary);padding:7px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500}
+.nav button:disabled{opacity:0.3;cursor:default}
+.nav button:not(:disabled):hover{background:var(--color-background-tertiary)}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--color-border-primary);cursor:pointer;transition:background 0.2s}
+.dot.active{background:var(--color-text-primary)}
+.slide-label{font-size:12px;color:var(--color-text-secondary)}
+
+.s1,.s2,.s3,.s4,.s5{background:#0A1628;width:100%;height:100%}
+
+.tag{position:absolute;top:6%;left:5%;font-size:1.1vw;font-weight:600;letter-spacing:0.15em;color:#00B4D8;text-transform:uppercase}
+.stitle{position:absolute;top:14%;left:5%;font-size:2.4vw;font-weight:600;color:#ffffff}
+
+.s1 .bar{position:absolute;left:0;top:0;width:0.9%;height:100%;background:#00B4D8}
+.s1 .main{position:absolute;top:18%;left:6%;font-size:5.5vw;font-weight:700;color:#fff;font-family:Georgia,serif;line-height:1.1}
+.s1 .date{position:absolute;top:52%;left:6%;font-size:2.4vw;color:#00B4D8;font-weight:400}
+.s1 .divider{position:absolute;top:64%;left:6%;width:55%;height:1px;background:#1A3A5C}
+.s1 .sub{position:absolute;top:68%;left:6%;font-size:1.1vw;color:#8BA4B8}
+.s1 .bignum{position:absolute;top:28%;right:5%;font-size:9vw;font-weight:700;color:#0077B6;font-family:Georgia,serif;line-height:1}
+.s1 .biglabel{position:absolute;top:70%;right:5%;font-size:1vw;color:#8BA4B8;letter-spacing:0.15em;text-align:right}
+.s1 .footer{position:absolute;bottom:0;left:0;right:0;height:8%;background:#112240;display:flex;align-items:center;padding:0 5%;font-size:1vw;color:#8BA4B8}
+
+.kpi-grid{position:absolute;top:28%;left:3%;right:3%;display:grid;grid-template-columns:repeat(4,1fr);gap:1.5%}
+.kpi-card{background:#112240;border-radius:8px;padding:6% 5% 5%;position:relative;overflow:hidden}
+.kpi-top{position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-val{font-size:4.5vw;font-weight:700;font-family:Georgia,serif;line-height:1.1;margin-top:4%}
+.kpi-label{font-size:1.1vw;font-weight:600;color:#fff;margin-top:6%}
+.kpi-sub{font-size:0.9vw;color:#8BA4B8;margin-top:3%}
+.s2 .footnote{position:absolute;bottom:3%;left:5%;font-size:0.85vw;color:#8BA4B8}
+
+.chart-wrap{position:absolute;top:26%;left:4%;right:4%;bottom:12%;display:flex;align-items:flex-end;gap:1.2%}
+.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;height:100%}
+.bar-col .bar-val{font-size:1.1vw;color:#00B4D8;font-weight:600;margin-bottom:3%}
+.bar-col .bar-body{width:100%;background:#0077B6;border-radius:4px 4px 0 0;transition:height 0.3s}
+.bar-col .bar-lbl{font-size:0.85vw;color:#8BA4B8;margin-top:5%;text-align:center}
+.xaxis{position:absolute;bottom:12%;left:4%;right:4%;height:1px;background:#1A3A5C}
+.s3 .footnote{position:absolute;bottom:3%;left:5%;font-size:0.85vw;color:#8BA4B8}
+
+.pie-area{position:absolute;top:24%;left:3%;width:48%;bottom:10%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.legend{display:flex;gap:5%;margin-top:4%;justify-content:center}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:0.9vw;color:#8BA4B8}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.right-panel{position:absolute;top:24%;left:54%;right:3%;bottom:10%;display:flex;flex-direction:column;gap:3%}
+.status-card{background:#112240;border:0.5px solid #1A3A5C;border-radius:8px;padding:4% 5%;display:flex;align-items:center;justify-content:space-between;flex:1}
+.sc-left{display:flex;flex-direction:column;gap:4px}
+.sc-accent{width:4px;height:100%;border-radius:2px;flex-shrink:0;margin-right:3%}
+.sc-label{font-size:1.2vw;font-weight:600;color:#fff}
+.sc-count{font-size:1vw;color:#8BA4B8}
+.sc-pct{font-size:2.5vw;font-weight:700;font-family:Georgia,serif}
+.s4 .footnote{position:absolute;bottom:3%;left:5%;font-size:0.85vw;color:#8BA4B8}
+
+.hbar-wrap{position:absolute;top:26%;left:4%;right:4%;bottom:12%;display:flex;flex-direction:column;justify-content:space-around}
+.hbar-row{display:flex;align-items:center;gap:2%}
+.hbar-lbl{width:22%;font-size:1vw;color:#8BA4B8;text-align:right;flex-shrink:0}
+.hbar-track{flex:1;height:1.8vw;background:#112240;border-radius:4px;overflow:hidden}
+.hbar-fill{height:100%;background:#0077B6;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+.hbar-num{font-size:1vw;color:#00B4D8;font-weight:600}
+.s5 .footnote{position:absolute;bottom:3%;left:5%;font-size:0.9vw;color:#F4A261}
+
+.camp-back{position:fixed;top:16px;left:16px;z-index:9999;background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:8px 14px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;transition:all 0.2s ease}
+.camp-back:hover{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8)}
+</style>
+
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+
+<div class="pres">
+
+<div class="nav">
+  <button id="prev" onclick="go(-1)">← Önceki</button>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div class="dots" id="dots"></div>
+    <span class="slide-label" id="slide-label">1 / 5</span>
+  </div>
+  <button id="next" onclick="go(1)">Sonraki →</button>
+</div>
+
+<div class="slide s1 active" id="slide-0">
+  <div class="bar"></div>
+  <div class="main">Lead Analizi</div>
+  <div class="date">8 – 16 Nisan 2026</div>
+  <div class="divider"></div>
+  <div class="sub">Toplam Lead Analizi  •  Satış Durumu  •  Kayıp Nedenleri</div>
+  <div class="bignum">129</div>
+  <div class="biglabel">TOPLAM LEAD</div>
+  <div style="position:absolute;top:5%;left:6%;font-size:1.1vw;font-weight:600;letter-spacing:0.15em;color:#00B4D8">HAFTALIK PERFORMANS RAPORU</div>
+  <div class="footer">Hazırlayan: İlknur Yaman  |  Veri Kaynağı: CRM Sistemi  |  16 Nisan 2026</div>
+</div>
+
+<div class="slide s2" id="slide-1">
+  <div class="tag">Özel Göstergeler</div>
+  <div class="stitle">8 – 16 Nisan 2026 Performansı</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-top" style="background:#00B4D8"></div>
+      <div class="kpi-val" style="color:#00B4D8">129</div>
+      <div class="kpi-label">Toplam Lead</div>
+      <div class="kpi-sub">+31.6% önceki haftaya göre</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top" style="background:#E63946"></div>
+      <div class="kpi-val" style="color:#E63946">72</div>
+      <div class="kpi-label">Başarısız</div>
+      <div class="kpi-sub">%55.8 oran (önceki: %65.3)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top" style="background:#F4A261"></div>
+      <div class="kpi-val" style="color:#F4A261">39</div>
+      <div class="kpi-label">Takipte</div>
+      <div class="kpi-sub">%30.2 oran</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top" style="background:#2DC653"></div>
+      <div class="kpi-val" style="color:#2DC653">1</div>
+      <div class="kpi-label">Yüksek Potansiyel</div>
+      <div class="kpi-sub">En sıcak lead</div>
+    </div>
+  </div>
+  <div class="footnote">* Tüm leadler İlknur Yaman tarafından yönetilmektedir. Veriler 16 Nisan 2026 itibarıyla CRM sistemindendir.</div>
+</div>
+
+<div class="slide s3" id="slide-2">
+  <div class="tag">Günlük Lead Akışı</div>
+  <div class="stitle">8 – 16 Nisan | Günlük Lead Sayıları</div>
+  <div class="chart-wrap" id="barchart"></div>
+  <div class="xaxis"></div>
+  <div class="footnote">En yoğun günler: 12 ve 13 Nisan (19 lead/gün)</div>
+</div>
+
+<div class="slide s4" id="slide-3">
+  <div class="tag">Satış Durumu</div>
+  <div class="stitle">Lead Dönüşüm & Durum Analizi</div>
+  <div class="pie-area">
+    <canvas id="pieChart" width="260" height="260"></canvas>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#E63946"></div>Başarısız</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#F4A261"></div>Takipte</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#2DC653"></div>Yüksek Pot.</div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="status-card">
+      <div style="width:4px;height:100%;background:#E63946;border-radius:2px;margin-right:3%;flex-shrink:0"></div>
+      <div class="sc-left"><div class="sc-label">Başarısız</div><div class="sc-count">72 lead</div></div>
+      <div class="sc-pct" style="color:#E63946">63.7%</div>
+    </div>
+    <div class="status-card">
+      <div style="width:4px;height:100%;background:#F4A261;border-radius:2px;margin-right:3%;flex-shrink:0"></div>
+      <div class="sc-left"><div class="sc-label">Takipte</div><div class="sc-count">39 lead</div></div>
+      <div class="sc-pct" style="color:#F4A261">34.5%</div>
+    </div>
+    <div class="status-card">
+      <div style="width:4px;height:100%;background:#2DC653;border-radius:2px;margin-right:3%;flex-shrink:0"></div>
+      <div class="sc-left"><div class="sc-label">Yüksek Potansiyel</div><div class="sc-count">1 lead</div></div>
+      <div class="sc-pct" style="color:#2DC653">0.9%</div>
+    </div>
+  </div>
+  <div class="footnote">* 17 Yeni Lead bu analizde yer almamaktadır (henüz değerlendirilmemiş).</div>
+</div>
+
+<div class="slide s5" id="slide-4">
+  <div class="tag">Kayıp Nedenleri Analizi</div>
+  <div class="stitle">Başarısız 72 Lead — Neden Kaybettik?</div>
+  <div class="hbar-wrap" id="hbars"></div>
+  <div class="footnote">⚠ Kişisel sebepler tüm kayıpların %59.7'sini oluşturmaktadır. İkinci sırada mali sebepler gelir (%16.7).</div>
+</div>
+
+</div>
+
+<script>
+let cur = 0;
+const total = 5;
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const labelEl = document.getElementById('slide-label');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+
+for(let i=0;i<total;i++){
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n){
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  labelEl.textContent = (cur+1) + ' / ' + total;
+  prevBtn.disabled = cur===0;
+  nextBtn.disabled = cur===total-1;
+  if(cur===2) drawBars();
+  if(cur===3) drawPie();
+  if(cur===4) drawHBars();
+}
+function go(d){goTo(Math.max(0,Math.min(total-1,cur+d)));}
+prevBtn.disabled = true;
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight') go(1);
+  if(e.key==='ArrowLeft') go(-1);
+});
+
+const dayData = [
+  {lbl:'8 Nis',val:16},{lbl:'9 Nis',val:12},{lbl:'10 Nis',val:14},
+  {lbl:'11 Nis',val:16},{lbl:'12 Nis',val:19},{lbl:'13 Nis',val:19},
+  {lbl:'14 Nis',val:18},{lbl:'15 Nis',val:10},{lbl:'16 Nis',val:5}
+];
+const maxVal = 24;
+
+function drawBars(){
+  const wrap = document.getElementById('barchart');
+  if(wrap.children.length) return;
+  dayData.forEach(d=>{
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const pct = Math.round(d.val/maxVal*100);
+    col.innerHTML = '<div class="bar-val">'+d.val+'</div><div class="bar-body" style="height:'+pct+'%"></div><div class="bar-lbl">'+d.lbl+'</div>';
+    wrap.appendChild(col);
+  });
+}
+
+function drawPie(){
+  const canvas = document.getElementById('pieChart');
+  if(!canvas || canvas.dataset.drawn) return;
+  canvas.dataset.drawn = '1';
+  const ctx = canvas.getContext('2d');
+  const data = [72,39,1];
+  const colors = ['#E63946','#F4A261','#2DC653'];
+  const total = data.reduce((a,b)=>a+b,0);
+  let start = -Math.PI/2;
+  const cx=130,cy=130,r=110;
+  data.forEach((v,i)=>{
+    const angle = (v/total)*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,start,start+angle);
+    ctx.closePath();
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    ctx.strokeStyle='#0A1628';
+    ctx.lineWidth=2;
+    ctx.stroke();
+    const mid = start + angle/2;
+    const tx = cx + Math.cos(mid)*r*0.65;
+    const ty = cy + Math.sin(mid)*r*0.65;
+    ctx.fillStyle='#fff';
+    ctx.font='bold 14px sans-serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    const pct = Math.round(v/total*100);
+    if(pct > 2) ctx.fillText(pct+'%',tx,ty);
+    start += angle;
+  });
+}
+
+const hbarData = [
+  {lbl:'Kişisel Sebepler',val:43,max:43},
+  {lbl:'Mali Sebepler',val:12,max:43},
+  {lbl:'Program Uyumsuzluğu',val:7,max:43},
+  {lbl:'Zamanlama',val:3,max:43},
+  {lbl:'İletişimsizlik',val:3,max:43},
+  {lbl:'Hastane Tercihi',val:2,max:43},
+  {lbl:'Güven Problemi',val:1,max:43},
+];
+
+function drawHBars(){
+  const wrap = document.getElementById('hbars');
+  if(wrap.children.length) return;
+  hbarData.forEach(d=>{
+    const row = document.createElement('div');
+    row.className = 'hbar-row';
+    const pct = Math.round(d.val/d.max*100);
+    row.innerHTML = '<div class="hbar-lbl">'+d.lbl+'</div><div class="hbar-track"><div class="hbar-fill" style="width:'+pct+'%"><span class="hbar-num">'+d.val+'</span></div></div>';
+    wrap.appendChild(row);
+  });
+}
+</script>

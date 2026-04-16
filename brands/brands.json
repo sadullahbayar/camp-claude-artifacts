@@ -136,6 +136,19 @@
             "weekly",
             "analytics"
           ]
+        },
+        {
+          "slug": "lead-analizi-8-16-nisan",
+          "name": "Lead Analizi — 8–16 Nisan 2026",
+          "description": "Haftalık lead performans raporu: 129 lead, satış durumu ve kayıp nedenleri analizi",
+          "date": "2026-04-16",
+          "tags": [
+            "lead",
+            "analiz",
+            "satış",
+            "crm",
+            "rapor"
+          ]
         }
       ]
     }
