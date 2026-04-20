@@ -71,6 +71,18 @@
             "skor",
             "hazırlık"
           ]
+        },
+        {
+          "slug": "offer-fatigue-tespiti",
+          "name": "Offer Fatigue Tespiti",
+          "description": "USCAMP reklam kampanyalarında CPL artışının kaynağını tespit eden marketing analizi ve offer merdiveni önerisi.",
+          "date": "2026-04-20",
+          "tags": [
+            "marketing",
+            "analiz",
+            "rapor",
+            "strateji"
+          ]
         }
       ]
     },

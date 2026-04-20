@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offer Fatigue Tespiti — USCAMP Marketing Analizi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0F1419;
+    --ink-soft: #1A2332;
+    --paper: #F5F1E8;
+    --paper-warm: #EDE6D4;
+    --accent: #C8553D;
+    --accent-soft: #E8A87C;
+    --amber: #D4A017;
+    --success: #4A7C59;
+    --muted: #6B7280;
+    --line: #D4CCB8;
+    --danger: #8B2635;
+  }
+  
+  .camp-back {
+    position: fixed; top: 16px; left: 16px; z-index: 9999;
+    background: rgba(0,0,0,0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: rgba(0,0,0,0.4);
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s ease;
+  }
+  .camp-back:hover {
+    background: rgba(0,0,0,0.08);
+    color: rgba(0,0,0,0.7);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter Tight', -apple-system, sans-serif;
+    line-height: 1.5;
+    font-size: 16px;
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(circle at 20% 10%, rgba(200, 85, 61, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(212, 160, 23, 0.04) 0%, transparent 40%);
+  }
+  
+  .container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+  
+  /* ============ HEADER ============ */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 40px;
+    margin-bottom: 60px;
+    position: relative;
+  }
+  
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  
+  .masthead .brand {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(48px, 6vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    font-variation-settings: "opsz" 144;
+  }
+  
+  h1 .italic {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  
+  .subtitle {
+    font-size: 20px;
+    color: var(--ink-soft);
+    font-weight: 300;
+    max-width: 720px;
+    line-height: 1.4;
+  }
+  
+  .meta-row {
+    display: flex;
+    gap: 48px;
+    margin-top: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  .meta-row span strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  
+  /* ============ EXECUTIVE BOX ============ */
+  .executive {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 56px;
+    margin-bottom: 80px;
+    position: relative;
+    border-radius: 2px;
+  }
+  
+  .executive::before {
+    content: 'EXECUTIVE SUMMARY';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    background: var(--accent);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    padding: 4px 12px;
+    font-weight: 700;
+  }
+  
+  .executive p {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    line-height: 1.35;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  
+  .executive p .highlight {
+    color: var(--amber);
+    font-style: italic;
+  }
+  
+  /* ============ SECTIONS ============ */
+  section {
+    margin-bottom: 96px;
+  }
+  
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    max-width: 900px;
+  }
+  
+  h2 .italic {
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .section-intro {
+    font-size: 18px;
+    color: var(--ink-soft);
+    max-width: 720px;
+    margin-bottom: 40px;
+    line-height: 1.55;
+  }
+  
+  /* ============ SECTION 1: CPL TREND ============ */
+  .cpl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  
+  .cpl-chart {
+    background: var(--paper-warm);
+    padding: 40px;
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  
+  .chart-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    height: 220px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 12px;
+    position: relative;
+  }
+  
+  .bar {
+    flex: 1;
+    background: var(--ink-soft);
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 8px;
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  
+  .bar.current {
+    background: var(--accent);
+  }
+  
+  .bar-labels {
+    display: flex;
+    gap: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  
+  .bar-labels span {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .cpl-insight {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+  
+  .cpl-insight .number {
+    font-size: 56px;
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  
+  /* ============ THREE CHANNELS ============ */
+  .channels-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  
+  .channel-card {
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    padding: 32px;
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+  
+  .channel-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .channel-card.uscamp { border-top: 4px solid var(--danger); }
+  .channel-card.medroute { border-top: 4px solid var(--amber); }
+  .channel-card.webinar { border-top: 4px solid var(--success); }
+  
+  .channel-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  
+  .channel-offer {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    min-height: 56px;
+  }
+  
+  .channel-cpl {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 4px;
+    font-variation-settings: "opsz" 144;
+  }
+  
+  .channel-card.uscamp .channel-cpl { color: var(--danger); }
+  .channel-card.medroute .channel-cpl { color: var(--amber); }
+  .channel-card.webinar .channel-cpl { color: var(--success); }
+  
+  .channel-cpl-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+  
+  .channel-stats {
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .channel-stats .stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+  
+  .channel-stats .stat-label {
+    color: var(--muted);
+  }
+  
+  .channel-stats .stat-value {
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  
+  /* ============ OVERLAP VENN ============ */
+  .venn-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  
+  .venn-svg {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+  }
+  
+  .overlap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  
+  .overlap-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  
+  .overlap-table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  
+  .overlap-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .overlap-table .source-name {
+    font-weight: 600;
+  }
+  
+  .overlap-table .big-number {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  
+  .overlap-table tr.highlight-row {
+    background: var(--paper-warm);
+  }
+  
+  /* ============ PARADOX BOX ============ */
+  .paradox {
+    background: linear-gradient(135deg, var(--paper-warm) 0%, var(--paper) 100%);
+    border: 2px solid var(--ink);
+    padding: 56px;
+    margin: 40px 0;
+    position: relative;
+  }
+  
+  .paradox-label {
+    position: absolute;
+    top: -14px;
+    left: 32px;
+    background: var(--paper);
+    padding: 0 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  
+  .paradox-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  
+  .paradox-side {
+    text-align: center;
+  }
+  
+  .paradox-side .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  
+  .paradox-side .value {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 8px;
+    font-variation-settings: "opsz" 144;
+  }
+  
+  .paradox-side.left .value { color: var(--danger); }
+  .paradox-side.right .value { color: var(--success); }
+  
+  .paradox-side .description {
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 220px;
+    margin: 0 auto;
+  }
+  
+  .paradox-divider {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-style: italic;
+    color: var(--accent);
+  }
+  
+  .paradox-conclusion {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  
+  /* ============ DIAGNOSIS ============ */
+  .diagnosis {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 64px;
+    position: relative;
+  }
+  
+  .diagnosis h2 {
+    color: var(--paper);
+  }
+  
+  .diagnosis h2 .italic {
+    color: var(--accent-soft);
+  }
+  
+  .diagnosis .section-intro {
+    color: var(--paper-warm);
+    opacity: 0.85;
+  }
+  
+  .diagnosis-list {
+    display: grid;
+    gap: 32px;
+    margin-top: 40px;
+  }
+  
+  .diagnosis-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 24px;
+    align-items: start;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(245, 241, 232, 0.15);
+  }
+  
+  .diagnosis-item:last-child {
+    border-bottom: none;
+  }
+  
+  .diagnosis-number {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 300;
+    line-height: 0.9;
+    color: var(--accent-soft);
+    font-variation-settings: "opsz" 144;
+  }
+  
+  .diagnosis-content h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+  
+  .diagnosis-content p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--paper-warm);
+    opacity: 0.9;
+  }
+  
+  /* ============ LADDER ============ */
+  .ladder {
+    margin-top: 48px;
+  }
+  
+  .ladder-steps {
+    display: grid;
+    gap: 16px;
+  }
+  
+  .ladder-step {
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    padding: 32px 40px;
+    position: relative;
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 32px;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+  
+  .ladder-step:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+  
+  .ladder-step.tier-1 { margin-left: 0; }
+  .ladder-step.tier-2 { margin-left: 48px; }
+  .ladder-step.tier-3 { margin-left: 96px; }
+  
+  .ladder-step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-weight: 400;
+    color: var(--accent);
+    line-height: 1;
+    font-variation-settings: "opsz" 144;
+  }
+  
+  .ladder-step-content h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  
+  .ladder-step-content .tier-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .ladder-step-content p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 600px;
+  }
+  
+  .ladder-step-cpl {
+    text-align: right;
+  }
+  
+  .ladder-step-cpl .cpl-value {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink);
+  }
+  
+  .ladder-step-cpl .cpl-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+  
+  /* ============ NEXT STEPS ============ */
+  .next-steps {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  
+  .step-card {
+    padding: 32px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    position: relative;
+  }
+  
+  .step-card .timeframe {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  
+  .step-card h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  
+  .step-card p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  
+  /* ============ FOOTER ============ */
+  footer {
+    margin-top: 120px;
+    padding-top: 32px;
+    border-top: 2px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 900px) {
+    .container { padding: 32px 20px; }
+    h1 { font-size: 48px; }
+    .executive { padding: 32px 28px; }
+    .executive::before { left: 16px; }
+    .executive p { font-size: 20px; }
+    .cpl-grid, .venn-container { grid-template-columns: 1fr; }
+    .channels-grid { grid-template-columns: 1fr; }
+    .paradox { padding: 32px 24px; }
+    .paradox-grid { grid-template-columns: 1fr; gap: 24px; }
+    .paradox-side .value { font-size: 48px; }
+    .paradox-divider { transform: rotate(90deg); }
+    .diagnosis { padding: 40px 24px; }
+    .diagnosis-item { grid-template-columns: 1fr; gap: 8px; }
+    .diagnosis-number { font-size: 48px; }
+    .ladder-step { grid-template-columns: 1fr; gap: 12px; padding: 24px; }
+    .ladder-step.tier-1, .ladder-step.tier-2, .ladder-step.tier-3 { margin-left: 0; }
+    .ladder-step-cpl { text-align: left; }
+    .next-steps { grid-template-columns: 1fr; }
+    .meta-row { flex-direction: column; gap: 8px; }
+  }
+  
+  /* ============ ANIMATIONS ============ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  header, section {
+    animation: fadeUp 0.7s ease-out backwards;
+  }
+  
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(3) { animation-delay: 0.15s; }
+  section:nth-child(4) { animation-delay: 0.2s; }
+  section:nth-child(5) { animation-delay: 0.25s; }
+  section:nth-child(6) { animation-delay: 0.3s; }
+  section:nth-child(7) { animation-delay: 0.35s; }
+</style>
+</head>
+<body>
+<a href="/brands/uscamp/" class="camp-back">← USCAMP</a>
+
+<div class="container">
+
+  <!-- ============ HEADER ============ -->
+  <header>
+    <div class="masthead">
+      <span><span class="brand">CAMP GROUP</span> · INTERNAL BRIEFING</span>
+      <span>VOL. 01 · NO. 01 · 20.04.2026</span>
+    </div>
+    <h1>Reklamlarımız neden <span class="italic">pahalılaşıyor</span>?</h1>
+    <p class="subtitle">USCAMP, MEDROUTE ve Webinar lead verilerinin çapraz analizi — ve neden bu artık bir kreatif sorunu değil, bir <em>offer</em> sorunu.</p>
+    <div class="meta-row">
+      <span>HAZIRLAYAN: <strong>Sadullah Bayar</strong></span>
+      <span>VERİ KAYNAĞI: <strong>Meta Ads + CRM Export</strong></span>
+      <span>ÖRNEKLEM: <strong>5.874 benzersiz lead</strong></span>
+    </div>
+  </header>
+  
+  <!-- ============ EXECUTIVE SUMMARY ============ -->
+  <div class="executive">
+    <p>USCAMP reklamlarında <span class="highlight">creative yorgunluğu değil, offer yorgunluğu</span> yaşıyoruz. Aynı kitleye aynı tek-seçenekli teklifi aylardır sunuyoruz — ve kitle artık yanıt vermiyor. Çözüm yeni bir video değil, yeni bir <em>giriş kapısı</em>.</p>
+  </div>
+
+  <!-- ============ SECTION 1: THE PROBLEM ============ -->
+  <section>
+    <span class="section-number">01 — SORUN</span>
+    <h2>Lead başına maliyet, <span class="italic">her ay</span> artıyor.</h2>
+    <p class="section-intro">Son dört ayda USCAMP ana kampanyasında lead başına maliyet yukarı yönlü bir trende girdi. Aynı kreatif, aynı kitle, giderek azalan dönüşüm. Bu klasik bir "auction fatigue" örüntüsü.</p>
+    
+    <div class="cpl-grid">
+      <div class="cpl-chart">
+        <div class="chart-title">USCAMP · CPL Trend · Aylık</div>
+        <div class="bars">
+          <div class="bar" style="height: 45%">~300₺</div>
+          <div class="bar" style="height: 60%">~400₺</div>
+          <div class="bar" style="height: 80%">~550₺</div>
+          <div class="bar current" style="height: 100%">~650₺</div>
+        </div>
+        <div class="bar-labels">
+          <span>Ara '25</span>
+          <span>Oca '26</span>
+          <span>Şub '26</span>
+          <span>Nis '26</span>
+        </div>
+      </div>
+      <div>
+        <div class="cpl-insight">
+          <span class="number">+117%</span>
+          dört ay içinde lead başına maliyet artışı. Meta'nın auction sisteminde bu, aynı mesajın aynı kitleye <em>görünmez hale gelmesinin</em> imzasıdır.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 2: THREE CHANNELS ============ -->
+  <section>
+    <span class="section-number">02 — KEŞİF</span>
+    <h2>Aynı şirkette, <span class="italic">üç farklı fiyat</span>.</h2>
+    <p class="section-intro">Şu an aktif üç kampanyamız var ve aynı lead için birbirinden çok farklı maliyetler ödüyoruz. Fark kampanyaların hedefleme ayarlarında değil — kullanıcıya <em>ne sunduğumuzda</em>.</p>
+    
+    <div class="channels-grid">
+      <div class="channel-card uscamp">
+        <div class="channel-name">USCAMP · Core</div>
+        <div class="channel-offer">"ABD'de doktor olmak ister misin?"</div>
+        <div class="channel-cpl">~650₺</div>
+        <div class="channel-cpl-label">LEAD BAŞINA</div>
+        <div class="channel-stats">
+          <div class="stat"><span class="stat-label">Toplam lead (tüm zaman)</span><span class="stat-value">5.542</span></div>
+          <div class="stat"><span class="stat-label">Taahhüt seviyesi</span><span class="stat-value">Yüksek</span></div>
+          <div class="stat"><span class="stat-label">Trend</span><span class="stat-value">↑ Artıyor</span></div>
+        </div>
+      </div>
+      
+      <div class="channel-card medroute">
+        <div class="channel-name">MEDROUTE · Staj</div>
+        <div class="channel-offer">"ABD'de staj fırsatı, başvur."</div>
+        <div class="channel-cpl">~175₺</div>
+        <div class="channel-cpl-label">LEAD BAŞINA</div>
+        <div class="channel-stats">
+          <div class="stat"><span class="stat-label">Yeni kampanya lead</span><span class="stat-value">166</span></div>
+          <div class="stat"><span class="stat-label">Taahhüt seviyesi</span><span class="stat-value">Orta</span></div>
+          <div class="stat"><span class="stat-label">USCAMP vs fiyat</span><span class="stat-value">3,7× ucuz</span></div>
+        </div>
+      </div>
+      
+      <div class="channel-card webinar">
+        <div class="channel-name">Webinar · Eğitim</div>
+        <div class="channel-offer">"Ücretsiz webinara katıl."</div>
+        <div class="channel-cpl">~70₺</div>
+        <div class="channel-cpl-label">LEAD BAŞINA</div>
+        <div class="channel-stats">
+          <div class="stat"><span class="stat-label">Kayıtlı katılımcı</span><span class="stat-value">166</span></div>
+          <div class="stat"><span class="stat-label">Taahhüt seviyesi</span><span class="stat-value">Düşük</span></div>
+          <div class="stat"><span class="stat-label">USCAMP vs fiyat</span><span class="stat-value">9,3× ucuz</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 3: OVERLAP ANALYSIS ============ -->
+  <section>
+    <span class="section-number">03 — ÇAPRAZ ANALİZ</span>
+    <h2>Bu üç kampanya, <span class="italic">farklı insanlara</span> ulaşıyor.</h2>
+    <p class="section-intro">Email bazında çapraz kontrol yaptığımızda şaşırtıcı bir şey çıktı: MEDROUTE ve Webinar leadlerinin büyük çoğunluğu USCAMP kampanyasında hiç lead olarak görülmemiş. Yani aynı kitleye ulaşıyormuşuz gibi görünüyor — ama gerçekte farklı segmentleri aktive ediyoruz.</p>
+    
+    <div class="venn-container">
+      <svg class="venn-svg" viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg">
+        <!-- USCAMP big circle (background) -->
+        <circle cx="250" cy="180" r="160" fill="#8B2635" fill-opacity="0.15" stroke="#8B2635" stroke-width="2"/>
+        <!-- MEDROUTE circle -->
+        <circle cx="160" cy="290" r="80" fill="#D4A017" fill-opacity="0.25" stroke="#D4A017" stroke-width="2"/>
+        <!-- Webinar circle -->
+        <circle cx="340" cy="290" r="80" fill="#4A7C59" fill-opacity="0.25" stroke="#4A7C59" stroke-width="2"/>
+        
+        <!-- Labels -->
+        <text x="250" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#8B2635" letter-spacing="1.5">USCAMP</text>
+        <text x="250" y="118" text-anchor="middle" font-family="Fraunces" font-size="22" font-weight="600" fill="#0F1419">5.542</text>
+        
+        <text x="110" y="380" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#D4A017" letter-spacing="1.5">MEDROUTE</text>
+        <text x="110" y="398" text-anchor="middle" font-family="Fraunces" font-size="18" font-weight="600" fill="#0F1419">166</text>
+        
+        <text x="390" y="380" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#4A7C59" letter-spacing="1.5">WEBINAR</text>
+        <text x="390" y="398" text-anchor="middle" font-family="Fraunces" font-size="18" font-weight="600" fill="#0F1419">166</text>
+        
+        <!-- Overlap indicators -->
+        <text x="165" y="230" text-anchor="middle" font-family="Fraunces" font-size="16" font-weight="600" fill="#0F1419">24</text>
+        <text x="165" y="245" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6B7280">overlap</text>
+        
+        <text x="335" y="230" text-anchor="middle" font-family="Fraunces" font-size="16" font-weight="600" fill="#0F1419">52</text>
+        <text x="335" y="245" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6B7280">overlap</text>
+        
+        <!-- Bottom center: medroute-webinar overlap (almost zero) -->
+        <text x="250" y="340" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#6B7280">MEDROUTE ∩ Webinar = 1</text>
+      </svg>
+      
+      <div>
+        <table class="overlap-table">
+          <thead>
+            <tr>
+              <th>Kaynak</th>
+              <th>Toplam</th>
+              <th>USCAMP'te var</th>
+              <th>Yeni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row">
+              <td class="source-name">MEDROUTE</td>
+              <td>166</td>
+              <td>24 (%14,5)</td>
+              <td class="big-number">%85,5</td>
+            </tr>
+            <tr class="highlight-row">
+              <td class="source-name">Webinar</td>
+              <td>166</td>
+              <td>52 (%31,3)</td>
+              <td class="big-number">%68,1</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 20px; font-size: 14px; color: var(--ink-soft); line-height: 1.6;">
+          <strong>Kritik nüans:</strong> Webinar'a kayıt olan 52 eski USCAMP leadinin <em>tamamı</em> önce USCAMP'e lead olmuş, sonra webinara gelmiş. Yani webinar sadece yeni kitle değil, eski <em>uyuyan</em> leadleri de uyandırıyor.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4: THE PARADOX ============ -->
+  <section>
+    <span class="section-number">04 — PARADOKS</span>
+    <h2>Reach aynı. Lead farklı.</h2>
+    <p class="section-intro">Meta Ads panelinde MEDROUTE ve USCAMP kampanyalarının eriştiği kitleyi karşılaştırdığımızda, toplam erişimlerin %85'inden fazlası örtüşüyor. Yani iki kampanya da aynı insanlara gösterilmiş. Ama sonuçlar tamamen farklı.</p>
+    
+    <div class="paradox">
+      <div class="paradox-label">AYNI KİTLE · FARKLI SONUÇ</div>
+      <div class="paradox-grid">
+        <div class="paradox-side left">
+          <div class="label">USCAMP Kampanya</div>
+          <div class="value">650₺</div>
+          <div class="description">"ABD'de doktor olmak ister misin?" — scroll'lanıyor.</div>
+        </div>
+        <div class="paradox-divider">vs</div>
+        <div class="paradox-side right">
+          <div class="label">MEDROUTE Kampanya</div>
+          <div class="value">175₺</div>
+          <div class="description">"ABD'de staj fırsatı" — form dolduruluyor.</div>
+        </div>
+      </div>
+      <div class="paradox-conclusion">
+        Sorun kitlede değil, kitleye <em>ne söylediğimizde</em>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 5: DIAGNOSIS ============ -->
+  <section>
+    <div class="diagnosis">
+      <span class="section-number" style="color: var(--accent-soft);">05 — TEŞHİS</span>
+      <h2>Bu bir <span class="italic">offer fatigue</span> tablosudur.</h2>
+      <p class="section-intro">Üç bulgunun kesişim noktası tek bir tanıya götürüyor. Ve tanı konduktan sonra çözüm de netleşiyor.</p>
+      
+      <div class="diagnosis-list">
+        <div class="diagnosis-item">
+          <div class="diagnosis-number">01</div>
+          <div class="diagnosis-content">
+            <h3>USCAMP offer'ı çok "ağır" bir ilk adım.</h3>
+            <p>"ABD'de doktor olmak" yüksek taahhüt isteyen bir karar. Kitle bu mesajı gördüğünde "henüz hazır değilim" veya "bu bana göre değil" diye geçiyor. Ama aynı kişi "ABD'de staj" veya "ücretsiz webinar" teklifi gördüğünde eşik düşüyor, form doluyor.</p>
+          </div>
+        </div>
+        
+        <div class="diagnosis-item">
+          <div class="diagnosis-number">02</div>
+          <div class="diagnosis-content">
+            <h3>Tek offer'la çok büyük bir kitleyi daraltıyoruz.</h3>
+            <p>Meta'ya 250 bin kişiye ulaşıyoruz ama hepsine aynı şeyi söylüyoruz. "Zaten karar vermiş" olan dar segmente hitap eden mesaj, geri kalan %90'ı hiç konuşturamıyor. MEDROUTE ve Webinar ayrı giriş kapıları açıyor ve gerçekten de yeni insanlar giriyor.</p>
+          </div>
+        </div>
+        
+        <div class="diagnosis-item">
+          <div class="diagnosis-number">03</div>
+          <div class="diagnosis-content">
+            <h3>CPL artışı auction sisteminin bize söylediği şey.</h3>
+            <p>Aynı mesaj aynı kitleye defalarca gösterildikçe tıklama oranı düşüyor, Meta bunu telafi etmek için CPM artırıyor, lead gelmediği için CPL katlanarak büyüyor. Buna "ölüm sarmalı" denir — ve biz şu an bu sarmala girmek üzereyiz.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 6: THE LADDER ============ -->
+  <section>
+    <span class="section-number">06 — ÇÖZÜM ÖNERİSİ</span>
+    <h2>Üç kampanya değil, <span class="italic">bir offer merdiveni</span>.</h2>
+    <p class="section-intro">Şu an elimizde üç ayrı kampanya var ama birbirinden kopuk çalışıyorlar. Bu üç kampanyayı <em>merdiven basamakları</em> haline getirirsek, her basamak bir sonrakini besler. Kullanıcı ucuz bir kapıdan girer, kademeli olarak taahhüt artar, sonunda USCAMP core programına ulaşır.</p>
+    
+    <div class="ladder">
+      <div class="ladder-steps">
+        <div class="ladder-step tier-1">
+          <div class="ladder-step-num">01</div>
+          <div class="ladder-step-content">
+            <span class="tier-label">BASAMAK 1 · AWARENESS KAPISI</span>
+            <h4>Information offers</h4>
+            <p>Webinar, ücretsiz rehber, kısa email serisi, quiz. Taahhüt sadece "zaman/dikkat". Amaç: havuzu doldurmak, yeni kitleyi sisteme sokmak.</p>
+          </div>
+          <div class="ladder-step-cpl">
+            <div class="cpl-value">~70₺</div>
+            <div class="cpl-label">HEDEF CPL</div>
+          </div>
+        </div>
+        
+        <div class="ladder-step tier-2">
+          <div class="ladder-step-num">02</div>
+          <div class="ladder-step-content">
+            <span class="tier-label">BASAMAK 2 · INTEREST KAPISI</span>
+            <h4>Low-commitment offers</h4>
+            <p>MEDROUTE staj, mini workshop, ücretli ama düşük fiyatlı kısa program. Taahhüt: küçük para veya belirgin ilgi. Amaç: niyet kalitesini yükseltmek, nitelikli lead çıkarmak.</p>
+          </div>
+          <div class="ladder-step-cpl">
+            <div class="cpl-value">~175₺</div>
+            <div class="cpl-label">HEDEF CPL</div>
+          </div>
+        </div>
+        
+        <div class="ladder-step tier-3">
+          <div class="ladder-step-num">03</div>
+          <div class="ladder-step-content">
+            <span class="tier-label">BASAMAK 3 · COMMITMENT KAPISI</span>
+            <h4>USCAMP core program</h4>
+            <p>Asıl ürün. Doğrudan soğuk reklamla satmaya çalışmak yerine, yukarıdaki iki basamaktan gelen ısınmış leadleri burada kapatmak. Soğuk reklam bütçesi kademeli olarak aşağı basamaklara kaydırılır.</p>
+          </div>
+          <div class="ladder-step-cpl">
+            <div class="cpl-value">~650₺</div>
+            <div class="cpl-label">MEVCUT CPL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 7: NEXT STEPS ============ -->
+  <section>
+    <span class="section-number">07 — SONRAKİ ADIMLAR</span>
+    <h2>Merdiveni kurmadan önce, <span class="italic">ölçüm altyapısı</span>.</h2>
+    <p class="section-intro">Stratejinin "çalıştığını" söyleyebilmek için önce ölçmemiz lazım. Özellikle şu kritik soru: MEDROUTE ve Webinar leadleri zaman içinde USCAMP programına dönüyor mu? Bu veri olmadan bütçe dağılımı kararı kumardır.</p>
+    
+    <div class="next-steps">
+      <div class="step-card">
+        <div class="timeframe">İLK 30 GÜN</div>
+        <h4>Ölçüm altyapısını kur</h4>
+        <p>CRM'de MEDROUTE ve Webinar leadleri için ayrı tag'ler aç. Source tracking'i netleştir. Her lead'in geldiği kampanya ve sonraki satış yolculuğu izlenebilsin.</p>
+      </div>
+      
+      <div class="step-card">
+        <div class="timeframe">30–60 GÜN</div>
+        <h4>Cross-conversion ölç</h4>
+        <p>Nisan leadlerinden kaçı Haziran sonuna kadar USCAMP programına satışa dönüştü? MEDROUTE ve Webinar'ın bonus funnel değeri bu rakamla netleşir.</p>
+      </div>
+      
+      <div class="step-card">
+        <div class="timeframe">60–90 GÜN</div>
+        <h4>Offer çeşitlendirme testi</h4>
+        <p>USCAMP core program için 2–3 farklı açı ile yeni creative'ler test et (başarı-bazlı, eğitim-bazlı, sosyal kanıt). Gerçek offer fatigue mi, yoksa creative fatigue mi ayırt et.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <span>CAMP Group · Dahili Analiz</span>
+    <span>Hazırlayan: Sadullah Bayar · Pazarlama</span>
+    <span>Sürüm 1.0 · 20 Nisan 2026</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
