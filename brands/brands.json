@@ -149,6 +149,18 @@
             "crm",
             "rapor"
           ]
+        },
+        {
+          "slug": "patient-intelligence-dashboard",
+          "name": "Patient Intelligence Dashboard",
+          "description": "1.009 lead analizi: kanser türü, pain point, segment ve dönüşüm verileri",
+          "date": "2026-04-20",
+          "tags": [
+            "dashboard",
+            "analytics",
+            "crm",
+            "patients"
+          ]
         }
       ]
     }

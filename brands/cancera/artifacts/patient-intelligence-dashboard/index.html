@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancera — Patient Intelligence Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f8f7f4;color:#1a1a18;min-height:100vh;padding:2rem}
+.dash{max-width:1100px;margin:0 auto;padding:2rem;background:#fff;border-radius:16px;box-shadow:0 2px 24px rgba(0,0,0,0.07)}
+.header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.75rem;padding-bottom:1rem;border-bottom:0.5px solid rgba(0,0,0,0.1)}
+.header-title{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;letter-spacing:-0.3px;color:#1a1a18}
+.header-meta{font-size:12px;color:#888780;text-align:right;line-height:1.7}
+.section-label{font-size:10px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:#b4b2a9;margin-bottom:12px;margin-top:1.5rem}
+.kpi-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+.kpi{background:#f8f7f4;border-radius:8px;padding:14px 16px}
+.kpi-val{font-size:26px;font-weight:500;line-height:1;margin-bottom:4px;color:#1a1a18}
+.kpi-lbl{font-size:11px;color:#888780}
+.kpi-sub{font-size:11px;color:#b4b2a9;margin-top:2px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:1rem 1.25rem}
+.card-title{font-size:13px;font-weight:500;color:#888780;margin-bottom:14px}
+.chart-wrap{position:relative;width:100%}
+.h220{height:220px}
+.h180{height:180px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.bar-label{width:140px;flex-shrink:0;color:#888780;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-label-sm{width:100px;flex-shrink:0;color:#888780;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;background:#f1efe8;border-radius:3px;height:8px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-count{width:28px;text-align:right;color:#888780;font-size:11px;flex-shrink:0}
+.legend-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;font-size:11px;color:#888780}
+.legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0}
+.pain-item{border-left:2px solid;padding:9px 12px;margin-bottom:8px;border-radius:0 8px 8px 0}
+.pain-name{font-size:12px;font-weight:500;margin-bottom:3px;color:#1a1a18}
+.pain-bar-wrap{display:flex;align-items:center;gap:6px;margin-top:4px}
+.pain-pct{font-size:11px;color:#b4b2a9;width:30px;flex-shrink:0}
+.pain-track{flex:1;background:rgba(0,0,0,0.08);border-radius:2px;height:4px;overflow:hidden}
+.pain-fill{height:100%;border-radius:2px}
+.matrix-wrap{overflow-x:auto}
+.matrix{width:100%;border-collapse:collapse;font-size:11px}
+.matrix th{padding:5px 8px;text-align:center;font-weight:500;color:#888780;border-bottom:0.5px solid rgba(0,0,0,0.1)}
+.matrix th.row-h{text-align:left}
+.matrix td{padding:5px 8px;text-align:center;border-bottom:0.5px solid rgba(0,0,0,0.06);color:#1a1a18}
+.matrix td.row-h{text-align:left;color:#888780;white-space:nowrap}
+.cell-0{background:transparent}.cell-1{background:rgba(55,138,221,0.08)}.cell-2{background:rgba(55,138,221,0.16)}.cell-3{background:rgba(55,138,221,0.26)}.cell-4{background:rgba(55,138,221,0.38)}.cell-5{background:rgba(55,138,221,0.52)}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.divider{height:0.5px;background:rgba(0,0,0,0.08);margin:1rem 0}
+@media(max-width:700px){.grid2,.grid3,.kpi-row{grid-template-columns:1fr}}
+.camp-back{position:fixed;top:16px;left:16px;z-index:9999;background:rgba(0,0,0,0.04);backdrop-filter:blur(12px);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:8px 14px;color:rgba(0,0,0,0.4);text-decoration:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;transition:all 0.2s ease}
+.camp-back:hover{background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.7)}
+</style>
+</head>
+<body>
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<div class="dash">
+
+  <div class="header">
+    <div>
+      <div class="header-title">Cancera — Patient Intelligence</div>
+      <div style="font-size:12px;color:#b4b2a9;margin-top:3px">1.009 lead · Şubat – Nisan 2026</div>
+    </div>
+    <div class="header-meta">
+      kaynak: CRM export 18.04.2026<br>
+      enrichment: claude-sonnet-4-6<br>
+      clustering: claude-opus-4-7
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-val">1.009</div><div class="kpi-lbl">toplam lead</div><div class="kpi-sub">Şub–Nis 2026</div></div>
+    <div class="kpi"><div class="kpi-val">15.3</div><div class="kpi-lbl">günlük ort. lead</div><div class="kpi-sub">66 günde</div></div>
+    <div class="kpi"><div class="kpi-val">292</div><div class="kpi-lbl">belirgin pain</div><div class="kpi-sub">%28.9 — 15 tema</div></div>
+    <div class="kpi"><div class="kpi-val">%0.6</div><div class="kpi-lbl">dönüşüm oranı</div><div class="kpi-sub">6 başarılı / 1009</div></div>
+  </div>
+
+  <div class="section-label">Hasta profili</div>
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">kanser türü dağılımı</div>
+      <div class="legend-row">
+        <span style="display:flex;align-items:center;gap:4px"><span class="legend-dot" style="background:#378add"></span>akciğer 15.3%</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="legend-dot" style="background:#5dcaa5"></span>meme 15.1%</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="legend-dot" style="background:#b4b2a9"></span>bilinmiyor 16.4%</span>
+      </div>
+      <div class="chart-wrap h220"><canvas id="cKanser" role="img" aria-label="Kanser türü dağılımı">Akciğer 154, meme 152, bilinmiyor 165, kolon 88, pankreas 60, beyin 44, over 41, kan 36, diğer 269.</canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">yakınlık — kim yazıyor?</div>
+      <div style="margin-top:4px">
+        <div class="bar-row"><div class="bar-label">kendisi</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:#378add"></div></div><div class="bar-count">364</div></div>
+        <div class="bar-row"><div class="bar-label">diğer yakın akraba</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#5dcaa5"></div></div><div class="bar-count">253</div></div>
+        <div class="bar-row"><div class="bar-label">eş</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#ef9f27"></div></div><div class="bar-count">117</div></div>
+        <div class="bar-row"><div class="bar-label">kardeş</div><div class="bar-track"><div class="bar-fill" style="width:9.6%;background:#d85a30"></div></div><div class="bar-count">81</div></div>
+        <div class="bar-row"><div class="bar-label">bilinmiyor</div><div class="bar-track"><div class="bar-fill" style="width:9.1%;background:#888780"></div></div><div class="bar-count">77</div></div>
+        <div class="bar-row"><div class="bar-label">anne</div><div class="bar-track"><div class="bar-fill" style="width:5.6%;background:#af9ec5"></div></div><div class="bar-count">47</div></div>
+        <div class="bar-row"><div class="bar-label">baba</div><div class="bar-track"><div class="bar-fill" style="width:4.5%;background:#af9ec5"></div></div><div class="bar-count">38</div></div>
+        <div class="bar-row"><div class="bar-label">çocuk</div><div class="bar-track"><div class="bar-fill" style="width:2.5%;background:#af9ec5"></div></div><div class="bar-count">21</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">evre & tedavi aşaması</div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:#b4b2a9;margin-bottom:6px">evre</div>
+        <div class="bar-row"><div class="bar-label-sm">bilinmiyor</div><div class="bar-track"><div class="bar-fill" style="width:64.6%;background:#888780"></div></div><div class="bar-count">652</div></div>
+        <div class="bar-row"><div class="bar-label-sm">metastatik</div><div class="bar-track"><div class="bar-fill" style="width:22.3%;background:#e24b4a"></div></div><div class="bar-count">225</div></div>
+        <div class="bar-row"><div class="bar-label-sm">evre 4</div><div class="bar-track"><div class="bar-fill" style="width:6%;background:#f09595"></div></div><div class="bar-count">61</div></div>
+        <div class="bar-row"><div class="bar-label-sm">evre 2</div><div class="bar-track"><div class="bar-fill" style="width:2%;background:#85b7eb"></div></div><div class="bar-count">20</div></div>
+        <div class="bar-row"><div class="bar-label-sm">evre 1</div><div class="bar-track"><div class="bar-fill" style="width:1.8%;background:#5dcaa5"></div></div><div class="bar-count">18</div></div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-top:10px">
+        <div style="font-size:11px;color:#b4b2a9;margin-bottom:6px">tedavi aşaması</div>
+        <div class="bar-row"><div class="bar-label-sm">bilinmiyor</div><div class="bar-track"><div class="bar-fill" style="width:56%;background:#888780"></div></div><div class="bar-count">566</div></div>
+        <div class="bar-row"><div class="bar-label-sm">tedavi sürüyor</div><div class="bar-track"><div class="bar-fill" style="width:18.2%;background:#378add"></div></div><div class="bar-count">184</div></div>
+        <div class="bar-row"><div class="bar-label-sm">yeni teşhis</div><div class="bar-track"><div class="bar-fill" style="width:12.5%;background:#5dcaa5"></div></div><div class="bar-count">126</div></div>
+        <div class="bar-row"><div class="bar-label-sm">nüks/tekrar</div><div class="bar-track"><div class="bar-fill" style="width:6%;background:#ef9f27"></div></div><div class="bar-count">61</div></div>
+        <div class="bar-row"><div class="bar-label-sm">tedavi tamamlandı</div><div class="bar-track"><div class="bar-fill" style="width:5.9%;background:#639922"></div></div><div class="bar-count">60</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Pain point haritası</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">15 tema · 292 belirgin pain cümlesi</div>
+      <div id="painBars"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">aylık büyüme & niyet dağılımı</div>
+      <div class="legend-row">
+        <span style="display:flex;align-items:center;gap:4px"><span class="legend-dot" style="background:#378add"></span>ikinci görüş</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="legend-dot" style="background:#5dcaa5"></span>genel bilgi</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="legend-dot" style="background:#888780"></span>diğer</span>
+      </div>
+      <div class="chart-wrap h220"><canvas id="cAylik" role="img" aria-label="Aylık lead ve niyet dağılımı">Şubat 223, Mart 516, Nisan 270.</canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">Niyet & dönüşüm analizi</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">niyet dağılımı</div>
+      <div class="chart-wrap h180"><canvas id="cNiyet" role="img" aria-label="Niyet dağılımı">İkinci görüş 520, genel bilgi 405, diğer 84.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">niyet × satış durumu matrisi</div>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead><tr><th class="row-h">niyet</th><th>başarılı</th><th>takipte</th><th>başarısız</th><th>yeni</th><th>toplam</th></tr></thead>
+          <tbody>
+            <tr><td class="row-h">ikinci görüş</td><td class="cell-1">2</td><td class="cell-3">133</td><td class="cell-5">300</td><td class="cell-0">83</td><td>520</td></tr>
+            <tr><td class="row-h">genel bilgi</td><td class="cell-0">0</td><td class="cell-2">135</td><td class="cell-4">265</td><td class="cell-1">1</td><td>405</td></tr>
+            <tr><td class="row-h">rapor değerlendirme</td><td class="cell-1">1</td><td class="cell-1">7</td><td class="cell-2">13</td><td class="cell-0">0</td><td>20</td></tr>
+            <tr><td class="row-h">diğer</td><td class="cell-0">0</td><td class="cell-1">11</td><td class="cell-2">10</td><td class="cell-0">0</td><td>28</td></tr>
+            <tr><td class="row-h">çaresizlik/son umut</td><td class="cell-0">0</td><td class="cell-1">2</td><td class="cell-1">10</td><td class="cell-0">0</td><td>22</td></tr>
+            <tr><td class="row-h">tedavi koordinasyon</td><td class="cell-0">0</td><td class="cell-1">2</td><td class="cell-1">2</td><td class="cell-0">0</td><td>5</td></tr>
+            <tr><td class="row-h">yurt dışı tedavi</td><td class="cell-1">1</td><td class="cell-0">0</td><td class="cell-1">3</td><td class="cell-0">0</td><td>4</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:10px;color:#b4b2a9;margin-top:10px">mavi yoğunluğu = satır içindeki oran</div>
+    </div>
+  </div>
+
+  <div class="section-label">Operasyonel öncelik</div>
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">duygu yoğunluğu dağılımı</div>
+      <div class="chart-wrap h180"><canvas id="cDuygu" role="img" aria-label="Duygu yoğunluğu 1-5">1:219, 2:375, 3:293, 4:101, 5:19.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">aciliyet skoru dağılımı</div>
+      <div class="chart-wrap h180"><canvas id="cAcil" role="img" aria-label="Aciliyet skoru 1-5">1:233, 2:331, 3:197, 4:231, 5:15.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">yüksek aciliyet (≥4) profili</div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;color:#888780;margin-bottom:6px">toplam 246 lead — aciliyet 4 veya 5</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <span class="tag" style="background:#fcebeb;color:#a32d2d">%53 başarısız</span>
+          <span class="tag" style="background:#e6f1fb;color:#185fa5">%31 takipte</span>
+          <span class="tag" style="background:#eaf3de;color:#3b6d11">%1.2 başarılı</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-top:10px;font-size:12px;color:#888780">en sık kanser türü</div>
+      <div class="bar-row" style="margin-top:8px"><div class="bar-label-sm">akciğer</div><div class="bar-track"><div class="bar-fill" style="width:70%;background:#e24b4a"></div></div><div class="bar-count">71</div></div>
+      <div class="bar-row"><div class="bar-label-sm">meme</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#e24b4a"></div></div><div class="bar-count">55</div></div>
+      <div class="bar-row"><div class="bar-label-sm">kolon/rektum</div><div class="bar-track"><div class="bar-fill" style="width:38%;background:#e24b4a"></div></div><div class="bar-count">38</div></div>
+      <div class="bar-row"><div class="bar-label-sm">pankreas</div><div class="bar-track"><div class="bar-fill" style="width:26%;background:#e24b4a"></div></div><div class="bar-count">26</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Kanser türü × evre matrisi</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">bilinen evre dağılımı (bilinmiyor hariç)</div>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead><tr><th class="row-h">kanser türü</th><th>evre 1</th><th>evre 2</th><th>evre 3</th><th>evre 4</th><th>metastatik</th><th>erken</th><th>ileri</th><th>toplam</th></tr></thead>
+        <tbody>
+          <tr><td class="row-h">akciğer</td><td>1</td><td>2</td><td>3</td><td>11</td><td class="cell-4">41</td><td>0</td><td>13</td><td><b>154</b></td></tr>
+          <tr><td class="row-h">meme</td><td class="cell-1">7</td><td class="cell-2">8</td><td>2</td><td>4</td><td class="cell-3">45</td><td>0</td><td>0</td><td><b>152</b></td></tr>
+          <tr><td class="row-h">kolon/rektum</td><td>2</td><td>2</td><td>2</td><td class="cell-2">11</td><td class="cell-3">36</td><td>0</td><td>0</td><td><b>88</b></td></tr>
+          <tr><td class="row-h">pankreas</td><td>0</td><td>1</td><td>1</td><td class="cell-2">9</td><td class="cell-2">14</td><td>0</td><td>0</td><td><b>60</b></td></tr>
+          <tr><td class="row-h">beyin/sinir sistemi</td><td>0</td><td>1</td><td>1</td><td class="cell-1">4</td><td>0</td><td>0</td><td class="cell-2">10</td><td><b>44</b></td></tr>
+          <tr><td class="row-h">over</td><td>1</td><td>1</td><td>1</td><td class="cell-1">3</td><td class="cell-2">14</td><td>0</td><td>0</td><td><b>41</b></td></tr>
+          <tr><td class="row-h">kan/lösemi</td><td class="cell-1">3</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td><b>36</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const baseOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+const txt='rgba(0,0,0,0.4)';
+const gridC='rgba(0,0,0,0.06)';
+
+new Chart(document.getElementById('cKanser'),{
+  type:'doughnut',
+  data:{labels:['akciğer','meme','bilinmiyor','kolon/rektum','pankreas','beyin','over','kan/lösemi','diğer'],
+    datasets:[{data:[154,152,165,88,60,44,41,36,269],backgroundColor:['#378add','#5dcaa5','#b4b2a9','#ef9f27','#d85a30','#7f77dd','#d4537e','#63a836','#888780'],borderWidth:0,hoverOffset:4}]},
+  options:{...baseOpts,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.label}: ${c.raw} (%${Math.round(c.raw/1009*100)})`}}}}
+});
+
+new Chart(document.getElementById('cAylik'),{
+  type:'bar',
+  data:{labels:['Şubat 2026','Mart 2026','Nisan 2026 (yarım)'],
+    datasets:[
+      {label:'ikinci görüş',data:[108,261,151],backgroundColor:'#378add',stack:'s'},
+      {label:'genel bilgi',data:[102,220,83],backgroundColor:'#5dcaa5',stack:'s'},
+      {label:'diğer',data:[13,35,36],backgroundColor:'#888780',stack:'s'}
+    ]},
+  options:{...baseOpts,scales:{x:{ticks:{color:txt,autoSkip:false},grid:{display:false}},y:{ticks:{color:txt},grid:{color:gridC}}},plugins:{legend:{display:false},tooltip:{mode:'index'}}}
+});
+
+new Chart(document.getElementById('cNiyet'),{
+  type:'doughnut',
+  data:{labels:['ikinci görüş','genel bilgi','diğer','çaresizlik','rapor değerlendirme','tedavi koordinasyon','yurt dışı'],
+    datasets:[{data:[520,405,28,22,20,5,4],backgroundColor:['#378add','#5dcaa5','#888780','#e24b4a','#ef9f27','#7f77dd','#d85a30'],borderWidth:0,hoverOffset:4}]},
+  options:{...baseOpts,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.label}: ${c.raw} (%${Math.round(c.raw/1009*100)})`}}}}
+});
+
+new Chart(document.getElementById('cDuygu'),{
+  type:'bar',
+  data:{labels:['1 — sakin','2','3','4','5 — panik'],
+    datasets:[{data:[219,375,293,101,19],backgroundColor:['#5dcaa5','#85b7eb','#378add','#ef9f27','#e24b4a'],borderWidth:0,borderRadius:4}]},
+  options:{...baseOpts,scales:{x:{ticks:{color:txt},grid:{display:false}},y:{ticks:{color:txt},grid:{color:gridC}}}}
+});
+
+new Chart(document.getElementById('cAcil'),{
+  type:'bar',
+  data:{labels:['1 — düşük','2','3','4','5 — kritik'],
+    datasets:[{data:[233,331,197,231,15],backgroundColor:['#5dcaa5','#85b7eb','#ef9f27','#d85a30','#e24b4a'],borderWidth:0,borderRadius:4}]},
+  options:{...baseOpts,scales:{x:{ticks:{color:txt},grid:{display:false}},y:{ticks:{color:txt},grid:{color:gridC}}}}
+});
+
+const painData=[
+  {name:'Başka tedavi seçeneği var mı?',n:38,color:'#378add'},
+  {name:'Diğer / sistem engelleri',n:36,color:'#888780'},
+  {name:'Mevcut tedavi doğru mu?',n:25,color:'#5dcaa5'},
+  {name:'Tüm tedaviler tükendi',n:22,color:'#e24b4a'},
+  {name:'Tedavi işe yaramıyor',n:21,color:'#d85a30'},
+  {name:'Tanı aldım, ne yapmalıyım?',n:19,color:'#7f77dd'},
+  {name:'Yan etkilerden tükeniyoruz',n:17,color:'#d4537e'},
+  {name:'Ameliyat olmalı mıyım?',n:17,color:'#63a836'},
+  {name:'Alternatif tedavi arayışı',n:17,color:'#1d9e75'},
+  {name:'Yeni metastaz çıktı',n:16,color:'#ef9f27'},
+  {name:'Tanıyı anlayamıyorum',n:16,color:'#af9ec5'},
+  {name:'Nüks etti, ne yapacağız?',n:14,color:'#ba7517'},
+  {name:'Tedavi bittikten sonra?',n:14,color:'#534ab7'},
+  {name:'Doktorlar farklı söylüyor',n:11,color:'#993556'},
+  {name:'Tamamen iyileşmek mümkün mü?',n:9,color:'#639922'},
+];
+const maxN=38;
+const container=document.getElementById('painBars');
+painData.forEach(p=>{
+  const pct=Math.round(p.n/292*100);
+  container.innerHTML+=`<div class="pain-item" style="border-color:${p.color};background:${p.color}12">
+    <div class="pain-name">${p.name}</div>
+    <div class="pain-bar-wrap">
+      <div class="pain-pct">${pct}%</div>
+      <div class="pain-track"><div class="pain-fill" style="width:${Math.round(p.n/maxN*100)}%;background:${p.color}"></div></div>
+      <div style="font-size:11px;color:#b4b2a9;width:24px;flex-shrink:0;text-align:right">${p.n}</div>
+    </div>
+  </div>`;
+});
+</script>
+</body>
+</html>
