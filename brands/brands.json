@@ -173,6 +173,18 @@
             "crm",
             "patients"
           ]
+        },
+        {
+          "slug": "weekly-report-apr14-20",
+          "name": "Haftalık Performans Raporu | 14-20 Nisan 2026",
+          "description": "14-20 Nisan 2026 haftası Cancera performans raporu",
+          "date": "2026-04-21",
+          "tags": [
+            "rapor",
+            "haftalik",
+            "performans",
+            "nisan-2026"
+          ]
         }
       ]
     }

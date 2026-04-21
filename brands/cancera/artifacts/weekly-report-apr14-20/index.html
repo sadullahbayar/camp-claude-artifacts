@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancera — Haftalık Performans Raporu | 14-20 Nisan 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --cancera-navy: #0A3161;
+  --cancera-navy-dark: #071F3E;
+  --cancera-navy-light: #E8EDF4;
+  --cancera-crimson: #B31942;
+  --cancera-crimson-dark: #8A1233;
+  --cancera-crimson-light: #FBE8EE;
+  --bg: #FAFBFC;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --text: #111827;
+  --text-muted: #4B5563;
+  --text-subtle: #9CA3AF;
+  --success: #0B6E4F;
+  --warning: #E8B931;
+  --danger: #B31942;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 2px rgba(17,24,39,0.04);
+  --shadow-md: 0 4px 12px rgba(17,24,39,0.06);
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); color: var(--cancera-navy); font-weight: 600; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.5rem, 2.8vw, 2.125rem); letter-spacing: -0.01em; margin-bottom: var(--space-6); }
+h3 { font-size: 1.25rem; margin-bottom: var(--space-2); }
+h4 { font-size: 1rem; font-family: var(--font-body); font-weight: 600; color: var(--text); margin-bottom: var(--space-2); }
+p { color: var(--text-muted); }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+.section { padding: var(--space-12) 0; }
+
+.header {
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-4) 0;
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--cancera-navy);
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.logo-mark { display: inline-flex; gap: 2px; align-items: flex-end; height: 22px; }
+.logo-mark span { display: block; width: 3px; border-radius: 1px; }
+.logo-mark span:nth-child(1) { background: var(--cancera-crimson); height: 50%; }
+.logo-mark span:nth-child(2) { background: var(--cancera-navy); height: 75%; }
+.logo-mark span:nth-child(3) { background: var(--cancera-crimson); height: 65%; }
+.logo-mark span:nth-child(4) { background: var(--cancera-navy); height: 100%; }
+.logo-mark span:nth-child(5) { background: var(--cancera-crimson); height: 90%; }
+.header-meta { font-size: 0.875rem; color: var(--text-muted); }
+
+.hero {
+  background: linear-gradient(135deg, var(--cancera-navy) 0%, var(--cancera-navy-dark) 100%);
+  color: white;
+  padding: var(--space-16) 0 var(--space-12);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute; top: -50%; right: -10%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(179,25,66,0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero h1 { color: white; margin-bottom: var(--space-4); position: relative; }
+.hero .subtitle { color: rgba(255,255,255,0.85); font-size: 1.125rem; max-width: 720px; position: relative; }
+.hero .eyebrow {
+  display: inline-block;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: #F4A4B8;
+  margin-bottom: var(--space-4);
+  position: relative;
+}
+
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-8); }
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+.kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--cancera-navy); }
+.kpi.crimson::before { background: var(--cancera-crimson); }
+.kpi.danger::before { background: var(--danger); }
+.kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-subtle); margin-bottom: var(--space-2); font-weight: 600; }
+.kpi-value { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--cancera-navy); line-height: 1; margin-bottom: var(--space-2); }
+.kpi-delta { font-size: 0.8125rem; color: var(--success); font-weight: 500; }
+.kpi-delta.negative { color: var(--cancera-crimson); }
+.kpi-delta.neutral { color: var(--text-muted); }
+
+.callout {
+  background: var(--cancera-navy-light);
+  border-left: 4px solid var(--cancera-navy);
+  padding: var(--space-4) var(--space-6);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: var(--space-4) 0;
+}
+.callout.crimson { background: var(--cancera-crimson-light); border-left-color: var(--cancera-crimson); }
+.callout h4 { color: var(--cancera-navy); margin-bottom: var(--space-2); font-size: 0.9375rem; }
+.callout.crimson h4 { color: var(--cancera-crimson-dark); }
+.callout p { font-size: 0.9375rem; margin: 0; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-4);
+}
+.card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-2); }
+.card-header h3 { margin: 0; }
+.card-meta { font-size: 0.8125rem; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-4); }
+
+/* Bar chart */
+.bar-chart { display: flex; flex-direction: column; gap: var(--space-3); }
+.bar-row { display: grid; grid-template-columns: 140px 1fr 80px; gap: var(--space-3); align-items: center; }
+.bar-label { font-size: 0.875rem; color: var(--text); font-weight: 500; }
+.bar-track { height: 24px; background: #F3F4F6; border-radius: 4px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; background: var(--cancera-navy); border-radius: 4px; transition: width 0.3s ease; }
+.bar-fill.crimson { background: var(--cancera-crimson); }
+.bar-fill.gray { background: #9CA3AF; }
+.bar-value { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--cancera-navy); text-align: right; }
+
+/* Donut (SVG) */
+.donut-wrap { display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap; }
+.donut { flex-shrink: 0; }
+.donut-legend { flex: 1; min-width: 200px; }
+.legend-row { display: flex; align-items: center; gap: var(--space-2); font-size: 0.875rem; margin-bottom: var(--space-2); }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { color: var(--text-muted); flex: 1; }
+.legend-value { font-weight: 600; color: var(--text); }
+
+/* Funnel */
+.funnel { display: flex; flex-direction: column; gap: var(--space-2); }
+.funnel-step {
+  background: var(--cancera-navy-light);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.funnel-step.step-2 { background: #D5DFED; margin: 0 auto; width: 85%; }
+.funnel-step.step-3 { background: #B8C7DC; margin: 0 auto; width: 60%; }
+.funnel-step.step-4 { background: var(--cancera-crimson-light); margin: 0 auto; width: 35%; border: 1px solid var(--cancera-crimson); }
+.funnel-label { font-weight: 600; font-size: 0.9375rem; color: var(--cancera-navy); }
+.funnel-value { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--cancera-navy); }
+.funnel-step.step-4 .funnel-label,
+.funnel-step.step-4 .funnel-value { color: var(--cancera-crimson-dark); }
+.funnel-rate { font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 2px 0; font-style: italic; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+th { background: var(--cancera-navy-light); color: var(--cancera-navy); font-weight: 600; text-align: left; padding: var(--space-3) var(--space-4); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); color: var(--text); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(10,49,97,0.03); }
+td.num { font-variant-numeric: tabular-nums; text-align: right; font-weight: 500; }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.badge-navy { background: var(--cancera-navy-light); color: var(--cancera-navy); }
+.badge-crimson { background: var(--cancera-crimson-light); color: var(--cancera-crimson-dark); }
+.badge-gray { background: #F3F4F6; color: var(--text-muted); }
+
+/* Two-col comparison */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.compare-cell { background: var(--bg); border-radius: var(--radius-sm); padding: var(--space-4); }
+.compare-cell .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-subtle); margin-bottom: var(--space-1); }
+.compare-cell .value { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: var(--cancera-navy); }
+
+.footer {
+  background: var(--cancera-navy-dark);
+  color: rgba(255,255,255,0.8);
+  padding: var(--space-8) 0 var(--space-4);
+  margin-top: var(--space-12);
+  font-size: 0.875rem;
+}
+.footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
+.footer-brand { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: white; }
+
+/* Daily trend chart */
+.daily-chart { display: flex; align-items: flex-end; gap: var(--space-2); height: 180px; padding: var(--space-4) 0; border-bottom: 1px solid var(--border); }
+.daily-bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.daily-bar-stack { width: 100%; display: flex; flex-direction: column-reverse; border-radius: 4px 4px 0 0; overflow: hidden; }
+.daily-bar-ig { background: var(--cancera-navy); width: 100%; transition: all 0.3s ease; }
+.daily-bar-web { background: var(--cancera-crimson); width: 100%; }
+.daily-label { font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1); text-align: center; }
+.daily-value { font-size: 0.8125rem; font-weight: 600; color: var(--cancera-navy); }
+
+.legend-inline { display: flex; gap: var(--space-4); font-size: 0.8125rem; color: var(--text-muted); margin-top: var(--space-3); }
+
+@media (max-width: 768px) {
+  .section { padding: var(--space-8) 0; }
+  .hero { padding: var(--space-12) 0 var(--space-8); }
+  .bar-row { grid-template-columns: 100px 1fr 60px; font-size: 0.8125rem; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .funnel-step.step-2, .funnel-step.step-3, .funnel-step.step-4 { width: 100%; }
+}
+</style>
+</head>
+
+<body>
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<style>.camp-back{position:fixed;top:16px;left:16px;z-index:9999;background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:8px 14px;color:rgba(0,0,0,0.4);text-decoration:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;transition:all 0.2s ease}.camp-back:hover{background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.7)}</style>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark"><span></span><span></span><span></span><span></span><span></span></span>
+      cancera
+    </a>
+    <div class="header-meta">Haftalık Rapor • 14–20 Nisan 2026</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">Haftalık Performans Raporu</span>
+    <h1>Yüksek erişim, düşük dönüşüm: reklam bağımlılığı derinleşiyor</h1>
+    <p class="subtitle">Bu hafta Cancera 94 bin görüntüleme ve 93 lead topladı. Ancak görüntülemelerin %79'u ve etkileşimlerin %41'i reklamlardan geldi; lead'lerin %73'ü "Başarısız" olarak kapandı. Organik büyüme sağlıklı, ama huni sonundaki dönüşüm ciddi bir darboğaz.</p>
+  </div>
+</section>
+
+<!-- EXECUTIVE SUMMARY KPIs -->
+<section class="section">
+  <div class="container">
+    <h2>Haftanın özeti</h2>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Görüntüleme</div>
+        <div class="kpi-value">94.376</div>
+        <div class="kpi-delta">↑ %13,8 erişim artışı</div>
+      </div>
+      <div class="kpi crimson">
+        <div class="kpi-label">Takipçi</div>
+        <div class="kpi-value">5.291</div>
+        <div class="kpi-delta">↑ +200 net (+%3,3)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Etkileşim</div>
+        <div class="kpi-value">729</div>
+        <div class="kpi-delta neutral">%41'i reklamlardan</div>
+      </div>
+      <div class="kpi crimson">
+        <div class="kpi-label">Toplam Lead</div>
+        <div class="kpi-value">93</div>
+        <div class="kpi-delta negative">↓ %20,5 (geçen hafta 117)</div>
+      </div>
+      <div class="kpi danger">
+        <div class="kpi-label">Başarısızlık Oranı</div>
+        <div class="kpi-value">%73,1</div>
+        <div class="kpi-delta negative">↑ 7,3 puan artış</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Takipte Lead</div>
+        <div class="kpi-value">25</div>
+        <div class="kpi-delta neutral">Aktif satış hunisi</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>📊 Haftanın ana mesajı</h4>
+      <p>Görünürlük ve takipçi büyümesi güçlü — haftalık +200 net takipçi ve 52 bin hesaba erişim sağlıklı sinyaller. Ancak <strong>lead hacmi geçen haftaya göre %20 düşerken başarısızlık oranı 7 puan arttı</strong>. Bu, üst hunide (görünürlük) iyi, orta-alt hunide (satış dönüşümü) giderek zayıflayan bir tabloya işaret ediyor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSTAGRAM PERFORMANCE -->
+<section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <h2>1. Instagram'da reklam bağımlılığı kritik seviyede</h2>
+
+    <div class="grid-2">
+      <!-- Views donut -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Görüntülemelerin %79'u reklamlardan</h3>
+          <span class="card-meta">94.376 toplam</span>
+        </div>
+        <div class="donut-wrap">
+          <svg class="donut" width="160" height="160" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E8EDF4" stroke-width="6"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B31942" stroke-width="6"
+                    stroke-dasharray="79.4 20.6" stroke-dashoffset="25" stroke-linecap="butt"/>
+            <text x="21" y="20" text-anchor="middle" font-family="Playfair Display" font-size="7" font-weight="600" fill="#0A3161">79%</text>
+            <text x="21" y="26" text-anchor="middle" font-family="DM Sans" font-size="2.5" fill="#4B5563">reklamdan</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-row"><span class="legend-dot" style="background:#B31942;"></span><span class="legend-label">Reklam kaynaklı</span><span class="legend-value">74.936</span></div>
+            <div class="legend-row"><span class="legend-dot" style="background:#0A3161;"></span><span class="legend-label">Organik</span><span class="legend-value">19.440</span></div>
+            <div class="legend-row" style="margin-top:var(--space-3); padding-top:var(--space-2); border-top:1px solid var(--border);"><span class="legend-label">Takipçi olmayan</span><span class="legend-value">%86,7</span></div>
+            <div class="legend-row"><span class="legend-label">Takipçi</span><span class="legend-value">%13,3</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactions donut -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Etkileşimlerin %41'i reklamlardan</h3>
+          <span class="card-meta">729 toplam</span>
+        </div>
+        <div class="donut-wrap">
+          <svg class="donut" width="160" height="160" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E8EDF4" stroke-width="6"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B31942" stroke-width="6"
+                    stroke-dasharray="41 59" stroke-dashoffset="25"/>
+            <text x="21" y="20" text-anchor="middle" font-family="Playfair Display" font-size="7" font-weight="600" fill="#0A3161">41%</text>
+            <text x="21" y="26" text-anchor="middle" font-family="DM Sans" font-size="2.5" fill="#4B5563">reklamdan</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-row"><span class="legend-dot" style="background:#B31942;"></span><span class="legend-label">Reklam kaynaklı</span><span class="legend-value">299</span></div>
+            <div class="legend-row"><span class="legend-dot" style="background:#0A3161;"></span><span class="legend-label">Organik</span><span class="legend-value">430</span></div>
+            <div class="legend-row" style="margin-top:var(--space-3); padding-top:var(--space-2); border-top:1px solid var(--border);"><span class="legend-label">Takipçi olmayan</span><span class="legend-value">%57,7</span></div>
+            <div class="legend-row"><span class="legend-label">Takipçi</span><span class="legend-value">%42,3</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout crimson">
+      <h4>⚠️ Yorum</h4>
+      <p>Reklamlar görünürlüğü 4,8x büyütüyor (19K organik → 94K toplam) ama etkileşim çarpanı sadece 1,7x (430 → 729). Yani reklamla gelen kitle içerikle daha az ilişki kuruyor. <strong>Etkileşim oranı organik izleyicide %2,2, reklam izleyicide %0,4</strong> — organik izleyici 5,5 kat daha değerli.</p>
+    </div>
+
+    <!-- Content type performance -->
+    <div class="card" style="margin-top: var(--space-4);">
+      <div class="card-header">
+        <h3>İçerik tipi performansı: Reels etkileşimde, Posts erişimde önde</h3>
+      </div>
+
+      <h4 style="margin-top: var(--space-4); color: var(--text-muted); font-size:0.8125rem; text-transform:uppercase; letter-spacing:0.08em;">Görüntüleme dağılımı</h4>
+      <div class="bar-chart" style="margin-bottom: var(--space-6);">
+        <div class="bar-row">
+          <div class="bar-label">Posts</div>
+          <div class="bar-track"><div class="bar-fill" style="width:54.8%;"></div></div>
+          <div class="bar-value">%54,8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Reels</div>
+          <div class="bar-track"><div class="bar-fill" style="width:36.8%;"></div></div>
+          <div class="bar-value">%36,8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Stories</div>
+          <div class="bar-track"><div class="bar-fill" style="width:8.4%;"></div></div>
+          <div class="bar-value">%8,4</div>
+        </div>
+      </div>
+
+      <h4 style="color: var(--text-muted); font-size:0.8125rem; text-transform:uppercase; letter-spacing:0.08em;">Etkileşim dağılımı</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">Reels</div>
+          <div class="bar-track"><div class="bar-fill crimson" style="width:60.4%;"></div></div>
+          <div class="bar-value">%60,4</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Posts</div>
+          <div class="bar-track"><div class="bar-fill crimson" style="width:35.8%;"></div></div>
+          <div class="bar-value">%35,8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Stories</div>
+          <div class="bar-track"><div class="bar-fill crimson" style="width:3.7%;"></div></div>
+          <div class="bar-value">%3,7</div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: var(--space-4);">
+        <h4>💡 İçerik stratejisi içgörüsü</h4>
+        <p>Posts görüntülemede %54,8 ile önde çünkü reklam bütçesinin büyük kısmı static post'lara akıyor. Ama etkileşim üretmede Reels %60,4 ile açık ara lider — yani <strong>Reels, görüntüleme başına Posts'un ~2,5 katı etkileşim üretiyor</strong>. Reklam bütçesini Reels'e kaydırmak ROI'yi artırabilir.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAD FUNNEL -->
+<section class="section">
+  <div class="container">
+    <h2>2. Instagram lead hunisi: 94K görüntüleme → 85 lead</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>Dönüşüm hunisi</h3>
+          <span class="card-meta">14–20 Nisan</span>
+        </div>
+        <div class="funnel">
+          <div class="funnel-step">
+            <span class="funnel-label">Görüntüleme</span>
+            <span class="funnel-value">94.376</span>
+          </div>
+          <div class="funnel-rate">↓ %0,77 görüntüleme → etkileşim</div>
+          <div class="funnel-step step-2">
+            <span class="funnel-label">Etkileşim</span>
+            <span class="funnel-value">729</span>
+          </div>
+          <div class="funnel-rate">↓ %11,7 etkileşim → lead</div>
+          <div class="funnel-step step-3">
+            <span class="funnel-label">IG lead</span>
+            <span class="funnel-value">85</span>
+          </div>
+          <div class="funnel-rate">↓ %25,9 lead → takipte</div>
+          <div class="funnel-step step-4">
+            <span class="funnel-label">Aktif takipte</span>
+            <span class="funnel-value">22</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Kaynak karşılaştırması</h3>
+          <span class="card-meta">Başarısızlık oranı</span>
+        </div>
+        <div class="bar-chart" style="margin-bottom: var(--space-4);">
+          <div class="bar-row">
+            <div class="bar-label">Instagram (85)</div>
+            <div class="bar-track"><div class="bar-fill crimson" style="width:74.1%;"></div></div>
+            <div class="bar-value">%74,1</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Website (8)</div>
+            <div class="bar-track"><div class="bar-fill" style="width:62.5%;"></div></div>
+            <div class="bar-value">%62,5</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Kaynak</th><th style="text-align:right;">Lead</th><th style="text-align:right;">Başarısız</th><th style="text-align:right;">Takipte</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Instagram</td><td class="num">85</td><td class="num">63</td><td class="num">22</td></tr>
+            <tr><td>Website</td><td class="num">8</td><td class="num">5</td><td class="num">3</td></tr>
+            <tr style="font-weight:600; background: var(--cancera-navy-light);"><td>Toplam</td><td class="num">93</td><td class="num">68</td><td class="num">25</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout crimson" style="margin-top: var(--space-4);">
+          <h4>⚠️ Website lead hacmi çok düşük</h4>
+          <p>Website sadece 8 lead getirdi (toplam %8,6). Instagram'a bu denli bağımlılık, tek kanallı bir risktir — reklam durursa pipeline çöker.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily trend -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Günlük lead akışı</h3>
+        <span class="card-meta">14–20 Nisan • 93 lead</span>
+      </div>
+      <div class="daily-chart">
+        <div class="daily-bar">
+          <div class="daily-value">19</div>
+          <div class="daily-bar-stack" style="height: 150px;">
+            <div class="daily-bar-ig" style="height: 126.3px;"></div>
+            <div class="daily-bar-web" style="height: 23.7px;"></div>
+          </div>
+          <div class="daily-label">Sal<br>14</div>
+        </div>
+        <div class="daily-bar">
+          <div class="daily-value">10</div>
+          <div class="daily-bar-stack" style="height: 79px;">
+            <div class="daily-bar-ig" style="height: 63.2px;"></div>
+            <div class="daily-bar-web" style="height: 15.8px;"></div>
+          </div>
+          <div class="daily-label">Çar<br>15</div>
+        </div>
+        <div class="daily-bar">
+          <div class="daily-value">11</div>
+          <div class="daily-bar-stack" style="height: 87px;">
+            <div class="daily-bar-ig" style="height: 79px;"></div>
+            <div class="daily-bar-web" style="height: 8px;"></div>
+          </div>
+          <div class="daily-label">Per<br>16</div>
+        </div>
+        <div class="daily-bar">
+          <div class="daily-value">13</div>
+          <div class="daily-bar-stack" style="height: 103px;">
+            <div class="daily-bar-ig" style="height: 103px;"></div>
+          </div>
+          <div class="daily-label">Cum<br>17</div>
+        </div>
+        <div class="daily-bar">
+          <div class="daily-value">16</div>
+          <div class="daily-bar-stack" style="height: 126px;">
+            <div class="daily-bar-ig" style="height: 118.1px;"></div>
+            <div class="daily-bar-web" style="height: 7.9px;"></div>
+          </div>
+          <div class="daily-label">Cmt<br>18</div>
+        </div>
+        <div class="daily-bar">
+          <div class="daily-value">19</div>
+          <div class="daily-bar-stack" style="height: 150px;">
+            <div class="daily-bar-ig" style="height: 142.1px;"></div>
+            <div class="daily-bar-web" style="height: 7.9px;"></div>
+          </div>
+          <div class="daily-label">Paz<br>19</div>
+        </div>
+        <div class="daily-bar">
+          <div class="daily-value">5</div>
+          <div class="daily-bar-stack" style="height: 39px;">
+            <div class="daily-bar-ig" style="height: 39px;"></div>
+          </div>
+          <div class="daily-label">Pzt<br>20</div>
+        </div>
+      </div>
+      <div class="legend-inline">
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--cancera-navy);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Instagram (85)</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--cancera-crimson);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Website (8)</span>
+      </div>
+      <div class="callout" style="margin-top: var(--space-4);">
+        <h4>📅 Desen: hafta sonu pik, Pazartesi çökmesi</h4>
+        <p>Salı (19), Cumartesi (16) ve Pazar (19) günleri en yüksek lead hacmi geldi. Pazartesi 20 Nisan'da sadece 5 lead — muhtemelen reklam bütçesi ya da yayın temposuyla ilgili. <strong>Hafta sonu içerik/reklam yoğunluğu sürdürülmeli</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOSS REASONS -->
+<section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <h2>3. Kaybetme nedenleri: "Kişisel Sebepler" %59 ile ezici çoğunlukta</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>Başarısız 68 lead — neden kaybedildi?</h3>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="bar-label">Kişisel Sebepler</div>
+            <div class="bar-track"><div class="bar-fill crimson" style="width:59%;"></div></div>
+            <div class="bar-value">40</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Mali Sebepler</div>
+            <div class="bar-track"><div class="bar-fill" style="width:16%;"></div></div>
+            <div class="bar-value">11</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Program Uyumsuzluğu</div>
+            <div class="bar-track"><div class="bar-fill" style="width:12%;"></div></div>
+            <div class="bar-value">8</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Hastane Tercihi</div>
+            <div class="bar-track"><div class="bar-fill gray" style="width:3%;"></div></div>
+            <div class="bar-value">2</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">İletişimsizlik</div>
+            <div class="bar-track"><div class="bar-fill gray" style="width:3%;"></div></div>
+            <div class="bar-value">2</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Zamanlama</div>
+            <div class="bar-track"><div class="bar-fill gray" style="width:3%;"></div></div>
+            <div class="bar-value">2</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Güven Problemi</div>
+            <div class="bar-track"><div class="bar-fill gray" style="width:3%;"></div></div>
+            <div class="bar-value">2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Hafta karşılaştırması</h3>
+          <span class="card-meta">Bu hafta vs geçen hafta</span>
+        </div>
+        <div class="compare-grid" style="margin-bottom: var(--space-4);">
+          <div class="compare-cell">
+            <div class="label">Bu hafta</div>
+            <div class="value" style="color:var(--cancera-crimson);">%73,1</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;">68/93 başarısız</div>
+          </div>
+          <div class="compare-cell">
+            <div class="label">Geçen hafta</div>
+            <div class="value">%65,8</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;">77/117 başarısız</div>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Metrik</th><th style="text-align:right;">Bu Hafta</th><th style="text-align:right;">Geçen Hafta</th><th style="text-align:right;">Fark</th></tr></thead>
+          <tbody>
+            <tr><td>Toplam lead</td><td class="num">93</td><td class="num">117</td><td class="num" style="color:var(--cancera-crimson);">-24</td></tr>
+            <tr><td>Başarısız</td><td class="num">68</td><td class="num">77</td><td class="num" style="color:var(--success);">-9</td></tr>
+            <tr><td>Takipte</td><td class="num">25</td><td class="num">39</td><td class="num" style="color:var(--cancera-crimson);">-14</td></tr>
+            <tr><td>Başarısızlık %</td><td class="num">73,1</td><td class="num">65,8</td><td class="num" style="color:var(--cancera-crimson);">+7,3p</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout crimson">
+      <h4>🚨 "Kişisel Sebepler" kategorisi çok geniş — kaybı anlamıyoruz</h4>
+      <p>Başarısız lead'lerin %59'u tek bir soyut kategori altında toplanmış. "Kişisel Sebepler" altında gerçekten ne yatıyor: <em>fiyat mı? eşlik edecek kişi yokluğu mu? karar erteleme mi? tedaviyi reddetme mi?</em> Bu kategoriyi <strong>3-4 alt nedene ayırmak</strong> (örn. "Fiyat endişesi", "Aile kararı bekleniyor", "Tedaviyi reddetti", "Karar aşamasında") kayıp analizini çok daha kullanılabilir hale getirir.</p>
+    </div>
+
+    <div class="callout">
+      <h4>💰 Mali + Program = %28 birleşik</h4>
+      <p>Mali Sebepler (11) + Program Uyumsuzluğu (8) = 19 lead; başarısızlığın %28'i. Bu iki neden <strong>ürün/fiyat tasarımıyla çözülebilir</strong> — esnek ödeme planı, paket seçenekleri veya daha hızlı slot açma mekanizmaları test edilebilir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section class="section">
+  <div class="container">
+    <h2>4. Öneriler — önümüzdeki hafta için 4 aksiyon</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>1. Reklam bütçesini Reels'e kaydır</h3>
+          <span class="badge badge-navy">Yüksek etki</span>
+        </div>
+        <p>Posts görüntülemenin %54,8'ini alırken etkileşimin sadece %35,8'ini üretiyor. Reels tersi: %36,8 görüntüleme, %60,4 etkileşim. Reklam bütçesinin %60-70'ini Reels'e yönlendirmek, aynı harcamayla daha fazla etkileşim (ve potansiyel lead) getirebilir.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>2. "Kişisel Sebepler"i parçala</h3>
+          <span class="badge badge-crimson">Veri kalitesi</span>
+        </div>
+        <p>CRM'de bu kategoriyi en az 3 alt nedene böl: Fiyat endişesi, Karar erteleme, Aile/çevre etkisi. Böylece hangi engelin gerçek darboğaz olduğunu görebilir ve her birine özel bir mesajla yeniden temas edebiliriz.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>3. Website lead akışını güçlendir</h3>
+          <span class="badge badge-crimson">Risk azaltma</span>
+        </div>
+        <p>Website haftalık sadece 8 lead getiriyor — başarısızlık oranı da IG'den 12 puan daha düşük (%62,5 vs %74,1). Website lead'i daha kaliteli, ama hacmi çok düşük. SEO + blog içerik + website'de direkt form görünürlüğü artırılmalı.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>4. Hafta sonu ivmesini koru, Pazartesi'yi kurtar</h3>
+          <span class="badge badge-navy">Operasyon</span>
+        </div>
+        <p>Salı-Pazar arası günlük 10-19 lead, Pazartesi 5. Pazartesi çökmesi reklam yayını/içerik programıyla ilgiliyse düzeltilmeli. Hafta sonu (Cmt-Paz) en verimli günler — bu saatlerde içerik yoğunluğu ve canlı ekip desteği artırılabilir.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div>
+      <div class="footer-brand">cancera</div>
+      <div style="color:rgba(255,255,255,0.6); font-size:0.8125rem; margin-top:4px;">Haftalık Performans Raporu • 14-20 Nisan 2026</div>
+    </div>
+    <div style="color:rgba(255,255,255,0.6); font-size:0.8125rem;">Hazırlayan: Cala · Pazarlama Ekibi</div>
+  </div>
+</footer>
+
+</body>
+</html>
