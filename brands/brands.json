@@ -185,6 +185,19 @@
             "performans",
             "nisan-2026"
           ]
+        },
+        {
+          "slug": "lead-analizi-17-23-nisan-v2",
+          "name": "Lead Analizi — 17–23 Nisan 2026",
+          "description": "59 lead analizi: günlük akış, satış durumu, kayıp nedenleri ve dönemsel karşılaştırma",
+          "date": "2026-04-23",
+          "tags": [
+            "lead",
+            "analiz",
+            "satış",
+            "crm",
+            "rapor"
+          ]
         }
       ]
     }
