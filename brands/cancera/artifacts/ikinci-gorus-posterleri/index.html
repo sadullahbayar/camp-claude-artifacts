@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Cancera — İkinci Görüş Posterleri</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0A3161;
+    --navy-dark: #071F3E;
+    --navy-light: #E8EDF4;
+    --crimson: #B31942;
+    --crimson-dark: #8A1233;
+    --crimson-light: #FBE8EE;
+    --bg: #FAFBFC;
+    --text: #111827;
+    --text-muted: #4B5563;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #2a2a2a;
+    padding: 40px 20px;
+    color: var(--text);
+  }
+  .page-title {
+    color: white;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .page-sub {
+    color: #aaa;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 40px;
+    letter-spacing: 0.5px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1080px);
+    gap: 32px;
+    justify-content: center;
+  }
+  .poster {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .poster-label {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 16px;
+    margin-bottom: 32px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Logo bileşeni - tüm posterlerde ortak */
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .logo-marks {
+    display: inline-flex;
+    gap: 4px;
+  }
+  .logo-bar {
+    width: 6px;
+    height: 28px;
+    border-radius: 2px;
+  }
+  .logo-bar.crimson { background: var(--crimson); }
+  .logo-bar.navy { background: var(--navy); }
+  .logo-text { font-size: 28px; color: var(--navy); }
+  .logo-light .logo-text { color: white; }
+  .logo-light .logo-bar.navy { background: var(--navy-light); }
+
+  /* ===========================
+     POSTER 1: DİJİTAL KANSER MERKEZİ
+     Aesthetic: Editorial, navy gradient, crimson glow
+     =========================== */
+  .p1 {
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-dark) 100%);
+    color: white;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .p1::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--crimson) 0%, transparent 70%);
+    opacity: 0.35;
+    filter: blur(40px);
+  }
+  .p1::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--crimson-dark) 0%, transparent 70%);
+    opacity: 0.25;
+    filter: blur(40px);
+  }
+  .p1-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .p1-tag {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--crimson);
+    font-weight: 600;
+    padding: 8px 16px;
+    border: 1px solid var(--crimson);
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .p1-body {
+    position: relative;
+    z-index: 2;
+  }
+  .p1-eyebrow {
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: var(--crimson-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .p1-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--crimson);
+  }
+  .p1-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 92px;
+    line-height: 0.95;
+    font-weight: 700;
+    letter-spacing: -2px;
+    margin-bottom: 32px;
+  }
+  .p1-headline em {
+    font-style: italic;
+    color: var(--crimson);
+    font-weight: 600;
+  }
+  .p1-divider {
+    width: 80px;
+    height: 3px;
+    background: var(--crimson);
+    margin-bottom: 32px;
+  }
+  .p1-sub {
+    font-size: 26px;
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--navy-light);
+    max-width: 720px;
+    margin-bottom: 20px;
+  }
+  .p1-sub strong {
+    color: white;
+    font-weight: 600;
+  }
+  .p1-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+  .p1-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--crimson);
+    margin-bottom: 4px;
+  }
+  .p1-stat-label {
+    font-size: 13px;
+    color: var(--navy-light);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .p1-footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 13px;
+    color: var(--navy-light);
+    letter-spacing: 1px;
+  }
+  .p1-cta {
+    background: var(--crimson);
+    color: white;
+    padding: 18px 32px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===========================
+     POSTER 2: 14 SAAT vs 14 SANİYE
+     Aesthetic: Split editorial, contrast
+     =========================== */
+  .p2 {
+    background: var(--bg);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .p2-left {
+    background: linear-gradient(160deg, #1a1a1a 0%, #2a2a2a 100%);
+    padding: 80px 60px;
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .p2-left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 30% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+  }
+  .p2-right {
+    background: linear-gradient(160deg, var(--navy) 0%, var(--navy-dark) 100%);
+    padding: 80px 60px;
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .p2-right::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--crimson) 0%, transparent 70%);
+    opacity: 0.3;
+    filter: blur(50px);
+    transform: translateY(-50%);
+  }
+  .p2-tag {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+  .p2-tag.warn { color: #ff6b6b; }
+  .p2-tag.win { color: var(--crimson-light); }
+  .p2-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 200px;
+    line-height: 0.9;
+    font-weight: 700;
+    letter-spacing: -8px;
+  }
+  .p2-num.dim { color: rgba(255,255,255,0.3); text-decoration: line-through; text-decoration-color: #ff6b6b; text-decoration-thickness: 6px; }
+  .p2-num.bright { color: white; }
+  .p2-unit {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 400;
+    font-style: italic;
+    margin-top: -10px;
+  }
+  .p2-desc {
+    font-size: 22px;
+    line-height: 1.4;
+    opacity: 0.85;
+    margin-top: 24px;
+  }
+  .p2-cta-band {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--crimson);
+    padding: 28px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    grid-column: 1 / -1;
+  }
+  .p2-cta-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: white;
+  }
+  .p2-cta-text em { font-style: italic; }
+
+  /* ===========================
+     POSTER 3: FORUM TAHMİN EDER
+     Aesthetic: Editorial typography, comparison
+     =========================== */
+  .p3 {
+    background: var(--bg);
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .p3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--navy) 0%, var(--navy) 50%, var(--crimson) 50%, var(--crimson) 100%);
+  }
+  .p3-eyebrow {
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: var(--crimson);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .p3-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 88px;
+    line-height: 0.95;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -2px;
+    margin-bottom: 60px;
+  }
+  .p3-headline em {
+    font-style: italic;
+    color: var(--crimson);
+  }
+  .p3-compare {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    align-items: stretch;
+    margin-bottom: 60px;
+  }
+  .p3-card {
+    padding: 40px;
+    border-radius: 8px;
+    position: relative;
+  }
+  .p3-card.bad {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+  }
+  .p3-card.good {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 12px 40px rgba(10,49,97,0.3);
+  }
+  .p3-card-tag {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .p3-card.bad .p3-card-tag { color: #9ca3af; }
+  .p3-card.good .p3-card-tag { color: var(--crimson-light); }
+  .p3-card-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+  .p3-card-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    line-height: 1.15;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .p3-card.bad .p3-card-text { color: #6b7280; text-decoration: line-through; text-decoration-color: #ef4444; }
+  .p3-card-meta {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .p3-card.bad .p3-card-meta { color: #6b7280; }
+  .p3-card.good .p3-card-meta { color: var(--navy-light); }
+  .p3-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 60px;
+    color: var(--crimson);
+    font-weight: 700;
+  }
+  .p3-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-style: italic;
+    color: var(--navy);
+    line-height: 1.3;
+    border-left: 4px solid var(--crimson);
+    padding-left: 24px;
+  }
+  .p3-tagline strong { font-style: normal; font-weight: 700; }
+  .p3-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 32px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 32px;
+  }
+  .p3-footer-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ===========================
+     POSTER 4: ARAMA MOTORU PANİK ÜRETİR
+     Aesthetic: Bold contrast, cream + crimson
+     =========================== */
+  .p4 {
+    background: #FBE8EE;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .p4-top {
+    padding: 70px 80px 40px;
+    flex: 0 0 auto;
+  }
+  .p4-eyebrow {
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--crimson-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .p4-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 76px;
+    line-height: 1.0;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -1.5px;
+  }
+  .p4-quote .strike {
+    text-decoration: line-through;
+    text-decoration-color: var(--crimson);
+    text-decoration-thickness: 6px;
+    color: rgba(10,49,97,0.4);
+  }
+  .p4-quote em {
+    font-style: italic;
+    color: var(--crimson);
+  }
+  .p4-middle {
+    background: var(--navy);
+    color: white;
+    padding: 50px 80px;
+    margin: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+  .p4-middle::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: var(--crimson);
+  }
+  .p4-key {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 38px;
+    line-height: 1.3;
+    font-weight: 400;
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+  .p4-key strong {
+    font-style: normal;
+    font-weight: 700;
+    color: white;
+    background: var(--crimson);
+    padding: 2px 12px;
+    margin: 0 -4px;
+  }
+  .p4-bottom {
+    background: var(--bg);
+    padding: 40px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .p4-cta-text {
+    font-size: 18px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .p4-cta-button {
+    background: var(--crimson);
+    color: white;
+    padding: 16px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-radius: 4px;
+  }
+
+  /* ===========================
+     POSTER 5: KİŞİYE ÖZEL — AI vs CANCERA
+     Aesthetic: Minimal editorial, navy bg, refined
+     =========================== */
+  .p5 {
+    background: var(--navy-dark);
+    color: white;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .p5::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .p5::after {
+    content: '';
+    position: absolute;
+    bottom: -200px;
+    right: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, var(--crimson) 0%, transparent 65%);
+    opacity: 0.25;
+    filter: blur(60px);
+  }
+  .p5-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .p5-eyebrow {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--crimson-light);
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border: 1px solid var(--crimson);
+    border-radius: 999px;
+  }
+  .p5-body {
+    position: relative;
+    z-index: 2;
+  }
+  .p5-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .p5-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: baseline;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .p5-row:last-child { border-bottom: none; }
+  .p5-row-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding-top: 16px;
+  }
+  .p5-row-label.dim { color: rgba(255,255,255,0.4); }
+  .p5-row-label.accent { color: var(--crimson); }
+  .p5-row-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+  .p5-row-text.dim { color: rgba(255,255,255,0.45); font-weight: 400; font-style: italic; }
+  .p5-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    line-height: 1.3;
+    font-style: italic;
+    margin-top: 60px;
+    color: white;
+    max-width: 850px;
+  }
+  .p5-tagline strong {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--crimson-light);
+    background: linear-gradient(180deg, transparent 60%, rgba(179,25,66,0.5) 60%);
+    padding: 0 4px;
+  }
+  .p5-footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ===========================
+     POSTER 6: KANSER TEK BİR HASTALIK DEĞİL
+     Aesthetic: Manifesto, type-driven
+     =========================== */
+  .p6 {
+    background: var(--bg);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .p6-band {
+    background: var(--navy);
+    color: white;
+    padding: 24px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .p6-band-tag {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .p6-band-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--navy-light);
+  }
+  .p6-main {
+    flex: 1;
+    padding: 80px 80px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+  .p6-statement {
+    font-family: 'Playfair Display', serif;
+    font-size: 96px;
+    line-height: 0.95;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -3px;
+    margin-bottom: 50px;
+  }
+  .p6-statement .crossed {
+    text-decoration: line-through;
+    text-decoration-color: var(--crimson);
+    text-decoration-thickness: 8px;
+    color: rgba(10,49,97,0.3);
+  }
+  .p6-statement em {
+    font-style: italic;
+    color: var(--crimson);
+  }
+  .p6-statement-2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    line-height: 1.25;
+    font-weight: 400;
+    color: var(--text-muted);
+    max-width: 850px;
+    margin-bottom: 40px;
+  }
+  .p6-statement-2 strong {
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .p6-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-top: 30px;
+    border-top: 2px solid var(--navy);
+  }
+  .p6-cta-mark {
+    width: 60px;
+    height: 60px;
+    background: var(--crimson);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    font-style: italic;
+    border-radius: 4px;
+  }
+  .p6-cta-text {
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .p6-cta-text em {
+    font-style: italic;
+    color: var(--crimson);
+  }
+  .p6-footer {
+    background: var(--navy-dark);
+    color: white;
+    padding: 24px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .p6-footer-tag {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    color: var(--navy-light);
+  }
+</style>
+</head>
+<body>
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<style>.camp-back{position:fixed;top:16px;left:16px;z-index:9999;background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:8px 14px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;transition:all 0.2s ease}.camp-back:hover{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8)}</style>
+
+<h1 class="page-title">Cancera — İkinci Görüş Poster Serisi</h1>
+<p class="page-sub">6 farklı opsiyon · 1080×1080 · Instagram & LinkedIn formatı</p>
+
+<div class="grid">
+
+  <!-- ============= POSTER 1 ============= -->
+  <div>
+    <div class="poster p1">
+      <div class="p1-header">
+        <div class="logo logo-light">
+          <div class="logo-marks">
+            <div class="logo-bar crimson"></div>
+            <div class="logo-bar navy"></div>
+          </div>
+          <span class="logo-text" style="color:white;">Cancera</span>
+        </div>
+        <div class="p1-tag">Dijital Onkoloji Merkezi</div>
+      </div>
+
+      <div class="p1-body">
+        <div class="p1-eyebrow">Türkçe ikinci görüş</div>
+        <h1 class="p1-headline">Amerika'ya<br>gitmeden,<br><em>ikinci görüşünü</em> al.</h1>
+        <div class="p1-divider"></div>
+        <p class="p1-sub">
+          Pasaport yok. Çevirmen yok. Aylarca süren süreçler yok.<br>
+          <strong>Sadece raporun, sadece doğru onkolog —</strong> Amerika'daki Türk onkologlardan, Türkçe.
+        </p>
+        <div class="p1-stats">
+          <div>
+            <div class="p1-stat-num">14<span style="font-size:24px;">sn</span></div>
+            <div class="p1-stat-label">Başvuru süresi</div>
+          </div>
+          <div>
+            <div class="p1-stat-num">0<span style="font-size:24px;">çeviri</span></div>
+            <div class="p1-stat-label">Türkçe konsültasyon</div>
+          </div>
+          <div>
+            <div class="p1-stat-num">100<span style="font-size:24px;">%</span></div>
+            <div class="p1-stat-label">Onkolog onaylı</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p1-footer">
+        <div>cancera.co · İkinci görüş, dünyanın en iyi merkezleri yanında</div>
+        <div class="p1-cta">Raporunu Yükle →</div>
+      </div>
+    </div>
+    <p class="poster-label">01 · Dijital Onkoloji Merkezi</p>
+  </div>
+
+  <!-- ============= POSTER 2 ============= -->
+  <div>
+    <div class="poster p2">
+      <div class="p2-left">
+        <div class="p2-tag warn">Eski Yol</div>
+        <div>
+          <div class="p2-num dim">14</div>
+          <div class="p2-unit" style="color:rgba(255,255,255,0.5);">saatlik uçuş</div>
+        </div>
+        <div class="p2-desc">
+          Pasaport, vize, çevirmen, aylarca bekleme.<br>
+          İkinci görüş için bir okyanus.
+        </div>
+      </div>
+      <div class="p2-right">
+        <div class="p2-tag win">Cancera ile</div>
+        <div>
+          <div class="p2-num bright">14</div>
+          <div class="p2-unit" style="color:var(--crimson-light);">saniyede başvuru</div>
+        </div>
+        <div class="p2-desc">
+          Raporunu yükle.<br>
+          <strong style="color:white;">İkinci görüşünü Türkçe al.</strong>
+        </div>
+      </div>
+      <div class="p2-cta-band">
+        <div class="p2-cta-text">Amerika'daki Türk onkologlar, <em>artık raporunda.</em></div>
+        <div class="logo logo-light">
+          <div class="logo-marks">
+            <div class="logo-bar crimson"></div>
+            <div class="logo-bar navy"></div>
+          </div>
+          <span class="logo-text" style="color:white;font-size:24px;">Cancera</span>
+        </div>
+      </div>
+    </div>
+    <p class="poster-label">02 · 14 Saat vs 14 Saniye</p>
+  </div>
+
+  <!-- ============= POSTER 3 ============= -->
+  <div>
+    <div class="poster p3">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:50px;">
+          <div class="logo">
+            <div class="logo-marks">
+              <div class="logo-bar crimson"></div>
+              <div class="logo-bar navy"></div>
+            </div>
+            <span class="logo-text">Cancera</span>
+          </div>
+          <div style="font-size:12px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Yalnız Değilsin</div>
+        </div>
+
+        <div class="p3-eyebrow">İkinci Görüş — Onkolog Onaylı</div>
+        <h1 class="p3-headline">Forum tahmin eder.<br><em>Cancera onkologla</em> doğrular.</h1>
+
+        <div class="p3-compare">
+          <div class="p3-card bad">
+            <div class="p3-card-tag">Forumda</div>
+            <div class="p3-card-icon">💬</div>
+            <div class="p3-card-text">Duyumlar, tahminler, "bende de oldu"lar.</div>
+            <div class="p3-card-meta">Senin protokolünü, senin biyolojini bilmeden verilmiş cevaplar.</div>
+          </div>
+          <div class="p3-arrow">→</div>
+          <div class="p3-card good">
+            <div class="p3-card-tag">Cancera'da</div>
+            <div class="p3-card-icon" style="filter:hue-rotate(0deg);">🩺</div>
+            <div class="p3-card-text">Onkolog onaylı ikinci görüş.</div>
+            <div class="p3-card-meta">Senin raporunu, senin protokolünü okuyan uzmandan, Türkçe gerçekler.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="p3-tagline">"<strong>Senin protokolüne özel</strong> ikinci görüş —<br>duyum değil, doğrulama."</p>
+        <div class="p3-footer">
+          <div class="p3-footer-text">cancera.co · İkinci görüş alanın</div>
+          <div class="p3-footer-text" style="color:var(--crimson);">Raporunu yükle →</div>
+        </div>
+      </div>
+    </div>
+    <p class="poster-label">03 · Forum vs Onkolog</p>
+  </div>
+
+  <!-- ============= POSTER 4 ============= -->
+  <div>
+    <div class="poster p4">
+      <div class="p4-top">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;">
+          <div class="logo">
+            <div class="logo-marks">
+              <div class="logo-bar crimson"></div>
+              <div class="logo-bar navy"></div>
+            </div>
+            <span class="logo-text">Cancera</span>
+          </div>
+          <div class="p4-eyebrow" style="margin-bottom:0;">Doğru Cevap, İkinci Görüş</div>
+        </div>
+        <h1 class="p4-quote">
+          <span class="strike">Arama motoru</span><br>
+          panik üretir.<br>
+          <em>İkinci görüş</em><br>
+          netlik üretir.
+        </h1>
+      </div>
+
+      <div class="p4-middle">
+        <p class="p4-key">
+          Kanser tek bir hastalık değil —<br>
+          <strong>aradığın cevap da öyle.</strong>
+        </p>
+        <p style="font-size:18px;line-height:1.6;color:var(--navy-light);max-width:780px;">
+          Aklındaki sorulara, senin raporunu ve protokolünü okuyan onkologdan
+          <strong style="color:white;">"sana özel"</strong> ikinci görüş al.
+        </p>
+      </div>
+
+      <div class="p4-bottom">
+        <div class="p4-cta-text">cancera.co · Raporunu yükle, ikinci görüşünü Türkçe al.</div>
+        <div class="p4-cta-button">İkinci Görüş Al</div>
+      </div>
+    </div>
+    <p class="poster-label">04 · Arama Motoru vs İkinci Görüş</p>
+  </div>
+
+  <!-- ============= POSTER 5 ============= -->
+  <div>
+    <div class="poster p5">
+      <div class="p5-header">
+        <div class="logo logo-light">
+          <div class="logo-marks">
+            <div class="logo-bar crimson"></div>
+            <div class="logo-bar navy"></div>
+          </div>
+          <span class="logo-text" style="color:white;">Cancera</span>
+        </div>
+        <div class="p5-eyebrow">Kişiye Özel İkinci Görüş</div>
+      </div>
+
+      <div class="p5-body">
+        <div class="p5-rows">
+          <div class="p5-row">
+            <div class="p5-row-label dim">AI</div>
+            <div class="p5-row-text dim">Herkese aynı cevabı verir.</div>
+          </div>
+          <div class="p5-row">
+            <div class="p5-row-label accent">Cancera</div>
+            <div class="p5-row-text">Senin raporunu okuyan onkologdan, sana özel ikinci görüş.</div>
+          </div>
+        </div>
+
+        <p class="p5-tagline">
+          Tedavi her hastaya özeldir —<br>
+          <strong>doğru ikinci görüş de öyle.</strong>
+        </p>
+      </div>
+
+      <div class="p5-footer">
+        <div style="font-size:13px;letter-spacing:1.5px;color:var(--navy-light);text-transform:uppercase;">cancera.co · Onkolog onaylı, Türkçe</div>
+        <div style="background:var(--crimson);color:white;padding:14px 24px;border-radius:4px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Raporunu Yükle →</div>
+      </div>
+    </div>
+    <p class="poster-label">05 · AI vs Onkolog Onaylı</p>
+  </div>
+
+  <!-- ============= POSTER 6 ============= -->
+  <div>
+    <div class="poster p6">
+      <div class="p6-band">
+        <div class="logo logo-light">
+          <div class="logo-marks">
+            <div class="logo-bar crimson"></div>
+            <div class="logo-bar navy"></div>
+          </div>
+          <span class="logo-text" style="color:white;font-size:24px;">Cancera</span>
+        </div>
+        <div class="p6-band-tag">Manifesto · Nº 06</div>
+      </div>
+
+      <div class="p6-main">
+        <h1 class="p6-statement">
+          Kanser <span class="crossed">tek bir</span><br>
+          hastalık değil —<br>
+          <em>aradığın ikinci<br>görüş de öyle.</em>
+        </h1>
+        <p class="p6-statement-2">
+          Aynı tanı, farklı protokol. Aynı protokol, farklı yanıt.<br>
+          Genel cevaplar yetmez. <strong>Senin dosyana, senin biyolojine bakan</strong> bir onkolog gerek.
+        </p>
+        <div class="p6-cta-row">
+          <div class="p6-cta-mark">C</div>
+          <div class="p6-cta-text">
+            Cancera ile <em>sana özel ikinci görüş —</em><br>
+            Amerika'daki Türk onkologlardan, Türkçe.
+          </div>
+        </div>
+      </div>
+
+      <div class="p6-footer">
+        <div class="p6-footer-tag">cancera.co</div>
+        <div class="p6-footer-tag" style="color:var(--crimson-light);">Raporunu yükle, başvuru 14 saniye →</div>
+      </div>
+    </div>
+    <p class="poster-label">06 · Kanser Tek Bir Hastalık Değil</p>
+  </div>
+
+</div>
+
+</body>
+</html>

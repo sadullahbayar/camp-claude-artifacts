@@ -198,6 +198,18 @@
             "crm",
             "rapor"
           ]
+        },
+        {
+          "slug": "ikinci-gorus-posterleri",
+          "name": "İkinci Görüş Posterleri",
+          "description": "Cancera ikinci görüş hizmeti için sosyal medya poster tasarımları",
+          "date": "2026-04-27",
+          "tags": [
+            "poster",
+            "sosyal-medya",
+            "ikinci-gorus",
+            "tasarim"
+          ]
         }
       ]
     }
