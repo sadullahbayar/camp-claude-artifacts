@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancera — Haftalık Performans Raporu | 21-27 Nisan 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --cancera-navy: #0A3161;
+  --cancera-navy-dark: #071F3E;
+  --cancera-navy-light: #E8EDF4;
+  --cancera-crimson: #B31942;
+  --cancera-crimson-dark: #8A1233;
+  --cancera-crimson-light: #FBE8EE;
+  --bg: #FAFBFC;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --text: #111827;
+  --text-muted: #4B5563;
+  --text-subtle: #9CA3AF;
+  --success: #0B6E4F;
+  --warning: #E8B931;
+  --danger: #B31942;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 2px rgba(17,24,39,0.04);
+  --shadow-md: 0 4px 12px rgba(17,24,39,0.06);
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); color: var(--cancera-navy); font-weight: 600; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.5rem, 2.8vw, 2.125rem); letter-spacing: -0.01em; margin-bottom: var(--space-6); }
+h3 { font-size: 1.25rem; margin-bottom: var(--space-2); }
+h4 { font-size: 1rem; font-family: var(--font-body); font-weight: 600; color: var(--text); margin-bottom: var(--space-2); }
+p { color: var(--text-muted); }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+.section { padding: var(--space-12) 0; }
+
+.header {
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-4) 0;
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--cancera-navy);
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.logo-mark { display: inline-flex; gap: 2px; align-items: flex-end; height: 22px; }
+.logo-mark span { display: block; width: 3px; border-radius: 1px; }
+.logo-mark span:nth-child(1) { background: var(--cancera-crimson); height: 50%; }
+.logo-mark span:nth-child(2) { background: var(--cancera-navy); height: 75%; }
+.logo-mark span:nth-child(3) { background: var(--cancera-crimson); height: 65%; }
+.logo-mark span:nth-child(4) { background: var(--cancera-navy); height: 100%; }
+.logo-mark span:nth-child(5) { background: var(--cancera-crimson); height: 90%; }
+.header-meta { font-size: 0.875rem; color: var(--text-muted); }
+
+.hero {
+  background: linear-gradient(135deg, var(--cancera-navy) 0%, var(--cancera-navy-dark) 100%);
+  color: white;
+  padding: var(--space-16) 0 var(--space-12);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute; top: -50%; right: -10%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(179,25,66,0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero h1 { color: white; margin-bottom: var(--space-4); position: relative; }
+.hero .subtitle { color: rgba(255,255,255,0.85); font-size: 1.125rem; max-width: 760px; position: relative; }
+.hero .eyebrow {
+  display: inline-block;
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: #F4A4B8;
+  margin-bottom: var(--space-4);
+  position: relative;
+}
+
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-8); }
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+.kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--cancera-navy); }
+.kpi.crimson::before { background: var(--cancera-crimson); }
+.kpi.danger::before { background: var(--danger); }
+.kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-subtle); margin-bottom: var(--space-2); font-weight: 600; }
+.kpi-value { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--cancera-navy); line-height: 1; margin-bottom: var(--space-2); }
+.kpi-delta { font-size: 0.8125rem; color: var(--success); font-weight: 500; }
+.kpi-delta.negative { color: var(--cancera-crimson); }
+.kpi-delta.neutral { color: var(--text-muted); }
+
+.callout {
+  background: var(--cancera-navy-light);
+  border-left: 4px solid var(--cancera-navy);
+  padding: var(--space-4) var(--space-6);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: var(--space-4) 0;
+}
+.callout.crimson { background: var(--cancera-crimson-light); border-left-color: var(--cancera-crimson); }
+.callout h4 { color: var(--cancera-navy); margin-bottom: var(--space-2); font-size: 0.9375rem; }
+.callout.crimson h4 { color: var(--cancera-crimson-dark); }
+.callout p { font-size: 0.9375rem; margin: 0; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-4);
+}
+.card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-2); }
+.card-header h3 { margin: 0; }
+.card-meta { font-size: 0.8125rem; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-4); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); }
+
+/* Bar chart */
+.bar-chart { display: flex; flex-direction: column; gap: var(--space-3); }
+.bar-row { display: grid; grid-template-columns: 140px 1fr 80px; gap: var(--space-3); align-items: center; }
+.bar-label { font-size: 0.875rem; color: var(--text); font-weight: 500; }
+.bar-track { height: 24px; background: #F3F4F6; border-radius: 4px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; background: var(--cancera-navy); border-radius: 4px; transition: width 0.3s ease; }
+.bar-fill.crimson { background: var(--cancera-crimson); }
+.bar-fill.gray { background: #9CA3AF; }
+.bar-value { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--cancera-navy); text-align: right; }
+
+/* WoW comparison bars (dual) */
+.wow-grid { display: flex; flex-direction: column; gap: var(--space-4); }
+.wow-row { }
+.wow-label { font-size: 0.875rem; font-weight: 600; color: var(--text); margin-bottom: var(--space-2); display: flex; justify-content: space-between; }
+.wow-bars { display: flex; flex-direction: column; gap: 6px; }
+.wow-bar { display: grid; grid-template-columns: 80px 1fr 100px; gap: var(--space-3); align-items: center; font-size: 0.8125rem; }
+.wow-bar .week-label { color: var(--text-muted); }
+.wow-bar .bar-track { height: 18px; }
+.wow-bar .bar-fill.prev { background: #B8C7DC; }
+.wow-bar .bar-value { font-size: 0.875rem; }
+
+/* Donut */
+.donut-wrap { display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap; }
+.donut { flex-shrink: 0; }
+.donut-legend { flex: 1; min-width: 200px; }
+.legend-row { display: flex; align-items: center; gap: var(--space-2); font-size: 0.875rem; margin-bottom: var(--space-2); }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { color: var(--text-muted); flex: 1; }
+.legend-value { font-weight: 600; color: var(--text); }
+
+/* Top content cards */
+.top-content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); }
+.content-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  position: relative;
+}
+.content-rank {
+  display: inline-block; width: 28px; height: 28px;
+  background: var(--cancera-crimson); color: white;
+  border-radius: 50%; text-align: center; line-height: 28px;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.875rem;
+  margin-bottom: var(--space-3);
+}
+.content-card .views { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: var(--cancera-navy); margin-top: var(--space-2); }
+.content-card .views-label { font-size: 0.75rem; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.08em; }
+.content-card .title { font-size: 0.9375rem; font-weight: 500; color: var(--text); line-height: 1.4; margin-bottom: var(--space-2); }
+.content-card .date { font-size: 0.75rem; color: var(--text-muted); }
+
+/* Cities list */
+.cities-list { display: flex; flex-direction: column; gap: var(--space-3); }
+.city-row { display: grid; grid-template-columns: 100px 1fr 60px; gap: var(--space-3); align-items: center; }
+
+/* Profile activity strip */
+.metric-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-4); margin-top: var(--space-4); }
+.metric-cell { background: var(--bg); border-radius: var(--radius-sm); padding: var(--space-4); border: 1px solid var(--border); }
+.metric-cell .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-subtle); margin-bottom: var(--space-1); }
+.metric-cell .value { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: var(--cancera-navy); }
+.metric-cell .delta { font-size: 0.8125rem; color: var(--cancera-crimson); margin-top: var(--space-1); font-weight: 500; }
+
+/* Comparison table */
+table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+th { background: var(--cancera-navy-light); color: var(--cancera-navy); font-weight: 600; text-align: left; padding: var(--space-3) var(--space-4); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); color: var(--text); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(10,49,97,0.03); }
+td.num { font-variant-numeric: tabular-nums; text-align: right; font-weight: 500; }
+td.delta-neg { color: var(--cancera-crimson); font-weight: 600; }
+td.delta-pos { color: var(--success); font-weight: 600; }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.badge-navy { background: var(--cancera-navy-light); color: var(--cancera-navy); }
+.badge-crimson { background: var(--cancera-crimson-light); color: var(--cancera-crimson-dark); }
+.badge-gray { background: #F3F4F6; color: var(--text-muted); }
+
+.footer {
+  background: var(--cancera-navy-dark);
+  color: rgba(255,255,255,0.8);
+  padding: var(--space-8) 0 var(--space-4);
+  margin-top: var(--space-12);
+  font-size: 0.875rem;
+}
+.footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
+.footer-brand { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: white; }
+
+@media (max-width: 768px) {
+  .section { padding: var(--space-8) 0; }
+  .hero { padding: var(--space-12) 0 var(--space-8); }
+  .bar-row { grid-template-columns: 100px 1fr 60px; font-size: 0.8125rem; }
+  .wow-bar { grid-template-columns: 60px 1fr 70px; }
+}
+</style>
+</head>
+
+<body>
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<style>.camp-back{position:fixed;top:16px;left:16px;z-index:9999;background:rgba(0,0,0,0.04);backdrop-filter:blur(12px);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:8px 14px;color:rgba(0,0,0,0.4);text-decoration:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;transition:all 0.2s ease}.camp-back:hover{background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.7)}</style>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark"><span></span><span></span><span></span><span></span><span></span></span>
+      cancera
+    </a>
+    <div class="header-meta">Haftalık Rapor • 21–27 Nisan 2026</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">Haftalık Performans Raporu</span>
+    <h1>Reklam durdu, organik kalite yükseldi: küçülen ama olgunlaşan bir hafta</h1>
+    <p class="subtitle">Bu hafta görüntülemeler %80, etkileşimler %69 düştü — temel sebep reklam yayınının neredeyse durması (reklam views -89%). Ancak <strong>etkileşim oranı %50 arttı</strong>, takipçi-etkileşim payı %42'den %64'e fırladı. Yani daha az kişiye ulaştık ama gelenler içerikle gerçekten ilişki kurdu.</p>
+  </div>
+</section>
+
+<!-- EXECUTIVE KPIs -->
+<section class="section">
+  <div class="container">
+    <h2>Haftanın özeti</h2>
+
+    <div class="kpi-grid">
+      <div class="kpi danger">
+        <div class="kpi-label">Görüntüleme</div>
+        <div class="kpi-value">19.182</div>
+        <div class="kpi-delta negative">↓ %79,7 (önceki: 94.376)</div>
+      </div>
+      <div class="kpi danger">
+        <div class="kpi-label">Erişim</div>
+        <div class="kpi-value">7.637</div>
+        <div class="kpi-delta negative">↓ %85,3 (önceki: 51.840)</div>
+      </div>
+      <div class="kpi danger">
+        <div class="kpi-label">Etkileşim</div>
+        <div class="kpi-value">223</div>
+        <div class="kpi-delta negative">↓ %69,4 (önceki: 729)</div>
+      </div>
+      <div class="kpi crimson">
+        <div class="kpi-label">Etkileşim Oranı</div>
+        <div class="kpi-value">%1,16</div>
+        <div class="kpi-delta">↑ %50,5 (önceki: %0,77)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Takipçi</div>
+        <div class="kpi-value">5.309</div>
+        <div class="kpi-delta">↑ +19 net (+%0,2)</div>
+      </div>
+      <div class="kpi crimson">
+        <div class="kpi-label">Takipçi Etkileşimi</div>
+        <div class="kpi-value">%64,4</div>
+        <div class="kpi-delta">↑ 22,1 puan (önceki: %42,3)</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>📊 Haftanın ana mesajı</h4>
+      <p>Bu hafta, geçen haftanın <strong>tam tersi bir profil</strong> sergiledi. Geçen hafta yorumumuz "reklamla şişen büyük ama sığ bir görünürlük"tu. Bu hafta reklam neredeyse kapandı — hem görüntüleme hem erişim büyük düştü, ama <strong>kalan trafik organik ve takipçi ağırlıklı</strong>. Etkileşim oranı %50 arttı, takipçi etkileşim payı %42'den %64'e çıktı. Bu, içerikle gerçekten ilişki kuran bir kitlenin sinyali. Soru: bu küçülme bilinçli bir bütçe kararı mı, yoksa kampanya bitti de yenisi başlamadı mı?</p>
+    </div>
+  </div>
+</section>
+
+<!-- WoW COMPARISON -->
+<section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <h2>1. Haftadan haftaya: nicelik düştü, nitelik yükseldi</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>Hacim metrikleri</h3>
+          <span class="card-meta">21-27 Nis vs 14-20 Nis</span>
+        </div>
+        <div class="wow-grid">
+          <div class="wow-row">
+            <div class="wow-label"><span>Görüntüleme</span><span style="color:var(--cancera-crimson);">-79,7%</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:100%;"></div></div><span class="bar-value">94.376</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill crimson" style="width:20.3%;"></div></div><span class="bar-value">19.182</span></div>
+            </div>
+          </div>
+          <div class="wow-row">
+            <div class="wow-label"><span>Erişim</span><span style="color:var(--cancera-crimson);">-85,3%</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:100%;"></div></div><span class="bar-value">51.840</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill crimson" style="width:14.7%;"></div></div><span class="bar-value">7.637</span></div>
+            </div>
+          </div>
+          <div class="wow-row">
+            <div class="wow-label"><span>Etkileşim</span><span style="color:var(--cancera-crimson);">-69,4%</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:100%;"></div></div><span class="bar-value">729</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill crimson" style="width:30.6%;"></div></div><span class="bar-value">223</span></div>
+            </div>
+          </div>
+          <div class="wow-row">
+            <div class="wow-label"><span>Takipçi büyümesi</span><span style="color:var(--cancera-crimson);">-90,5%</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:100%;"></div></div><span class="bar-value">+200</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill crimson" style="width:9.5%;"></div></div><span class="bar-value">+19</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Kalite metrikleri</h3>
+          <span class="card-meta">Hepsi yükseldi</span>
+        </div>
+        <div class="wow-grid">
+          <div class="wow-row">
+            <div class="wow-label"><span>Etkileşim oranı</span><span style="color:var(--success);">+50,5%</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:66%;"></div></div><span class="bar-value">%0,77</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><span class="bar-value">%1,16</span></div>
+            </div>
+          </div>
+          <div class="wow-row">
+            <div class="wow-label"><span>Takipçi etkileşim payı</span><span style="color:var(--success);">+22,1 puan</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:65.7%;"></div></div><span class="bar-value">%42,3</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><span class="bar-value">%64,4</span></div>
+            </div>
+          </div>
+          <div class="wow-row">
+            <div class="wow-label"><span>Reklam dışı (organik) views payı</span><span style="color:var(--success);">+37,4 puan</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:35.6%;"></div></div><span class="bar-value">%20,6</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><span class="bar-value">%58,0</span></div>
+            </div>
+          </div>
+          <div class="wow-row">
+            <div class="wow-label"><span>Reklam dışı etkileşim payı</span><span style="color:var(--success);">+28 puan</span></div>
+            <div class="wow-bars">
+              <div class="wow-bar"><span class="week-label">Önceki</span><div class="bar-track"><div class="bar-fill prev" style="width:88.5%;"></div></div><span class="bar-value">%59</span></div>
+              <div class="wow-bar"><span class="week-label">Bu hafta</span><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><span class="bar-value">%87</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout crimson">
+      <h4>⚠️ Reklam yayını neredeyse durdu</h4>
+      <p>Reklam kaynaklı views <strong>74.935 → 8.056'ya (%89 düşüş)</strong>, reklam etkileşimleri <strong>299 → 29'a (%90 düşüş)</strong> indi. Bu kadar keskin bir düşüş tipik bir hafta içi dalgalanma değil — kampanya bitmiş, yeni bütçe başlamamış olabilir. <strong>Acil kontrol:</strong> Meta Ads Manager'da aktif kampanya var mı, bütçe planı ne durumda?</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPOSITION -->
+<section class="section">
+  <div class="container">
+    <h2>2. Trafiğin yapısı tamamen değişti</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>Görüntüleme: %42'si reklamlardan</h3>
+          <span class="card-meta">Önceki hafta: %79</span>
+        </div>
+        <div class="donut-wrap">
+          <svg class="donut" width="160" height="160" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E8EDF4" stroke-width="6"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B31942" stroke-width="6"
+                    stroke-dasharray="42 58" stroke-dashoffset="25"/>
+            <text x="21" y="20" text-anchor="middle" font-family="Playfair Display" font-size="7" font-weight="600" fill="#0A3161">42%</text>
+            <text x="21" y="26" text-anchor="middle" font-family="DM Sans" font-size="2.5" fill="#4B5563">reklamdan</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-row"><span class="legend-dot" style="background:#B31942;"></span><span class="legend-label">Reklam kaynaklı</span><span class="legend-value">8.056</span></div>
+            <div class="legend-row"><span class="legend-dot" style="background:#0A3161;"></span><span class="legend-label">Organik</span><span class="legend-value">11.126</span></div>
+            <div class="legend-row" style="margin-top:var(--space-3); padding-top:var(--space-2); border-top:1px solid var(--border);"><span class="legend-label">Takipçi</span><span class="legend-value">%42,8</span></div>
+            <div class="legend-row"><span class="legend-label">Takipçi olmayan</span><span class="legend-value">%57,2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Etkileşim: sadece %13'ü reklamlardan</h3>
+          <span class="card-meta">Önceki hafta: %41</span>
+        </div>
+        <div class="donut-wrap">
+          <svg class="donut" width="160" height="160" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E8EDF4" stroke-width="6"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B31942" stroke-width="6"
+                    stroke-dasharray="13 87" stroke-dashoffset="25"/>
+            <text x="21" y="20" text-anchor="middle" font-family="Playfair Display" font-size="7" font-weight="600" fill="#0A3161">13%</text>
+            <text x="21" y="26" text-anchor="middle" font-family="DM Sans" font-size="2.5" fill="#4B5563">reklamdan</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-row"><span class="legend-dot" style="background:#B31942;"></span><span class="legend-label">Reklam kaynaklı</span><span class="legend-value">29</span></div>
+            <div class="legend-row"><span class="legend-dot" style="background:#0A3161;"></span><span class="legend-label">Organik</span><span class="legend-value">194</span></div>
+            <div class="legend-row" style="margin-top:var(--space-3); padding-top:var(--space-2); border-top:1px solid var(--border);"><span class="legend-label">Takipçi</span><span class="legend-value">%64,4</span></div>
+            <div class="legend-row"><span class="legend-label">Takipçi olmayan</span><span class="legend-value">%35,6</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>💡 Önemli içgörü: Etkileşimler artık ezici çoğunlukla "gerçek" izleyiciden</h4>
+      <p>Geçen hafta etkileşimlerin sadece %42'si takipçilerden, %59'u organik (reklam dışı) gelmişti. Bu hafta <strong>%64'ü takipçi, %87'si organik</strong>. Bu kalıcı bir kalite artışı değil, "gürültünün kesildiği için sinyal daha net görünüyor" olabilir — ama yine de 194 organik etkileşim, geçen haftanın 430'u ile karşılaştırıldığında <strong>%55 düşüş</strong>. Yani organik baz da küçüldü, sadece toplam içindeki payı arttı.</p>
+    </div>
+
+    <!-- Content type performance -->
+    <div class="card">
+      <div class="card-header">
+        <h3>İçerik tipi: Posts hâkim oldu, Reels payı geriledi</h3>
+      </div>
+
+      <h4 style="margin-top: var(--space-4); color: var(--text-muted); font-size:0.8125rem; text-transform:uppercase; letter-spacing:0.08em;">Görüntüleme dağılımı (önceki haftayla karş.)</h4>
+      <div class="bar-chart" style="margin-bottom: var(--space-6);">
+        <div class="bar-row">
+          <div class="bar-label">Posts</div>
+          <div class="bar-track"><div class="bar-fill" style="width:62.1%;"></div></div>
+          <div class="bar-value">%62,1</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--text-subtle);">Posts (önceki)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:54.8%; opacity:0.4;"></div></div>
+          <div class="bar-value" style="color:var(--text-subtle);">%54,8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Reels</div>
+          <div class="bar-track"><div class="bar-fill" style="width:29.5%;"></div></div>
+          <div class="bar-value">%29,5</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--text-subtle);">Reels (önceki)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:36.8%; opacity:0.4;"></div></div>
+          <div class="bar-value" style="color:var(--text-subtle);">%36,8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Stories</div>
+          <div class="bar-track"><div class="bar-fill" style="width:8.5%;"></div></div>
+          <div class="bar-value">%8,5</div>
+        </div>
+      </div>
+
+      <h4 style="color: var(--text-muted); font-size:0.8125rem; text-transform:uppercase; letter-spacing:0.08em;">Etkileşim dağılımı</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">Posts</div>
+          <div class="bar-track"><div class="bar-fill crimson" style="width:50.8%;"></div></div>
+          <div class="bar-value">%50,8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Reels</div>
+          <div class="bar-track"><div class="bar-fill crimson" style="width:45.8%;"></div></div>
+          <div class="bar-value">%45,8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Stories</div>
+          <div class="bar-track"><div class="bar-fill crimson" style="width:3.4%;"></div></div>
+          <div class="bar-value">%3,4</div>
+        </div>
+      </div>
+
+      <div class="callout crimson" style="margin-top: var(--space-4);">
+        <h4>📉 Reels etkileşim üstünlüğü daraldı</h4>
+        <p>Geçen hafta Reels etkileşimde %60,4 ile açık ara liderdi (Posts %35,8). Bu hafta <strong>Posts %50,8 vs Reels %45,8</strong> — fark neredeyse kapandı. İki olası sebep: (1) Bu hafta yeni Reels üretimi az olmuş olabilir, (2) "Tümör belirteci" gibi yüksek görüntülemeli Posts haftanın etkileşimini de domine etti. Reels üretim temposu kontrol edilmeli.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOP CONTENT -->
+<section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <h2>3. En çok görüntülenen içerikler</h2>
+
+    <div class="top-content-grid">
+      <div class="content-card">
+        <span class="content-rank">1</span>
+        <div class="title">Tümör belirteci<br><span style="color:var(--text-subtle); font-size:0.8125rem; font-weight:400;">(Kanser Sözlüğü 11/50)</span></div>
+        <div class="date">27 Nisan</div>
+        <div class="views-label">Görüntüleme</div>
+        <div class="views">14.000</div>
+      </div>
+      <div class="content-card">
+        <span class="content-rank">2</span>
+        <div class="title">Çok Süt Tüketmek Prostat Riskini Arttırır Mı?</div>
+        <div class="date">20 Nisan</div>
+        <div class="views-label">Görüntüleme</div>
+        <div class="views">3.400</div>
+      </div>
+      <div class="content-card">
+        <span class="content-rank">3</span>
+        <div class="title">Prostat Kanseri (istatistik infografik)</div>
+        <div class="date">20 Nisan</div>
+        <div class="views-label">Görüntüleme</div>
+        <div class="views">2.600</div>
+      </div>
+      <div class="content-card">
+        <span class="content-rank">4</span>
+        <div class="title">"Kanser tedavisi = Kemoterapi" midir?</div>
+        <div class="date">20 Nisan</div>
+        <div class="views-label">Görüntüleme</div>
+        <div class="views">2.300</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>🏆 "Tümör belirteci" haftanın yıldızı</h4>
+      <p>Kanser Sözlüğü serisinin 11. parçası, tek başına haftanın toplam görüntülemesinin <strong>%73'ünü</strong> üretti (14.000 / 19.182). Bu, serinin doğru bir formatla doğru bir kitleye konuştuğunun en güçlü kanıtı — eğitim odaklı, anlaşılır, hatırlanabilir terim açıklamaları. <strong>Seri tempolu devam etmeli; haftada en az 1-2 yeni Sözlük girişi planlanmalı.</strong></p>
+    </div>
+
+    <div class="callout crimson">
+      <h4>⚠️ Veri nüansı: Top 4 toplamı haftalık total'i geçiyor</h4>
+      <p>Top 4 içeriğin görüntülemeleri toplamı 22.300 — haftanın toplam 19.182 görüntülemesini aşıyor. Bu, Apr 20 tarihli 3 postun "Last 7 days" penceresinde gösterilmesinden kaynaklanıyor (yayın tarihi 20 Nisan, önceki hafta) ama görüntülemelerin <strong>kümülatif</strong> sayıldığını gösteriyor. Yani 3,4K + 2,6K + 2,3K = 8,3K görüntülemenin önemli bir kısmı bu hafta değil, yayınlandıkları haftadan birikmiş. Gerçek "bu hafta üretilen" görüntüleme tek hafta sayısına daha yakındır.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE & PROFILE ACTIVITY -->
+<section class="section">
+  <div class="container">
+    <h2>4. Kitle ve profil aktivitesi</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>Top şehirler — Türkiye odaklı kitle</h3>
+          <span class="card-meta">İzleyici dağılımı</span>
+        </div>
+        <div class="cities-list">
+          <div class="city-row">
+            <div class="bar-label">İstanbul</div>
+            <div class="bar-track"><div class="bar-fill" style="width:91.5%;"></div></div>
+            <div class="bar-value">%18,3</div>
+          </div>
+          <div class="city-row">
+            <div class="bar-label">Ankara</div>
+            <div class="bar-track"><div class="bar-fill" style="width:41.5%;"></div></div>
+            <div class="bar-value">%8,3</div>
+          </div>
+          <div class="city-row">
+            <div class="bar-label">İzmir</div>
+            <div class="bar-track"><div class="bar-fill" style="width:32.5%;"></div></div>
+            <div class="bar-value">%6,5</div>
+          </div>
+          <div class="city-row">
+            <div class="bar-label">Bursa</div>
+            <div class="bar-track"><div class="bar-fill" style="width:17.5%;"></div></div>
+            <div class="bar-value">%3,5</div>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: var(--space-4);">
+          <h4>🇹🇷 4 büyük metropol = %36,6</h4>
+          <p>Türkiye'nin en büyük 4 şehri kitlenin üçte birinden fazlasını oluşturuyor. Lead potansiyeli olan onkoloji hastalarının da bu şehirlerde yoğunlaştığı düşünülürse, <strong>şehir-hedefli reklam segmentasyonu</strong> CPL'i düşürebilir.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Profil aktivitesi: ciddi düşüş</h3>
+          <span class="card-meta">vs 14-20 Nisan</span>
+        </div>
+        <div class="metric-strip" style="margin-top: 0;">
+          <div class="metric-cell">
+            <div class="label">Profil Aktivitesi</div>
+            <div class="value">304</div>
+            <div class="delta">↓ %66,5</div>
+          </div>
+          <div class="metric-cell">
+            <div class="label">Profil Ziyareti</div>
+            <div class="value">276</div>
+            <div class="delta">↓ %67,2</div>
+          </div>
+          <div class="metric-cell">
+            <div class="label">Dış Bağlantı Tıklaması</div>
+            <div class="value">28</div>
+            <div class="delta">↓ %56,0</div>
+          </div>
+        </div>
+        <div class="callout crimson" style="margin-top: var(--space-4);">
+          <h4>🚨 Lead hunisinin üst kısmı zayıfladı</h4>
+          <p>Profil ziyareti %67 düşmüş. Profil ziyareti = "ilgilenip Cancera'ya bakan kişi sayısı". Dış bağlantı tıklaması (link in bio → website) %56 düşmüş — <strong>bu doğrudan lead hacmini etkileyen metrik</strong>. Geçen hafta 93 lead vardı; bu hafta lead datası elimizde yok ama <strong>düşüşün belirgin olması beklenebilir</strong>. Lead exportu geldiğinde ilk bakılması gereken metrik Instagram kaynaklı lead sayısı.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth detail -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Takipçi büyümesi yavaşladı ama duruyor değil</h3>
+        <span class="card-meta">21-27 Nisan</span>
+      </div>
+      <div class="grid-3">
+        <div class="metric-cell">
+          <div class="label">Net Büyüme</div>
+          <div class="value">+19</div>
+          <div style="font-size:0.8125rem; color:var(--text-muted); margin-top:4px;">Önceki hafta: +200</div>
+        </div>
+        <div class="metric-cell">
+          <div class="label">Takip Edenler</div>
+          <div class="value" style="color:var(--success);">47</div>
+          <div style="font-size:0.8125rem; color:var(--text-muted); margin-top:4px;">Önceki: 222</div>
+        </div>
+        <div class="metric-cell">
+          <div class="label">Takipten Çıkanlar</div>
+          <div class="value" style="color:var(--cancera-crimson);">28</div>
+          <div style="font-size:0.8125rem; color:var(--text-muted); margin-top:4px;">Önceki: 22</div>
+        </div>
+      </div>
+      <div class="callout" style="margin-top: var(--space-4);">
+        <h4>📊 Yorum: Büyüme yavaşlaması ≠ kayıp</h4>
+        <p>Geçen hafta günlük ortalama +28 takipçi, bu hafta +2,7. Ancak hesap hâlâ büyüyor — sadece reklam pompası kapatılınca büyüme organik tempoya döndü. Asıl izlenecek olan: <strong>unfollow rate</strong>. Bu hafta 28 kişi takipten çıkmış (önceki hafta 22'ye karşı). Eğer reklamla gelen "yanlış" takipçiler dökülüyorsa bu sağlıklı bir temizlenme; ama uzun vadeli takipçilerden ayrılma varsa içerik kalitesi sorgulanmalı.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WoW Summary Table -->
+<section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <h2>5. Tam karşılaştırma tablosu</h2>
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>Metrik</th>
+            <th style="text-align:right;">14-20 Nisan</th>
+            <th style="text-align:right;">21-27 Nisan</th>
+            <th style="text-align:right;">Değişim</th>
+            <th>Yorum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Görüntüleme</td><td class="num">94.376</td><td class="num">19.182</td><td class="num delta-neg">-79,7%</td><td>Reklam kapanması</td></tr>
+          <tr><td>Erişim</td><td class="num">51.840</td><td class="num">7.637</td><td class="num delta-neg">-85,3%</td><td>Reklam kapanması</td></tr>
+          <tr><td>Etkileşim</td><td class="num">729</td><td class="num">223</td><td class="num delta-neg">-69,4%</td><td>Daha az şiddetli</td></tr>
+          <tr><td>Etkileşim oranı</td><td class="num">%0,77</td><td class="num">%1,16</td><td class="num delta-pos">+50,5%</td><td>Kalite arttı</td></tr>
+          <tr><td>Net takipçi büyümesi</td><td class="num">+200</td><td class="num">+19</td><td class="num delta-neg">-90,5%</td><td>Organik tempoya döndü</td></tr>
+          <tr><td>Takipçi etkileşim payı</td><td class="num">%42,3</td><td class="num">%64,4</td><td class="num delta-pos">+22,1p</td><td>Takipçi sadakati görünür</td></tr>
+          <tr><td>Reklam dışı etkileşim</td><td class="num">%59,0</td><td class="num">%87,0</td><td class="num delta-pos">+28p</td><td>Organik baskın</td></tr>
+          <tr><td>Profil ziyareti</td><td class="num">~842*</td><td class="num">276</td><td class="num delta-neg">-67,2%</td><td>Üst huni daraldı</td></tr>
+          <tr><td>Dış bağlantı tıklaması</td><td class="num">~64*</td><td class="num">28</td><td class="num delta-neg">-56,0%</td><td>Lead riskine işaret</td></tr>
+          <tr><td>Reels etkileşim payı</td><td class="num">%60,4</td><td class="num">%45,8</td><td class="num delta-neg">-14,6p</td><td>Posts'a yer açtı</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.75rem; color:var(--text-subtle); margin-top:var(--space-2); font-style:italic;">* Önceki hafta profil aktivite verileri raporda dışa aktarılmadığından, bu hafta gösterilen "% değişim" oranlarından geri hesaplandı.</p>
+  </div>
+</section>
+
+<!-- ACTIONS -->
+<section class="section">
+  <div class="container">
+    <h2>6. Önümüzdeki hafta için 4 aksiyon</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h3>1. Reklam durumunu acilen kontrol et</h3>
+          <span class="badge badge-crimson">Acil</span>
+        </div>
+        <p>Reklam views %89, reklam etkileşimi %90 düşmüş. Bu kasıtlı bir ara mı, yoksa kampanya bitti yenisi başlamadı mı? <strong>Meta Ads Manager'da aktif kampanya, harcama ve performans kontrolü yapılmalı.</strong> Eğer plansız bir duruş ise, dış bağlantı tıklaması %56 düşmüş — lead pipeline'ı önümüzdeki haftalarda etkilenecek.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>2. Kanser Sözlüğü temposunu artır</h3>
+          <span class="badge badge-navy">Yüksek etki</span>
+        </div>
+        <p>"Tümör belirteci" tek başına haftanın görüntülemesinin %73'ünü üretti (14K). Seri sürekli iyi performans gösteriyor — 11/50'deyiz, henüz çok yol var. <strong>Haftalık 2 Sözlük entry'sine çıkmak</strong> hem organik erişimi hem de etkileşim oranını koruyacaktır. Reels formatında uyarlamak da denenmeli.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>3. Reels üretimini diriltme</h3>
+          <span class="badge badge-navy">Orta vade</span>
+        </div>
+        <p>Reels'in etkileşim payı %60'tan %46'ya düştü. Bu, Reels'in bir hafta boyunca az üretildiğinin (veya zayıf performans gösterdiğinin) işareti. Geçen haftaki yorumumuzdan hatırlanan: Reels görüntüleme başına Posts'un 2,5 katı etkileşim üretiyor. <strong>Reels üretimi haftada en az 2-3'e çekilmeli.</strong></p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>4. Profil → website akışını izle</h3>
+          <span class="badge badge-crimson">Lead sinyali</span>
+        </div>
+        <p>External link tap %56 düşmüş — bu doğrudan website lead'ine giden ana akış. Lead exportu geldiğinde Instagram kaynaklı lead sayısının ne kadar düştüğüne bakılmalı. <strong>Bio'daki link metni veya CTA'sı yenilenebilir</strong>; Reels/Posts'larda "link in bio" hatırlatması daha sık yapılabilir.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div>
+      <div class="footer-brand">cancera</div>
+      <div style="color:rgba(255,255,255,0.6); font-size:0.8125rem; margin-top:4px;">Haftalık Performans Raporu • 21-27 Nisan 2026</div>
+    </div>
+    <div style="color:rgba(255,255,255,0.6); font-size:0.8125rem;">Hazırlayan: Cala · Pazarlama Ekibi</div>
+  </div>
+</footer>
+
+</body>
+</html>

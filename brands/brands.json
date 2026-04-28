@@ -210,6 +210,18 @@
             "ikinci-gorus",
             "tasarim"
           ]
+        },
+        {
+          "slug": "weekly-report-apr21-27",
+          "name": "Haftalık Performans Raporu | 21-27 Nisan 2026",
+          "description": "21-27 Nisan 2026 haftası Cancera performans raporu",
+          "date": "2026-04-28",
+          "tags": [
+            "rapor",
+            "haftalik",
+            "performans",
+            "nisan-2026"
+          ]
         }
       ]
     }
