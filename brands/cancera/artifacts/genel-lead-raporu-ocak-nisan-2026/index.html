@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancera &#8212; Genel Lead Raporu</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0A0F1E;color:#fff;font-family:'Trebuchet MS',Tahoma,sans-serif;padding:0}
+.nav{background:#111827;border-bottom:1px solid #253559;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{color:#C41E3A;font-size:18px;font-weight:700}
+.nav-title{color:#94A3B8;font-size:12px;margin-top:2px}
+.nav-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab-btn{background:none;border:1px solid transparent;color:#94A3B8;font-size:12px;padding:6px 11px;border-radius:6px;cursor:pointer;transition:all .2s;font-family:inherit}
+.tab-btn.active{background:#C41E3A;border-color:#C41E3A;color:#fff}
+.tab-btn:hover:not(.active){border-color:#253559;color:#fff}
+.page{display:none;padding:24px;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-header{margin-bottom:22px}
+.page-title{font-size:22px;font-weight:700;color:#fff}
+.page-sub{font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic}
+.page-desc{font-size:13px;color:#94A3B8;margin-top:10px;line-height:1.6;border-left:3px solid #C41E3A;background:#111827;padding:10px 14px;border-radius:0 8px 8px 0}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:#161F35;border-radius:10px;padding:18px 16px;border:1px solid #1A2744;position:relative;overflow:hidden;cursor:default;transition:transform .25s,box-shadow .25s,border-color .25s}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi-card:hover{transform:translateY(-4px)}
+.kpi-icon{font-size:15px;margin-bottom:10px;color:#64748B}
+.kpi-val{font-size:38px;font-weight:700;line-height:1}
+.kpi-label{font-size:12px;font-weight:600;color:#fff;margin-top:8px}
+.kpi-note{font-size:11px;color:#94A3B8;margin-top:4px;line-height:1.4}
+.kpi-red::before{background:#C41E3A}.kpi-red:hover{border-color:#C41E3A;box-shadow:0 0 20px rgba(196,30,58,.25)}.kpi-red .kpi-val{color:#C41E3A}
+.kpi-teal::before{background:#0ABFA3}.kpi-teal:hover{border-color:#0ABFA3;box-shadow:0 0 20px rgba(10,191,163,.2)}.kpi-teal .kpi-val{color:#0ABFA3}
+.kpi-dark::before{background:#E04060}.kpi-dark:hover{border-color:#E04060;box-shadow:0 0 20px rgba(224,64,96,.2)}.kpi-dark .kpi-val{color:#E04060}
+.kpi-gold::before{background:#D4A843}.kpi-gold:hover{border-color:#D4A843;box-shadow:0 0 20px rgba(212,168,67,.2)}.kpi-gold .kpi-val{color:#D4A843}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:#161F35;border-radius:10px;padding:18px;border:1px solid #1A2744;transition:border-color .25s,box-shadow .25s}
+.card:hover{border-color:rgba(196,30,58,.35);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.card-title{font-size:12px;font-weight:600;color:#64748B;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
+.card-desc{font-size:11px;color:#64748B;margin-top:10px;line-height:1.55}
+.chart-wrap{position:relative;width:100%}
+.stat-row{display:flex;align-items:center;gap:10px;padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.05);transition:background .2s;border-radius:6px;margin:0 -8px}
+.stat-row:last-child{border-bottom:none}
+.stat-row:hover{background:rgba(255,255,255,.04)}
+.stat-label{font-size:12px;color:#94A3B8;flex:1;min-width:0}
+.stat-bar-wrap{flex:2;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.stat-bar{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1);width:0}
+.stat-num{font-size:13px;font-weight:600;min-width:32px;text-align:right}
+.stat-pct{font-size:11px;color:#64748B;min-width:38px;text-align:right}
+.funnel-item{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;margin-bottom:5px;transition:transform .2s,background .2s;cursor:default}
+.funnel-item:hover{transform:translateX(6px);background:rgba(255,255,255,.04)}
+.funnel-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.funnel-label{font-size:12px;color:#94A3B8;flex:1}
+.funnel-num{font-size:19px;font-weight:700}
+.funnel-pct{font-size:11px;color:#64748B;min-width:40px;text-align:right}
+.insight{background:#1A2744;border:1px solid #253559;border-radius:8px;padding:11px 15px;font-size:12px;color:#94A3B8;margin-top:14px;display:flex;align-items:flex-start;gap:8px;line-height:1.55}
+.insight-icon{color:#0ABFA3;flex-shrink:0;font-size:13px;margin-top:1px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#94A3B8}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.section-sep{height:1px;background:#1A2744;margin:14px 0}
+</style>
+</head>
+<body>
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<style>
+.camp-back {
+  position: fixed; top: 16px; left: 16px; z-index: 9999;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.camp-back:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+}
+</style>
+
+
+<div class="nav">
+  <div>
+    <div class="nav-logo">&#8801;| cancera</div>
+    <div class="nav-title">Genel Lead Raporu &#8212; Ocak&#8211;Nisan 2026</div>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showPage('genel',this)">Genel &#214;zet</button>
+    <button class="tab-btn" onclick="showPage('durum',this)">Durum Da&#287;&#305;l&#305;m&#305;</button>
+    <button class="tab-btn" onclick="showPage('trend',this)">Trend</button>
+    <button class="tab-btn" onclick="showPage('kimler',this)">Kimlerle G&#246;r&#252;&#351;t&#252;k</button>
+    <button class="tab-btn" onclick="showPage('basarisiz',this)">Ba&#351;ar&#305;s&#305;z Analizi</button>
+    <button class="tab-btn" onclick="showPage('arama',this)">Arama Analizi</button>
+  </div>
+</div>
+
+<!-- GENEL ÖZET -->
+<div id="page-genel" class="page active">
+  <div class="page-header">
+    <div class="page-title">Genel &#214;zet</div>
+    <div class="page-sub">Ocak &#8211; Nisan 2026 &middot; Yeni Lead stat&#252;s&#252; hari&#231; tutulmu&#351;tur</div>
+    <div class="page-desc">Bu d&#246;nemde sisteme giri&#351; yapan toplam 1.066 lead incelenmi&#351;tir. 1.792 arama ger&#231;ekle&#351;tirilmi&#351;, aramalar&#305;n %75&#8217;i cevap al&#305;narak tamamlanm&#305;&#351;t&#305;r. Lead ba&#351;vurular&#305;n&#305;n %85&#8217;i Instagram kanal&#305;ndan gelmi&#351;; ba&#351;ar&#305;s&#305;z kapan&#305;&#351;lar&#305;n temel nedeni ki&#351;isel sebepler olmu&#351;tur.</div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-red"><div class="kpi-icon">&#9711;</div><div class="kpi-val" id="k1">0</div><div class="kpi-label">Toplam Lead</div><div class="kpi-note">Yeni Lead stat&#252;s&#252; hari&#231;</div></div>
+    <div class="kpi-card kpi-teal"><div class="kpi-icon">&#9719;</div><div class="kpi-val" id="k2">0</div><div class="kpi-label">Takipte</div><div class="kpi-note">G&#246;r&#252;&#351;me aktif olarak devam ediyor</div></div>
+    <div class="kpi-card kpi-dark"><div class="kpi-icon">&#10005;</div><div class="kpi-val" id="k3">0</div><div class="kpi-label">Ba&#351;ar&#305;s&#305;z</div><div class="kpi-note">D&#246;n&#252;&#351;&#252;m sa&#287;lanamad&#305;</div></div>
+    <div class="kpi-card kpi-gold"><div class="kpi-icon">&#9742;</div><div class="kpi-val" id="k4">0</div><div class="kpi-label">Toplam Arama</div><div class="kpi-note">1.066 lead i&#231;in yap&#305;lan t&#252;m aramalar</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">D&#246;n&#252;&#351;&#252;m Hunisi</div>
+      <div id="funnel-g"></div>
+      <div class="card-desc">Ba&#351;ar&#305;l&#305; kapan&#305;&#351; oran&#305; %0,6 seviyesindedir. Takipte stat&#252;s&#252;ndeki 314 lead ilerleyen s&#252;re&#231;te d&#246;n&#252;&#351;&#252;m potansiyeli ta&#351;&#305;maktad&#305;r.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Kaynak Da&#287;&#305;l&#305;m&#305;</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="srcChart"></canvas></div>
+      <div class="card-desc">Instagram dominant kanal olup toplam leadlerin %85&#8217;ini olu&#351;turmaktad&#305;r. Website kanal&#305; %14 ile ikinci s&#305;rada yer almaktad&#305;r.</div>
+    </div>
+  </div>
+  <div class="three-col">
+    <div class="card" style="border-color:rgba(10,191,163,.3)">
+      <div class="card-title" style="color:#0ABFA3">En Y&#252;ksek Hafta</div>
+      <div style="font-size:32px;font-weight:700;color:#0ABFA3">130</div>
+      <div style="font-size:12px;color:#94A3B8;margin-top:4px">Hafta 11 &#8212; Mart 2026</div>
+      <div class="card-desc">Mart ay&#305;n&#305;n en yo&#287;un haftas&#305;; kampanya yo&#287;unlu&#287;uyla &#246;rt&#252;&#351;mektedir.</div>
+    </div>
+    <div class="card" style="border-color:rgba(212,168,67,.3)">
+      <div class="card-title" style="color:#D4A843">Cevaplanan Arama</div>
+      <div style="font-size:32px;font-weight:700;color:#D4A843">%75</div>
+      <div style="font-size:12px;color:#94A3B8;margin-top:4px">802 / 1.066 lead</div>
+      <div class="card-desc">Her d&#246;rt leadden &#252;&#231;&#252;yle ileti&#351;im kurulabilmi&#351;tir.</div>
+    </div>
+    <div class="card" style="border-color:rgba(139,92,246,.3)">
+      <div class="card-title" style="color:#8B5CF6">Instagram Oran&#305;</div>
+      <div style="font-size:32px;font-weight:700;color:#8B5CF6">%85</div>
+      <div style="font-size:12px;color:#94A3B8;margin-top:4px">907 / 1.066 lead</div>
+      <div class="card-desc">Instagram reklamlar&#305; ana b&#252;y&#252;me kanal&#305;n&#305; olu&#351;turmaktad&#305;r.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DURUM DAĞILIMI -->
+<div id="page-durum" class="page">
+  <div class="page-header">
+    <div class="page-title">Durum Da&#287;&#305;l&#305;m&#305;</div>
+    <div class="page-sub">1.066 Lead &middot; T&#252;m stat&#252;ler</div>
+    <div class="page-desc">Leadlerin %69&#8217;u ba&#351;ar&#305;s&#305;z olarak kapanm&#305;&#351;t&#305;r. Takipte stat&#252;s&#252;ndeki 314 lead (%29,5) h&#226;l&#226; aktif s&#252;re&#231;tedir. Ba&#351;ar&#305;l&#305; ve Y&#252;ksek Potansiyel olmak &#252;zere toplamda 12 lead ilerleyen a&#351;amaya ge&#231;mi&#351;tir.</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Stat&#252; Da&#287;&#305;l&#305;m&#305;</div>
+      <div class="legend" id="dur-leg"></div>
+      <div class="chart-wrap" style="height:280px"><canvas id="durChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Say&#305;sal Detay</div>
+      <div id="dur-bars"></div>
+      <div class="card-desc">Ba&#351;ar&#305;l&#305; kapan&#305;&#351; oran&#305; (%0,6) bu a&#351;amada d&#252;&#351;&#252;k g&#246;r&#252;nse de takipte statüsündeki leadlerin d&#246;n&#252;&#351;&#252;m&#252; ile bu oran artacakt&#305;r.</div>
+    </div>
+  </div>
+  <div class="insight"><span class="insight-icon">&#9670;</span><span>Takipteki 314 lead aktif sat&#305;&#351; s&#252;re&#231;lerini temsil etmektedir. Do&#287;ru takip ile ba&#351;ar&#305;l&#305; d&#246;n&#252;&#351;&#252;m oran&#305; &#246;nemli &#246;l&#231;&#252;de yukar&#305; &#231;ekilebilir.</span></div>
+</div>
+
+<!-- TREND -->
+<div id="page-trend" class="page">
+  <div class="page-header">
+    <div class="page-title">Lead Trendi</div>
+    <div class="page-sub">Ayl&#305;k ve haftal&#305;k ak&#305;&#351; &middot; Ocak&#8211;Nisan 2026</div>
+    <div class="page-desc">&#350;ubat ile Mart aylar&#305;nda belirgin art&#305;&#351; ya&#351;anm&#305;&#351;; Mart 515 lead ile zirveye ula&#351;m&#305;&#351;t&#305;r. Nisan&#8217;da bir miktar gerileme g&#246;zlemlenmi&#351;tir.</div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">Ayl&#305;k Lead Da&#287;&#305;l&#305;m&#305;</div>
+    <div class="chart-wrap" style="height:260px"><canvas id="aylikChart"></canvas></div>
+    <div class="card-desc">Ayl&#305;k ortalama yakla&#351;&#305;k 267 leaddir. Mart ay&#305;ndaki zirve yo&#287;un reklam d&#246;nemine denk gelmektedir.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Haftal&#305;k Trend (H7 &#8211; H18)</div>
+    <div class="chart-wrap" style="height:220px"><canvas id="haftalikChart"></canvas></div>
+    <div class="card-desc">Haftal&#305;k bazda 70&#8211;130 aras&#305;nda dalgalanan bir seyir izlenmi&#351;tir. H10&#8217;daki d&#252;&#351;&#252;&#351; dikkate de&#287;er; H11&#8217;de h&#305;zl&#305; toparlanma ger&#231;ekle&#351;mi&#351;tir.</div>
+  </div>
+</div>
+
+<!-- KİMLERLE GÖRÜŞTÜK -->
+<div id="page-kimler" class="page">
+  <div class="page-header">
+    <div class="page-title">Kimlerle G&#246;r&#252;&#351;t&#252;k?</div>
+    <div class="page-sub">540 lead&#8217;in yak&#305;nl&#305;k derecesi bilgisi mevcuttur (1.066 lead&#8217;in %50,7&#8217;si)</div>
+    <div class="page-desc">Kendisi (%35) ve anne/baba (%30) kategorileri en b&#252;y&#252;k iki grubu olu&#351;turarak toplamda %65 paya sahiptir.</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Yak&#305;nl&#305;k Da&#287;&#305;l&#305;m&#305; (bilinen 540)</div>
+      <div class="legend" id="yak-leg"></div>
+      <div class="chart-wrap" style="height:280px"><canvas id="yakChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Say&#305;sal Detay</div>
+      <div id="yak-bars"></div>
+      <div class="card-desc">Anne/baba grubunun y&#252;ksekli&#287;i, aile &#252;yelerinin tedaviye dahil olma iste&#287;ini yans&#305;tmaktad&#305;r.</div>
+    </div>
+  </div>
+  <div class="insight"><span class="insight-icon">&#9670;</span><span>Kendisi + anne/baba toplamda %65 ile en b&#252;y&#252;k iki segment olu&#351;turmaktad&#305;r. Aile odakl&#305; ileti&#351;im stratejisi d&#246;n&#252;&#351;&#252;m oran&#305;n&#305; arttrabilir.</span></div>
+</div>
+
+<!-- BAŞARISIZ -->
+<div id="page-basarisiz" class="page">
+  <div class="page-header">
+    <div class="page-title">Ba&#351;ar&#305;s&#305;z Lead Analizi</div>
+    <div class="page-sub">739 ba&#351;ar&#305;s&#305;z lead &middot; Kaybetme sebepleri</div>
+    <div class="page-desc">Ba&#351;ar&#305;s&#305;z kapan&#305;&#351;lar&#305;n %23&#8217;&#252; ki&#351;isel sebeplerden kaynaklanmaktad&#305;r. Bu kategori genellikle &#8220;hen&#252;z haz&#305;r de&#287;ilim&#8221; veya &#8220;beklemek istiyorum&#8221; anlam&#305;na gelmektedir. Mali sebepler %9 ile ikinci s&#305;rada yer almaktad&#305;r.</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Kaybetme Sebepleri</div>
+      <div class="chart-wrap" style="height:360px"><canvas id="kaybChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sebep Analizi</div>
+      <div id="kayb-bars"></div>
+      <div class="card-desc">Ki&#351;isel sebepler ve zamanlama uyumsuzlu&#287;u toplamda leadlerin yakla&#351;&#305;k &#252;&#231;te birini olu&#351;turmaktad&#305;r.</div>
+    </div>
+  </div>
+  <div class="insight"><span class="insight-icon">&#9670;</span><span>Ki&#351;isel sebeplerden kapanan 171 lead &#8220;geri d&#246;nme potansiyeli ta&#351;&#305;yan&#8221; bir liste olu&#351;turmaktad&#305;r. Belirli aral&#305;klarla yap&#305;lacak yeniden ileti&#351;im bu grubu aktif s&#252;rece kazand&#305;rabilir.</span></div>
+</div>
+
+<!-- ARAMA -->
+<div id="page-arama" class="page">
+  <div class="page-header">
+    <div class="page-title">Arama Analizi</div>
+    <div class="page-sub">1.792 toplam arama &middot; 1.066 lead</div>
+    <div class="page-desc">Yap&#305;lan aramalar&#305;n %75&#8217;i kar&#351;&#305;l&#305;kl&#305; g&#246;r&#252;&#351;meyle sonu&#231;lanm&#305;&#351;t&#305;r. Cevap al&#305;namayan 197 arama i&#231;in yap&#305;land&#305;r&#305;lm&#305;&#351; bir geri arama s&#252;reci olu&#351;turulmas&#305; &#246;nerilmektedir.</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Arama Durumlar&#305;</div>
+      <div class="legend" id="ara-leg"></div>
+      <div class="chart-wrap" style="height:260px"><canvas id="araChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Son Arama Sonu&#231;lar&#305;</div>
+      <div id="ara-bars"></div>
+      <div class="section-sep"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+        <div style="background:#111827;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:#0ABFA3">%75</div>
+          <div style="font-size:11px;color:#64748B;margin-top:4px">Cevaplanan oran</div>
+        </div>
+        <div style="background:#111827;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:#D4A843">1,68</div>
+          <div style="font-size:11px;color:#64748B;margin-top:4px">Ortalama arama / lead</div>
+        </div>
+      </div>
+      <div class="card-desc">Yeniden planlanan 327 arama, aktif takip s&#252;recindeki leadleri temsil etmektedir.</div>
+    </div>
+  </div>
+  <div class="insight"><span class="insight-icon">&#9670;</span><span>Cevaplanmayan 197 arama (%18) i&#231;in yap&#305;land&#305;r&#305;lm&#305;&#351; bir geri arama s&#252;reci olu&#351;turulmas&#305; eri&#351;ilebilir lead havuzunu geni&#351;letecektir.</span></div>
+</div>
+
+<script>
+const CR='#C41E3A',TL='#0ABFA3',GD='#D4A843',PP='#8B5CF6',SU='#22C55E',SL='#64748B',RD='#E04060';
+const charts={};
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  renderPage(id);
+}
+
+function gc(id,cfg){
+  if(charts[id]){charts[id].destroy();delete charts[id]}
+  const c=document.getElementById(id);if(!c)return;
+  charts[id]=new Chart(c,cfg);
+}
+
+function animCount(el,target,dur){
+  if(!el)return;
+  dur=dur||900;
+  const s=performance.now();
+  const fmt=n=>n>=1000?n.toLocaleString('tr-TR'):String(n);
+  function step(now){
+    const p=Math.min((now-s)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=fmt(Math.round(e*target));
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function makeBars(id,items){
+  const el=document.getElementById(id);if(!el)return;
+  const mx=Math.max.apply(null,items.map(function(i){return i.n}));
+  el.innerHTML=items.map(function(it){
+    return '<div class="stat-row"><div class="stat-label">'+it.label+'</div><div class="stat-bar-wrap"><div class="stat-bar" style="background:'+it.color+'" data-w="'+Math.round(it.n/mx*100)+'"></div></div><div class="stat-num" style="color:'+it.color+'">'+it.n.toLocaleString('tr-TR')+'</div><div class="stat-pct">'+it.pct+'</div></div>';
+  }).join('');
+  setTimeout(function(){el.querySelectorAll('.stat-bar').forEach(function(b){b.style.width=b.getAttribute('data-w')+'%'});},80);
+}
+
+function makeLeg(id,items){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=items.map(function(i){return '<span class="leg-item"><span class="leg-dot" style="background:'+i.color+'"></span>'+i.label+' '+i.val+'</span>';}).join('');
+}
+
+function doughnut(cid,labels,data,colors){
+  gc(cid,{type:'doughnut',data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:0,hoverOffset:10}]},options:{responsive:true,maintainAspectRatio:false,cutout:'52%',animation:{duration:1000,easing:'easeOutQuart'},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){var t=data.reduce(function(a,b){return a+b},0);return c.label+': '+c.raw.toLocaleString('tr-TR')+' (%'+(c.raw/t*100).toFixed(1)+')';}}}}}});
+}
+
+function renderPage(id){
+  if(id==='genel'){
+    animCount(document.getElementById('k1'),1066);
+    animCount(document.getElementById('k2'),314,700);
+    animCount(document.getElementById('k3'),739,800);
+    animCount(document.getElementById('k4'),1792,1000);
+    var fw=document.getElementById('funnel-g');
+    fw.innerHTML='';
+    [{label:'Toplam lead',n:1066,pct:'%100',color:CR},{label:'Ba\u015far\u0131s\u0131z',n:739,pct:'%69,3',color:RD},{label:'Takipte',n:314,pct:'%29,5',color:TL},{label:'Y\u00fcksek potansiyel',n:6,pct:'%0,6',color:GD},{label:'Ba\u015far\u0131l\u0131',n:6,pct:'%0,6',color:SU}].forEach(function(f){
+      var d=document.createElement('div');d.className='funnel-item';
+      d.innerHTML='<div class="funnel-dot" style="background:'+f.color+'"></div><div class="funnel-label">'+f.label+'</div><div class="funnel-num" style="color:'+f.color+'">'+f.n.toLocaleString('tr-TR')+'</div><div class="funnel-pct">'+f.pct+'</div>';
+      fw.appendChild(d);
+    });
+    gc('srcChart',{type:'doughnut',data:{labels:['Instagram','Website','E-posta','Referans'],datasets:[{data:[907,146,6,1],backgroundColor:[CR,TL,GD,PP],borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:900,easing:'easeOutQuart'},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw.toLocaleString('tr-TR')+' lead';}}}}}});
+  }
+  if(id==='durum'){
+    makeLeg('dur-leg',[{label:'Ba\u015far\u0131s\u0131z',val:739,color:RD},{label:'Takipte',val:314,color:TL},{label:'Y\u00fck. Potansiyel',val:6,color:GD},{label:'Ba\u015far\u0131l\u0131',val:6,color:SU},{label:'Ask\u0131da',val:1,color:PP}]);
+    doughnut('durChart',['Ba\u015far\u0131s\u0131z','Takipte','Y\u00fck. Potansiyel','Ba\u015far\u0131l\u0131','Ask\u0131da'],[739,314,6,6,1],[RD,TL,GD,SU,PP]);
+    makeBars('dur-bars',[{label:'Ba\u015far\u0131s\u0131z',n:739,pct:'%69,3',color:RD},{label:'Takipte',n:314,pct:'%29,5',color:TL},{label:'Y\u00fck. Potansiyel',n:6,pct:'%0,6',color:GD},{label:'Ba\u015far\u0131l\u0131',n:6,pct:'%0,6',color:SU},{label:'Ask\u0131da',n:1,pct:'%0,1',color:PP}]);
+  }
+  if(id==='trend'){
+    gc('aylikChart',{type:'bar',data:{labels:['Ocak','\u015eubat','Mart','Nisan'],datasets:[{label:'Lead',data:[2,223,515,326],backgroundColor:[CR+'88',CR+'aa',CR,CR+'cc'],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:900,easing:'easeOutQuart'},scales:{x:{ticks:{color:'#94A3B8'},grid:{display:false}},y:{ticks:{color:'#64748B'},grid:{color:'rgba(255,255,255,.06)'}}},plugins:{legend:{display:false}}}});
+    gc('haftalikChart',{type:'line',data:{labels:['H7','H8','H9','H10','H11','H12','H13','H14','H15','H16','H17','H18'],datasets:[{label:'Lead',data:[3,124,128,73,130,127,115,113,111,107,18,15],borderColor:TL,backgroundColor:TL+'22',borderWidth:2.5,pointBackgroundColor:TL,pointRadius:4,pointHoverRadius:7,fill:true,tension:.35}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:1000,easing:'easeOutQuart'},scales:{x:{ticks:{color:'#94A3B8'},grid:{display:false}},y:{ticks:{color:'#64748B'},grid:{color:'rgba(255,255,255,.06)'}}},plugins:{legend:{display:false}}}});
+  }
+  if(id==='kimler'){
+    var yd=[{label:'Kendisi',n:191,pct:'%35,4',color:TL},{label:'Anne / baba',n:160,pct:'%29,6',color:CR},{label:'E\u015f / e\u015fi',n:80,pct:'%14,8',color:GD},{label:'Karde\u015f',n:51,pct:'%9,4',color:PP},{label:'Yak\u0131n akraba',n:35,pct:'%6,5',color:'#0EA5E9'},{label:'Di\u011fer',n:23,pct:'%4,3',color:SL}];
+    makeLeg('yak-leg',yd.map(function(d){return {label:d.label,val:d.n,color:d.color};}));
+    doughnut('yakChart',yd.map(function(d){return d.label;}),yd.map(function(d){return d.n;}),yd.map(function(d){return d.color;}));
+    makeBars('yak-bars',yd);
+  }
+  if(id==='basarisiz'){
+    var kd=[{label:'Ki\u015fisel Sebepler',n:171,pct:'%23,1',color:CR},{label:'Mali Sebepler',n:63,pct:'%8,5',color:'#A01830'},{label:'\u0130leti\u015fimsizlik',n:32,pct:'%4,3',color:'#741220'},{label:'Program Uyumsuzlu\u011fu',n:32,pct:'%4,3',color:'#5E0F1A'},{label:'Vefat / Hastal\u0131k',n:18,pct:'%2,4',color:SL},{label:'Hastane Tercihi',n:12,pct:'%1,6',color:'#3E0912'},{label:'Zamanlama',n:11,pct:'%1,5',color:'#2A0608'},{label:'Di\u011fer',n:7,pct:'%0,9',color:SL}];
+    gc('kaybChart',{type:'bar',data:{labels:kd.map(function(d){return d.label;}),datasets:[{label:'Lead',data:kd.map(function(d){return d.n;}),backgroundColor:kd.map(function(d){return d.color;}),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:{duration:1000,easing:'easeOutQuart'},scales:{x:{ticks:{color:'#64748B'},grid:{color:'rgba(255,255,255,.06)'}},y:{ticks:{color:'#94A3B8',font:{size:11}},grid:{display:false}}},plugins:{legend:{display:false}}}});
+    makeBars('kayb-bars',kd);
+  }
+  if(id==='arama'){
+    var ad=[{label:'Cevapland\u0131',n:802,color:TL},{label:'Cevaplanmad\u0131',n:197,color:RD},{label:'Me\u015fgul',n:45,color:GD}];
+    makeLeg('ara-leg',ad.map(function(d){return {label:d.label,val:d.n,color:d.color};}));
+    doughnut('araChart',ad.map(function(d){return d.label;}),ad.map(function(d){return d.n;}),ad.map(function(d){return d.color;}));
+    makeBars('ara-bars',[{label:'Yeniden Planland\u0131',n:327,pct:'%30,7',color:TL},{label:'Ba\u015far\u0131s\u0131z',n:716,pct:'%67,2',color:RD},{label:'Ba\u015far\u0131l\u0131',n:5,pct:'%0,5',color:SU},{label:'Sonu\u00e7 Yok',n:11,pct:'%1,0',color:GD}]);
+  }
+}
+
+renderPage('genel');
+</script>
+</body>
+</html>

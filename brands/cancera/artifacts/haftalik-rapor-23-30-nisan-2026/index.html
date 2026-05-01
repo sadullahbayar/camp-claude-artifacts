@@ -1,0 +1,533 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0A0F1E;color:#fff;font-family:'Trebuchet MS',sans-serif;padding:0}
+.nav{background:#111827;border-bottom:1px solid #253559;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{color:#C41E3A;font-size:18px;font-weight:700}
+.nav-badge{background:#C41E3A;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px;margin-left:8px}
+.nav-title{color:#94A3B8;font-size:12px;margin-top:2px}
+.nav-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab-btn{background:none;border:1px solid transparent;color:#94A3B8;font-size:12px;padding:6px 11px;border-radius:6px;cursor:pointer;transition:all .2s;font-family:inherit}
+.tab-btn.active{background:#C41E3A;border-color:#C41E3A;color:#fff}
+.tab-btn:hover:not(.active){border-color:#253559;color:#fff}
+.page{display:none;padding:24px;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-header{margin-bottom:22px}
+.page-title{font-size:22px;font-weight:700;color:#fff}
+.page-sub{font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic}
+.page-desc{font-size:13px;color:#94A3B8;margin-top:10px;line-height:1.6;border-left:3px solid #C41E3A;background:#111827;padding:10px 14px;border-radius:0 8px 8px 0}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:#161F35;border-radius:10px;padding:18px 16px;border:1px solid #1A2744;position:relative;overflow:hidden;cursor:default;transition:transform .25s,box-shadow .25s,border-color .25s}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi-card:hover{transform:translateY(-4px)}
+.kpi-icon{font-size:15px;margin-bottom:10px;color:#64748B}
+.kpi-val{font-size:42px;font-weight:700;line-height:1}
+.kpi-label{font-size:12px;font-weight:600;color:#fff;margin-top:8px}
+.kpi-note{font-size:11px;color:#94A3B8;margin-top:4px;line-height:1.4}
+.kpi-red::before{background:#C41E3A}.kpi-red:hover{border-color:#C41E3A;box-shadow:0 0 20px rgba(196,30,58,.25)}.kpi-red .kpi-val{color:#C41E3A}
+.kpi-teal::before{background:#0ABFA3}.kpi-teal:hover{border-color:#0ABFA3;box-shadow:0 0 20px rgba(10,191,163,.2)}.kpi-teal .kpi-val{color:#0ABFA3}
+.kpi-dark::before{background:#E04060}.kpi-dark:hover{border-color:#E04060;box-shadow:0 0 20px rgba(224,64,96,.2)}.kpi-dark .kpi-val{color:#E04060}
+.kpi-gold::before{background:#D4A843}.kpi-gold:hover{border-color:#D4A843;box-shadow:0 0 20px rgba(212,168,67,.2)}.kpi-gold .kpi-val{color:#D4A843}
+.kpi-pur::before{background:#8B5CF6}.kpi-pur:hover{border-color:#8B5CF6;box-shadow:0 0 20px rgba(139,92,246,.2)}.kpi-pur .kpi-val{color:#8B5CF6}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:#161F35;border-radius:10px;padding:18px;border:1px solid #1A2744;transition:border-color .25s,box-shadow .25s}
+.card:hover{border-color:rgba(196,30,58,.35);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.card-title{font-size:12px;font-weight:600;color:#64748B;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
+.card-desc{font-size:11px;color:#64748B;margin-top:10px;line-height:1.55}
+.chart-wrap{position:relative;width:100%}
+.stat-row{display:flex;align-items:center;gap:10px;padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.05);transition:background .2s;border-radius:6px;margin:0 -8px}
+.stat-row:last-child{border-bottom:none}
+.stat-row:hover{background:rgba(255,255,255,.04)}
+.stat-label{font-size:12px;color:#94A3B8;flex:1;min-width:0}
+.stat-bar-wrap{flex:2;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.stat-bar{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1);width:0}
+.stat-num{font-size:13px;font-weight:600;min-width:28px;text-align:right}
+.stat-pct{font-size:11px;color:#64748B;min-width:38px;text-align:right}
+.funnel-item{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;margin-bottom:5px;transition:transform .2s,background .2s;cursor:default}
+.funnel-item:hover{transform:translateX(6px);background:rgba(255,255,255,.04)}
+.funnel-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.funnel-label{font-size:12px;color:#94A3B8;flex:1}
+.funnel-num{font-size:19px;font-weight:700}
+.funnel-pct{font-size:11px;color:#64748B;min-width:40px;text-align:right}
+.insight{background:#1A2744;border:1px solid #253559;border-radius:8px;padding:11px 15px;font-size:12px;color:#94A3B8;margin-top:14px;display:flex;align-items:flex-start;gap:8px;line-height:1.55}
+.insight-icon{color:#0ABFA3;flex-shrink:0;font-size:13px;margin-top:1px}
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.cmp-box{background:#111827;border-radius:8px;padding:12px;text-align:center;border:1px solid #1A2744;transition:border-color .2s}
+.cmp-box:hover{border-color:#253559}
+.cmp-val{font-size:26px;font-weight:700;line-height:1}
+.cmp-lbl{font-size:10px;color:#64748B;margin-top:5px;line-height:1.3}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#94A3B8}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.section-sep{height:1px;background:#1A2744;margin:14px 0}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.4px;margin-left:6px;vertical-align:middle}
+</style>
+
+<a href="/brands/cancera/" class="camp-back">← Cancera</a>
+<style>
+.camp-back {
+  position: fixed; top: 16px; left: 16px; z-index: 9999;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.camp-back:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+}
+</style>
+<div class="nav">
+  <div>
+    <div class="nav-logo">≡| cancera <span class="nav-badge">HAFTALIK</span></div>
+    <div class="nav-title">23 – 30 Nisan 2026 · Yeni Lead statüsü hariç</div>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showPage('genel',this)">Genel Özet</button>
+    <button class="tab-btn" onclick="showPage('durum',this)">Durum</button>
+    <button class="tab-btn" onclick="showPage('gunluk',this)">Günlük Akış</button>
+    <button class="tab-btn" onclick="showPage('kimler',this)">Kimlerle Görüştük</button>
+    <button class="tab-btn" onclick="showPage('basarisiz',this)">Başarısız</button>
+    <button class="tab-btn" onclick="showPage('arama',this)">Arama</button>
+  </div>
+</div>
+
+<!-- GENEL ÖZET -->
+<div id="page-genel" class="page active">
+  <div class="page-header">
+    <div class="page-title">Genel Özet</div>
+    <div class="page-sub">23 – 30 Nisan 2026 · 8 günlük dönem · Yeni Lead statüsü hariç tutulmuştur</div>
+    <div class="page-desc">Bu hafta 24 lead sisteme girmiş; tüm aramalar İlknur Yaman tarafından gerçekleştirilmiştir. Toplam 33 arama yapılmış, aramaların %67'si cevap alınarak tamamlanmıştır. Lead başvurularının %87.5'i Instagram kanalından gelmiştir. Önceki haftaya (16–22 Nisan, 68 lead) kıyasla %65 düşüş yaşanmıştır.</div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-red">
+      <div class="kpi-icon">◎</div>
+      <div class="kpi-val" id="k1">0</div>
+      <div class="kpi-label">Toplam Lead</div>
+      <div class="kpi-note">Yeni Lead statüsü hariç · 8 günlük dönem</div>
+    </div>
+    <div class="kpi-card kpi-teal">
+      <div class="kpi-icon">◷</div>
+      <div class="kpi-val" id="k2">0</div>
+      <div class="kpi-label">Takipte</div>
+      <div class="kpi-note">Görüşme aktif olarak devam ediyor</div>
+    </div>
+    <div class="kpi-card kpi-dark">
+      <div class="kpi-icon">✕</div>
+      <div class="kpi-val" id="k3">0</div>
+      <div class="kpi-label">Başarısız</div>
+      <div class="kpi-note">Dönüşüm sağlanamadı</div>
+    </div>
+    <div class="kpi-card kpi-gold">
+      <div class="kpi-icon">☎</div>
+      <div class="kpi-val" id="k4">0</div>
+      <div class="kpi-label">Toplam Arama</div>
+      <div class="kpi-note">24 lead için yapılan tüm aramalar</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Dönüşüm hunisi</div>
+      <div id="funnel-g"></div>
+      <div class="card-desc">Bu hafta başarılı dönüşüm gerçekleşmemiştir. Takipte statüsündeki 12 lead ilerleyen süreçte dönüşüm potansiyeli taşımaktadır.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Önceki haftayla karşılaştırma (16–22 Nisan)</div>
+      <div class="cmp-grid">
+        <div class="cmp-box" style="border-color:rgba(196,30,58,.3)">
+          <div class="cmp-val" style="color:#C41E3A">24</div>
+          <div class="cmp-lbl">Bu hafta<br>23–30 Nisan</div>
+        </div>
+        <div class="cmp-box">
+          <div class="cmp-val" style="color:#64748B">68</div>
+          <div class="cmp-lbl">Önceki hafta<br>16–22 Nisan</div>
+        </div>
+        <div class="cmp-box" style="border-color:rgba(224,64,96,.3)">
+          <div class="cmp-val" style="color:#E04060">−65%</div>
+          <div class="cmp-lbl">Haftalık<br>değişim</div>
+        </div>
+        <div class="cmp-box" style="border-color:rgba(10,191,163,.3)">
+          <div class="cmp-val" style="color:#0ABFA3">%67</div>
+          <div class="cmp-lbl">Cevaplanan<br>arama oranı</div>
+        </div>
+      </div>
+      <div class="card-desc">Bu haftaki düşüş Nisan sonuna denk gelen hafta sonu ve dönem etkisinden kaynaklanıyor olabilir.</div>
+    </div>
+  </div>
+  <div class="three-col">
+    <div class="card" style="border-color:rgba(196,30,58,.3)">
+      <div class="card-title" style="color:#C41E3A">Instagram oranı</div>
+      <div style="font-size:34px;font-weight:700;color:#C41E3A">%87.5</div>
+      <div style="font-size:12px;color:#94A3B8;margin-top:4px">21 / 24 lead</div>
+      <div class="card-desc">Instagram bu hafta da dominant kanal olmaya devam etmiştir.</div>
+    </div>
+    <div class="card" style="border-color:rgba(212,168,67,.3)">
+      <div class="card-title" style="color:#D4A843">En yoğun gün</div>
+      <div style="font-size:34px;font-weight:700;color:#D4A843">28 Nis</div>
+      <div style="font-size:12px;color:#94A3B8;margin-top:4px">7 lead tek günde</div>
+      <div class="card-desc">Salı günü haftalık peak olarak öne çıkmıştır.</div>
+    </div>
+    <div class="card" style="border-color:rgba(139,92,246,.3)">
+      <div class="card-title" style="color:#8B5CF6">Günlük ortalama</div>
+      <div style="font-size:34px;font-weight:700;color:#8B5CF6">3.0</div>
+      <div style="font-size:12px;color:#94A3B8;margin-top:4px">lead / gün</div>
+      <div class="card-desc">Genel aylık ortalamanın (%8.9 / gün) altında seyretmiştir.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DURUM -->
+<div id="page-durum" class="page">
+  <div class="page-header">
+    <div class="page-title">Durum Dağılımı</div>
+    <div class="page-sub">24 Lead · Takipte ve Başarısız olmak üzere iki statü</div>
+    <div class="page-desc">Bu haftaki leadler tam olarak ikiye bölünmüş durumdadır: 12 lead görüşme sürecinde takip edilmekte, 12 lead ise çeşitli nedenlerle başarısız olarak kapanmıştır. Başarısız kapanışların en büyük grubu mali sebeplerdir (%42).</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Statü dağılımı</div>
+      <div class="legend" id="dur-leg"></div>
+      <div class="chart-wrap" style="height:270px"><canvas id="durChart" role="img" aria-label="Durum dağılımı: Takipte 12, Başarısız 12">Takipte 12, Başarısız 12.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sayısal detay</div>
+      <div id="dur-bars"></div>
+      <div class="section-sep"></div>
+      <div class="card-title" style="margin-bottom:10px">Başarısız kapanış sebepleri</div>
+      <div id="kayb-mini"></div>
+      <div class="card-desc">Mali sebepler ve kişisel sebepler toplamda başarısız leadlerin %75'ini oluşturmaktadır.</div>
+    </div>
+  </div>
+  <div class="insight">
+    <span class="insight-icon">◆</span>
+    <span>%50–%50 dağılım bu haftanın karakteristik özelliğidir. Takipteki 12 lead için düzenli ve yapılandırılmış takip süreci dönüşüm oranını belirleyecektir.</span>
+  </div>
+</div>
+
+<!-- GÜNLÜK AKIŞ -->
+<div id="page-gunluk" class="page">
+  <div class="page-header">
+    <div class="page-title">Günlük Lead Akışı</div>
+    <div class="page-sub">23 – 30 Nisan 2026 · 8 günlük dağılım</div>
+    <div class="page-desc">Haftanın ikinci yarısı (27–28 Nisan) belirgin biçimde daha yoğun geçmiştir. 28 Nisan'da 7 lead ile haftalık zirveye ulaşılmış, 27 Nisan'da 6 lead kaydedilmiştir. Hafta başı ve sonu görece sessiz kalmıştır.</div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">Günlük lead sayısı</div>
+    <div class="chart-wrap" style="height:270px"><canvas id="gunChart" role="img" aria-label="Günlük lead: 23 Nis 2, 24 Nis 1, 25 Nis 5, 26 Nis 1, 27 Nis 6, 28 Nis 7, 29 Nis 1, 30 Nis 1">Günlük lead dağılımı.</canvas></div>
+    <div class="card-desc">Hafta içi yoğunluğu çarşamba–perşembe günlerinde belirginleşmektedir. Hafta sonu ve Pazartesi trafiği düşük seyretmiştir.</div>
+  </div>
+  <div class="three-col">
+    <div class="card" style="text-align:center;border-color:rgba(196,30,58,.3)">
+      <div class="card-title" style="text-align:center">En yoğun gün</div>
+      <div style="font-size:28px;font-weight:700;color:#C41E3A">28 Nis</div>
+      <div style="font-size:20px;font-weight:700;color:#C41E3A;margin-top:2px">7 lead</div>
+      <div class="card-desc" style="margin-top:8px">Haftanın %29'u tek günde</div>
+    </div>
+    <div class="card" style="text-align:center;border-color:rgba(10,191,163,.3)">
+      <div class="card-title" style="text-align:center">Günlük ortalama</div>
+      <div style="font-size:28px;font-weight:700;color:#0ABFA3">3.0</div>
+      <div style="font-size:20px;font-weight:700;color:#0ABFA3;margin-top:2px">lead / gün</div>
+      <div class="card-desc" style="margin-top:8px">8 günde 24 toplam lead</div>
+    </div>
+    <div class="card" style="text-align:center;border-color:rgba(212,168,67,.3)">
+      <div class="card-title" style="text-align:center">Sakin günler</div>
+      <div style="font-size:28px;font-weight:700;color:#D4A843">24 & 26</div>
+      <div style="font-size:20px;font-weight:700;color:#D4A843;margin-top:2px">1'er lead</div>
+      <div class="card-desc" style="margin-top:8px">Pazar ve Salı günleri düşük trafik</div>
+    </div>
+  </div>
+</div>
+
+<!-- KİMLERLE GÖRÜŞTÜK -->
+<div id="page-kimler" class="page">
+  <div class="page-header">
+    <div class="page-title">Kimlerle Görüştük?</div>
+    <div class="page-sub">24 leadden 24'ünün yakınlık bilgisi mevcuttur</div>
+    <div class="page-desc">Bu haftaki başvurularda anne/baba kategorisi ve kendisi kategorisi öne çıkmakta, her biri 9'ar lead ile %37.5 paya sahip olmaktadır. Kardeş grubu 4 lead ile üçüncü sırada yer alırken eş ve diğer yakın kategorileri 2'şer leadden oluşmaktadır.</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Yakınlık dağılımı</div>
+      <div class="legend" id="yak-leg"></div>
+      <div class="chart-wrap" style="height:270px"><canvas id="yakChart" role="img" aria-label="Yakınlık dağılımı: anne/baba 9, kendisi 9, kardeş 4, eş/eşi 2">anne/baba 9, kendisi 9, kardeş 4, eş/eşi 2.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sayısal detay</div>
+      <div id="yak-bars"></div>
+      <div class="section-sep"></div>
+      <div class="card-title" style="margin-bottom:8px">Haftalık & genel karşılaştırma</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Bu hafta (kendisi)</div>
+          <div style="font-size:20px;font-weight:700;color:#0ABFA3">%37.5</div>
+        </div>
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Genel (kendisi)</div>
+          <div style="font-size:20px;font-weight:700;color:#64748B">%35.4</div>
+        </div>
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Bu hafta (anne/baba)</div>
+          <div style="font-size:20px;font-weight:700;color:#C41E3A">%37.5</div>
+        </div>
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Genel (anne/baba)</div>
+          <div style="font-size:20px;font-weight:700;color:#64748B">%29.6</div>
+        </div>
+      </div>
+      <div class="card-desc">Bu hafta anne/baba oranı genel ortalamanın belirgin biçimde üzerinde seyretmiştir.</div>
+    </div>
+  </div>
+  <div class="insight">
+    <span class="insight-icon">◆</span>
+    <span>Bu haftaki başvuruların %75'i kendisi veya anne/babası aracılığıyla gelmiştir. Hasta yakını odaklı iletişim dili bu hafta da etkin biçimde çalışmaktadır.</span>
+  </div>
+</div>
+
+<!-- BAŞARISIZ -->
+<div id="page-basarisiz" class="page">
+  <div class="page-header">
+    <div class="page-title">Başarısız Lead Analizi</div>
+    <div class="page-sub">12 başarısız lead · Kaybetme sebepleri</div>
+    <div class="page-desc">Bu haftaki başarısız kapanışların en büyük grubu mali sebeplerdir (5 lead, %42). Kişisel sebepler 4 lead ile ikinci sırada yer almaktadır. Hastane tercihi, rakip tercihi ve zamanlama sorunları birer lead ile diğer kategorileri oluşturmaktadır.</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Kaybetme sebepleri</div>
+      <div class="legend" id="kayb-leg"></div>
+      <div class="chart-wrap" style="height:270px"><canvas id="kaybChart" role="img" aria-label="Kaybetme: Mali sebepler 5, Kişisel sebepler 4, Hastane tercihi 1, Rakip tercihi 1, Zamanlama 1">Kaybetme sebepleri.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sayısal detay</div>
+      <div id="kayb-bars"></div>
+      <div class="section-sep"></div>
+      <div class="card-title" style="margin-bottom:8px">Bu hafta vs. genel trend</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Bu hafta (mali)</div>
+          <div style="font-size:20px;font-weight:700;color:#C41E3A">%42</div>
+        </div>
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Genel (mali)</div>
+          <div style="font-size:20px;font-weight:700;color:#64748B">%9</div>
+        </div>
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Bu hafta (kişisel)</div>
+          <div style="font-size:20px;font-weight:700;color:#A01830">%33</div>
+        </div>
+        <div style="background:#111827;border-radius:7px;padding:10px">
+          <div style="font-size:10px;color:#64748B;margin-bottom:4px">Genel (kişisel)</div>
+          <div style="font-size:20px;font-weight:700;color:#64748B">%23</div>
+        </div>
+      </div>
+      <div class="card-desc">Bu hafta mali sebepler genel ortalamanın çok üzerinde gerçekleşmiştir. Bu durum fiyat itirazlarına yönelik bir strateji geliştirilmesini gerektirebilir.</div>
+    </div>
+  </div>
+  <div class="insight">
+    <span class="insight-icon">◆</span>
+    <span>Mali sebeplerden kapanan 5 lead (%42), bu haftanın en dikkat çekici bulgusudur. Genel ortalamada bu oran %9'da kalmaktadır; bu hafta belirgin biçimde yüksek seyretmiştir.</span>
+  </div>
+</div>
+
+<!-- ARAMA -->
+<div id="page-arama" class="page">
+  <div class="page-header">
+    <div class="page-title">Arama Analizi</div>
+    <div class="page-sub">33 toplam arama · 24 lead · İlknur Yaman</div>
+    <div class="page-desc">Bu hafta 24 lead için toplam 33 arama gerçekleştirilmiştir. Aramaların %67'si karşılıklı görüşmeyle sonuçlanmış, %29'u cevaplanmamış, %4'ü meşgul sinyaliyle karşılaşılmıştır. Lead başına ortalama 1.4 arama yapılmıştır.</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Arama durumları</div>
+      <div class="legend" id="ara-leg"></div>
+      <div class="chart-wrap" style="height:260px"><canvas id="araChart" role="img" aria-label="Arama: Cevaplandı 16, Cevaplanmadı 7, Meşgul 1">Cevaplandı 16, Cevaplanmadı 7, Meşgul 1.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Son arama sonuçları</div>
+      <div id="ara-bars"></div>
+      <div class="section-sep"></div>
+      <div class="cmp-grid">
+        <div class="cmp-box" style="border-color:rgba(10,191,163,.3)">
+          <div class="cmp-val" style="color:#0ABFA3">%67</div>
+          <div class="cmp-lbl">Cevaplanan<br>oran (bu hafta)</div>
+        </div>
+        <div class="cmp-box">
+          <div class="cmp-val" style="color:#64748B">%75</div>
+          <div class="cmp-lbl">Cevaplanan<br>oran (genel)</div>
+        </div>
+        <div class="cmp-box" style="border-color:rgba(212,168,67,.3)">
+          <div class="cmp-val" style="color:#D4A843">1.4</div>
+          <div class="cmp-lbl">Ortalama arama<br>bu hafta / lead</div>
+        </div>
+        <div class="cmp-box">
+          <div class="cmp-val" style="color:#64748B">1.68</div>
+          <div class="cmp-lbl">Ortalama arama<br>genel / lead</div>
+        </div>
+      </div>
+      <div class="card-desc">Bu haftaki cevaplama oranı genel ortalama olan %75'in altında kalmıştır. Cevaplanmayan 7 arama için takip araması planlanması önerilir.</div>
+    </div>
+  </div>
+  <div class="insight">
+    <span class="insight-icon">◆</span>
+    <span>Cevaplanmayan 7 lead (%29) için ikinci bir arama denemesi yapılmamış olabilir. Bu leadler için yapılandırılmış yeniden arama süreci oluşturulması cevaplama oranını artıracaktır.</span>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const CR='#C41E3A',TL='#0ABFA3',GD='#D4A843',PP='#8B5CF6',SU='#22C55E',SL='#64748B',RD='#E04060',BL='#0EA5E9';
+const charts={};
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  renderPage(id);
+}
+
+function gc(id,cfg){
+  if(charts[id]){charts[id].destroy();delete charts[id]}
+  const c=document.getElementById(id);if(!c)return;
+  charts[id]=new Chart(c,cfg);return charts[id];
+}
+
+function animCount(el,target,dur=900){
+  if(!el)return;
+  const s=performance.now();
+  const fmt=n=>n>=1000?n.toLocaleString('tr-TR'):String(n);
+  function step(now){
+    const p=Math.min((now-s)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=fmt(Math.round(e*target));
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function makeBars(id,items){
+  const el=document.getElementById(id);if(!el)return;
+  const mx=Math.max(...items.map(i=>i.n));
+  el.innerHTML=items.map(it=>`
+    <div class="stat-row">
+      <div class="stat-label">${it.label}</div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="background:${it.color}" data-w="${Math.round(it.n/mx*100)}"></div></div>
+      <div class="stat-num" style="color:${it.color}">${it.n}</div>
+      <div class="stat-pct">${it.pct}</div>
+    </div>`).join('');
+  setTimeout(()=>el.querySelectorAll('.stat-bar').forEach(b=>{b.style.width=b.dataset.w+'%'}),80);
+}
+
+function makeLeg(id,items){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=items.map(i=>`<span class="leg-item"><span class="leg-dot" style="background:${i.color}"></span>${i.label} ${i.val}</span>`).join('');
+}
+
+function doughnut(cid,labels,data,colors){
+  return gc(cid,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:10}]},options:{responsive:true,maintainAspectRatio:false,cutout:'52%',animation:{duration:1000,easing:'easeOutQuart'},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const t=data.reduce((a,b)=>a+b,0);return `${c.label}: ${c.raw} (%${(c.raw/t*100).toFixed(1)})`}}}}}});
+}
+
+function renderPage(id){
+  if(id==='genel'){
+    animCount(document.getElementById('k1'),24);
+    animCount(document.getElementById('k2'),12,700);
+    animCount(document.getElementById('k3'),12,800);
+    animCount(document.getElementById('k4'),33,900);
+    const fw=document.getElementById('funnel-g');
+    [{label:'Toplam lead',n:24,pct:'%100',color:CR},
+     {label:'Takipte',n:12,pct:'%50',color:TL},
+     {label:'Başarısız',n:12,pct:'%50',color:RD},
+    ].forEach(f=>{
+      const d=document.createElement('div');
+      d.className='funnel-item';
+      d.innerHTML=`<div class="funnel-dot" style="background:${f.color}"></div><div class="funnel-label">${f.label}</div><div class="funnel-num" style="color:${f.color}">${f.n}</div><div class="funnel-pct">${f.pct}</div>`;
+      fw.appendChild(d);
+    });
+  }
+
+  if(id==='durum'){
+    makeLeg('dur-leg',[{label:'Takipte',val:12,color:TL},{label:'Başarısız',val:12,color:RD}]);
+    doughnut('durChart',['Takipte','Başarısız'],[12,12],[TL,RD]);
+    makeBars('dur-bars',[
+      {label:'Takipte',n:12,pct:'%50',color:TL},
+      {label:'Başarısız',n:12,pct:'%50',color:RD},
+    ]);
+    makeBars('kayb-mini',[
+      {label:'Mali sebepler',n:5,pct:'%42',color:CR},
+      {label:'Kişisel sebepler',n:4,pct:'%33',color:'#A01830'},
+      {label:'Diğer (3 kategori)',n:3,pct:'%25',color:SL},
+    ]);
+  }
+
+  if(id==='gunluk'){
+    gc('gunChart',{type:'bar',data:{
+      labels:['23 Nis','24 Nis','25 Nis','26 Nis','27 Nis','28 Nis','29 Nis','30 Nis'],
+      datasets:[{label:'Lead',data:[2,1,5,1,6,7,1,1],
+        backgroundColor:['#C41E3A88','#C41E3A88','#C41E3Aaa','#C41E3A88','#C41E3Acc','#C41E3A','#C41E3A88','#C41E3A88'],
+        borderRadius:6,borderSkipped:false}]
+    },options:{responsive:true,maintainAspectRatio:false,
+      animation:{duration:900,easing:'easeOutQuart'},
+      scales:{
+        x:{ticks:{color:'#94A3B8'},grid:{display:false}},
+        y:{ticks:{color:'#64748B',stepSize:1},grid:{color:'rgba(255,255,255,.06)'},min:0,max:8}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw} lead`}}}
+    }});
+  }
+
+  if(id==='kimler'){
+    const yd=[
+      {label:'Anne / baba',n:9,pct:'%37.5',color:CR},
+      {label:'Kendisi',n:9,pct:'%37.5',color:TL},
+      {label:'Kardeş',n:4,pct:'%16.7',color:GD},
+      {label:'Eş / eşi',n:2,pct:'%8.3',color:PP},
+    ];
+    makeLeg('yak-leg',yd.map(d=>({label:d.label,val:d.n,color:d.color})));
+    doughnut('yakChart',yd.map(d=>d.label),yd.map(d=>d.n),yd.map(d=>d.color));
+    makeBars('yak-bars',yd);
+  }
+
+  if(id==='basarisiz'){
+    const kd=[
+      {label:'Mali sebepler',n:5,pct:'%42',color:CR},
+      {label:'Kişisel sebepler',n:4,pct:'%33',color:'#A01830'},
+      {label:'Hastane tercihi',n:1,pct:'%8',color:'#741220'},
+      {label:'Rakip tercihi',n:1,pct:'%8',color:'#5E0F1A'},
+      {label:'Zamanlama',n:1,pct:'%8',color:SL},
+    ];
+    makeLeg('kayb-leg',kd.map(d=>({label:d.label,val:d.n,color:d.color})));
+    gc('kaybChart',{type:'bar',data:{
+      labels:kd.map(d=>d.label),
+      datasets:[{label:'Lead',data:kd.map(d=>d.n),backgroundColor:kd.map(d=>d.color),borderRadius:4,borderSkipped:false}]
+    },options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      animation:{duration:1000,easing:'easeOutQuart'},
+      scales:{
+        x:{ticks:{color:'#64748B',stepSize:1},grid:{color:'rgba(255,255,255,.06)'}},
+        y:{ticks:{color:'#94A3B8',font:{size:11}},grid:{display:false}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw} lead`}}}
+    }});
+    makeBars('kayb-bars',kd);
+  }
+
+  if(id==='arama'){
+    const ad=[{label:'Cevaplandı',n:16,color:TL},{label:'Cevaplanmadı',n:7,color:RD},{label:'Meşgul',n:1,color:GD}];
+    makeLeg('ara-leg',ad.map(d=>({label:d.label,val:d.n,color:d.color})));
+    doughnut('araChart',ad.map(d=>d.label),ad.map(d=>d.n),ad.map(d=>d.color));
+    makeBars('ara-bars',[
+      {label:'Yeniden planlandı',n:11,pct:'%46',color:TL},
+      {label:'Başarısız',n:12,pct:'%50',color:RD},
+      {label:'Sonuç yok',n:1,pct:'%4',color:GD},
+    ]);
+  }
+}
+
+renderPage('genel');
+</script>

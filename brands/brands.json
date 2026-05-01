@@ -222,6 +222,30 @@
             "performans",
             "nisan-2026"
           ]
+        },
+        {
+          "slug": "haftalik-rapor-23-30-nisan-2026",
+          "name": "Haftalık Lead Raporu — 23–30 Nisan 2026",
+          "description": "23–30 Nisan 2026 haftasına ait Cancera lead analizi ve performans raporu",
+          "date": "2026-05-01",
+          "tags": [
+            "haftalik",
+            "lead",
+            "analiz",
+            "nisan-2026"
+          ]
+        },
+        {
+          "slug": "genel-lead-raporu-ocak-nisan-2026",
+          "name": "Genel Lead Raporu — Ocak–Nisan 2026",
+          "description": "Ocak–Nisan 2026 dönemine ait kapsamlı Cancera lead analizi ve trend raporu",
+          "date": "2026-05-01",
+          "tags": [
+            "genel",
+            "lead",
+            "rapor",
+            "2026"
+          ]
         }
       ]
     }
