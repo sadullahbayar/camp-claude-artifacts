@@ -246,6 +246,18 @@
             "rapor",
             "2026"
           ]
+        },
+        {
+          "slug": "haftalik-rapor-30-nisan-7-mayis-2026",
+          "name": "Haftalık Lead Raporu — 30 Nisan–7 Mayıs 2026",
+          "description": "30 Nisan – 7 Mayıs 2026 haftasına ait Cancera lead analizi ve performans raporu",
+          "date": "2026-05-07",
+          "tags": [
+            "haftalik",
+            "lead",
+            "analiz",
+            "mayis-2026"
+          ]
         }
       ]
     }
