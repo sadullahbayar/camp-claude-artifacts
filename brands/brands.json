@@ -260,6 +260,27 @@
           ]
         }
       ]
+    },
+    {
+      "slug": "educamp",
+      "name": "EduCamp",
+      "description": "EduCamp marka artifactleri ve sosyal medya mockuplari",
+      "color": "#7C3AED",
+      "icon": "✈️",
+      "artifacts": [
+        {
+          "slug": "instagram-mockup",
+          "name": "EduCamp Instagram Mock-Up (Very Early Draft)",
+          "description": "EduCamp Instagram profil mockup tasarimi - cok erken taslak",
+          "date": "2026-06-15",
+          "tags": [
+            "mockup",
+            "instagram",
+            "sosyal-medya",
+            "taslak"
+          ]
+        }
+      ]
     }
   ]
 }
