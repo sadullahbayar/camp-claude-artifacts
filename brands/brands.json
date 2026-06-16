@@ -279,6 +279,19 @@
             "sosyal-medya",
             "taslak"
           ]
+        },
+        {
+          "slug": "icerik-rehberi",
+          "name": "EduCamp İçerik Rehberi",
+          "description": "EduCamp içerik üretim rehberi - ses, renk, tipografi, pillarlar, format ve Instagram/Reels sistemi",
+          "date": "2026-06-16",
+          "tags": [
+            "rehber",
+            "icerik",
+            "marka-kimligi",
+            "instagram",
+            "reels"
+          ]
         }
       ]
     }
