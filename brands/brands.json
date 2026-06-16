@@ -292,6 +292,18 @@
             "instagram",
             "reels"
           ]
+        },
+        {
+          "slug": "reels-guide",
+          "name": "EduCamp Reels Guide",
+          "description": "EduCamp Reels üretim rehberi - yapı, altyazı ve video format sistemi",
+          "date": "2026-06-16",
+          "tags": [
+            "rehber",
+            "reels",
+            "video",
+            "instagram"
+          ]
         }
       ]
     }
