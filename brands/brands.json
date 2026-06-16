@@ -270,7 +270,7 @@
       "artifacts": [
         {
           "slug": "instagram-mockup",
-          "name": "EduCamp Instagram Mock-Up (Very Early Draft)",
+          "name": "Instagram Mock-Up (standalone)",
           "description": "EduCamp Instagram profil mockup tasarimi - cok erken taslak",
           "date": "2026-06-15",
           "tags": [
@@ -282,7 +282,7 @@
         },
         {
           "slug": "icerik-rehberi",
-          "name": "EduCamp İçerik Rehberi",
+          "name": "FULL Content Guide (Posts + Reels)",
           "description": "EduCamp içerik üretim rehberi - ses, renk, tipografi, pillarlar, format ve Instagram/Reels sistemi",
           "date": "2026-06-16",
           "tags": [
@@ -295,7 +295,7 @@
         },
         {
           "slug": "reels-guide",
-          "name": "EduCamp Reels Guide",
+          "name": "Reels Guide (standalone)",
           "description": "EduCamp Reels üretim rehberi - yapı, altyazı ve video format sistemi",
           "date": "2026-06-16",
           "tags": [
