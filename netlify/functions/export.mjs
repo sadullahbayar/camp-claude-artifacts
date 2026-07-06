@@ -6,6 +6,9 @@
 
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const FORMATS = {
   "4x5":  { label: "Portrait 4:5",     ratio: 4 / 5,   w: 1080, h: 1350 },
@@ -15,22 +18,52 @@ const FORMATS = {
 };
 
 // Lambda Chromium ships with NO system fonts, so glyphs missing from the
-// design's webfonts (→ ✦ ★ …) render as tofu. Install fallback symbol fonts
-// once per instance; Chromium then borrows glyphs from them automatically,
-// exactly like a desktop browser does.
-const FALLBACK_FONTS = [
-  "https://cdnjs.cloudflare.com/ajax/libs/dejavu-fonts-ttf/2.37/ttf/DejaVuSans.ttf",
-  "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanssymbols/NotoSansSymbols%5Bwght%5D.ttf",
-  "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanssymbols2/NotoSansSymbols2%5Bwght%5D.ttf",
+// design's webfonts (→ ✦ ★ ✓ …) render as tofu. We install fallback fonts once
+// per instance; Chromium then borrows glyphs from them automatically, like a
+// desktop browser. chromium.font() symlinks the file into $HOME/.fonts BEFORE
+// launch. These fonts are BUNDLED with the function (netlify.toml included_files)
+// so there is no cold-start network dependency; a corrected remote URL is kept
+// only as a last resort if the bundled file can't be located at runtime.
+// Coverage (verified via fonttools): DejaVu Sans covers →/✦/✓/★/•; Noto Sans
+// Symbols adds arrows/misc, Noto Sans Symbols 2 adds dingbats/geometric shapes.
+const FONTS = [
+  { file: "DejaVuSans.ttf",
+    url: "https://raw.githubusercontent.com/matplotlib/matplotlib/main/lib/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf" },
+  { file: "NotoSansSymbols.ttf",
+    url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssymbols/NotoSansSymbols%5Bwght%5D.ttf" },
+  { file: "NotoSansSymbols2-Regular.ttf",
+    url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssymbols2/NotoSansSymbols2-Regular.ttf" },
 ];
+
 let fontsPromise = null;
 let browserPromise = null;
+let fontStatus = []; // QA: which fonts loaded, and from where
+
+function localFontPath(file) {
+  let here = null;
+  try { here = fileURLToPath(new URL("./fonts/" + file, import.meta.url)); } catch {}
+  const candidates = [
+    join(process.cwd(), "fonts", file),
+    process.env.LAMBDA_TASK_ROOT ? join(process.env.LAMBDA_TASK_ROOT, "fonts", file) : null,
+    here,
+    join("/var/task/fonts", file),
+  ].filter(Boolean);
+  return candidates.find(p => existsSync(p)) || null;
+}
 
 function installFonts() {
   if (!fontsPromise) {
-    fontsPromise = Promise.allSettled(FALLBACK_FONTS.map(u => chromium.font(u)))
-      .then(rs => rs.forEach((r, i) => r.status === "rejected" &&
-        console.warn("font install failed:", FALLBACK_FONTS[i], r.reason)));
+    fontsPromise = Promise.all(FONTS.map(async ({ file, url }) => {
+      const local = localFontPath(file);
+      const src = local || url;
+      try {
+        await chromium.font(src);
+        fontStatus.push({ font: file, source: local ? "bundled" : "remote", ok: true });
+      } catch (e) {
+        fontStatus.push({ font: file, source: local ? "bundled" : "remote", ok: false, error: String(e) });
+        console.warn("font install failed:", file, "via", local ? "bundled" : "remote", String(e));
+      }
+    }));
   }
   return fontsPromise;
 }
@@ -125,6 +158,7 @@ export default async (req) => {
         g.outW = FORMATS[g.key].w;
         g.outH = FORMATS[g.key].h;
       });
+      info.systemFonts = fontStatus;
       return Response.json(info);
     }
 
