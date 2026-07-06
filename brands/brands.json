@@ -306,6 +306,27 @@
           ]
         }
       ]
+    },
+    {
+      "slug": "camp",
+      "name": "CAMP Group (Genel)",
+      "description": "CAMP Group geneline ait artifactler ve araçlar",
+      "color": "#818cf8",
+      "icon": "🏢",
+      "artifacts": [
+        {
+          "slug": "carousel-exporter",
+          "name": "Carousel → PNG Exporter",
+          "description": "Claude ile tasarlanan carousel .html dosyasını sürükle-bırak ile 1080×1350 PNG'lere dönüştüren araç (Netlify serverless fonksiyonu ile).",
+          "date": "2026-07-06",
+          "tags": [
+            "tool",
+            "export",
+            "carousel",
+            "png"
+          ]
+        }
+      ]
     }
   ]
 }

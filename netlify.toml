@@ -1,0 +1,5 @@
+# Functions config only — does NOT touch the static site's publish settings.
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@sparticuz/chromium", "puppeteer-core"]
+  included_files = ["node_modules/@sparticuz/chromium/bin/**"]

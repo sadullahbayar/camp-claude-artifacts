@@ -1,0 +1,10 @@
+{
+  "name": "camp-claude-artifacts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CAMP artifacts static site + carousel exporter function",
+  "dependencies": {
+    "@sparticuz/chromium": "^131.0.0",
+    "puppeteer-core": "^23.11.0"
+  }
+}

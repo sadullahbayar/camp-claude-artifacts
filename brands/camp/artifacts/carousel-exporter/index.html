@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousel → PNG</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root { --navy: #1a2f4a; --gold: #d4a95c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f2f0eb; color: var(--navy); min-height: 100vh; }
+  main { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .sub { color: #888; font-size: 14px; margin-bottom: 24px; }
+  #drop { border: 3px dashed #c9c2b4; border-radius: 16px; padding: 70px 20px; text-align: center; font-size: 17px; color: #8a836f; cursor: pointer; transition: all .15s; }
+  #drop.over { border-color: var(--gold); background: #fdf8ef; color: var(--navy); }
+  #drop.busy { pointer-events: none; opacity: .6; }
+  #status { margin: 18px 0; font-size: 15px; min-height: 22px; }
+  #status .err { color: #b3261e; }
+  progress { width: 100%; height: 8px; accent-color: var(--navy); }
+  #thumbs { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 10px; }
+  .thumb { width: 160px; }
+  .thumb img { width: 160px; height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.15); display: block; }
+  .thumb .row { display: flex; justify-content: space-between; font-size: 12px; margin-top: 6px; }
+  .thumb a { color: var(--navy); font-weight: 600; text-decoration: none; }
+  button { background: var(--navy); color: #fff; border: 0; border-radius: 8px; padding: 12px 22px; font-size: 15px; cursor: pointer; margin-right: 10px; }
+  button.secondary { background: #fff; color: var(--navy); border: 1px solid #ccc; }
+  #actions { margin-top: 20px; display: none; }
+  .back-btn { position: fixed; top: 18px; left: 18px; z-index: 100; display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 999px; background: rgba(255,255,255,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 4px 18px rgba(26,47,74,0.12); color: var(--navy); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .back-btn:hover { background: rgba(255,255,255,0.8); }
+</style>
+</head>
+<body>
+<a class="back-btn" href="/brands/camp/">← CAMP</a>
+<main>
+  <h1>Carousel → PNG</h1>
+  <div class="sub">Drop a Claude-designed carousel .html (self-contained export) → get 1080×1350 PNGs.</div>
+
+  <div id="drop">Drag &amp; drop the .html file here — or click to choose</div>
+  <input type="file" id="file" accept=".html,.htm" hidden>
+
+  <div id="status"></div>
+  <progress id="bar" value="0" max="1" hidden></progress>
+
+  <div id="actions">
+    <button id="zip">Download all as ZIP</button>
+    <button class="secondary" onclick="location.reload()">Load another file</button>
+  </div>
+  <div id="thumbs"></div>
+</main>
+
+<script>
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('file');
+const statusEl = document.getElementById('status');
+const bar = document.getElementById('bar');
+const thumbs = document.getElementById('thumbs');
+const actions = document.getElementById('actions');
+let results = [], baseName = 'slide';
+
+drop.onclick = () => fileInput.click();
+drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) run(e.dataTransfer.files[0]); };
+fileInput.onchange = () => fileInput.files[0] && run(fileInput.files[0]);
+
+async function callExport(html, slide, attempt = 1) {
+  try {
+    const r = await fetch('/api/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ html, slide })
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+    return data;
+  } catch (e) {
+    if (attempt < 3) { // cold starts can time out; warm retry usually succeeds
+      statusEl.textContent = `Slide ${slide + 1}: retrying (${attempt + 1}/3)… first run wakes the server, hang on`;
+      await new Promise(r => setTimeout(r, 1500));
+      return callExport(html, slide, attempt + 1);
+    }
+    throw e;
+  }
+}
+
+async function run(file) {
+  baseName = file.name.replace(/\.html?$/i, '').replace(/\s+/g, '_');
+  const html = await file.text();
+  if (html.length > 5_500_000) {
+    statusEl.innerHTML = '<span class="err">File is over ~5.5&nbsp;MB — too large for the upload limit. Export this one locally with the Python script.</span>';
+    return;
+  }
+  drop.classList.add('busy');
+  results = []; thumbs.innerHTML = ''; actions.style.display = 'none';
+  bar.hidden = false; bar.value = 0;
+
+  try {
+    statusEl.textContent = 'Exporting slide 1… (first run can take ~15s while the server wakes up)';
+    const first = await callExport(html, 0);
+    const count = first.count;
+    if (!count) { statusEl.innerHTML = '<span class="err">No 4:5 slides found in this file.</span>'; done(); return; }
+    addResult(first, count);
+
+    for (let i = 1; i < count; i++) {
+      statusEl.textContent = `Exporting slide ${i + 1} of ${count}…`;
+      addResult(await callExport(html, i), count);
+    }
+    statusEl.textContent = `Done — ${count} PNG(s) ready.`;
+    actions.style.display = 'block';
+  } catch (e) {
+    statusEl.innerHTML = `<span class="err">Failed: ${e.message}. Try again, or use the Python script locally.</span>`;
+  }
+  done();
+}
+
+function done() { drop.classList.remove('busy'); bar.hidden = true; }
+
+function addResult(data, count) {
+  const name = `${baseName}_${String(data.slide + 1).padStart(2, '0')}.png`;
+  const bytes = Uint8Array.from(atob(data.png), c => c.charCodeAt(0));
+  const blob = new Blob([bytes], { type: 'image/png' });
+  results.push({ name, blob });
+  bar.value = results.length / count;
+
+  const div = document.createElement('div');
+  div.className = 'thumb';
+  const img = document.createElement('img');
+  img.src = URL.createObjectURL(blob);
+  const row = document.createElement('div');
+  row.className = 'row';
+  const a = document.createElement('a');
+  a.textContent = '↓ PNG'; a.href = img.src; a.download = name;
+  row.append(Object.assign(document.createElement('span'), { textContent: `Slide ${data.slide + 1}` }), a);
+  div.append(img, row);
+  thumbs.appendChild(div);
+}
+
+document.getElementById('zip').onclick = async () => {
+  const zip = new JSZip();
+  results.forEach(r => zip.file(r.name, r.blob));
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${baseName}_png.zip`;
+  a.click();
+};
+</script>
+</body>
+</html>
