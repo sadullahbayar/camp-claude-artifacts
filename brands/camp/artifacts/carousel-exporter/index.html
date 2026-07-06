@@ -3,149 +3,282 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carousel → PNG</title>
+<title>HTML → Image Exporter</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 <style>
-  :root { --navy: #1a2f4a; --gold: #d4a95c; }
+  :root { --navy: #1a2f4a; --gold: #d4a95c; --err: #b3261e; --warn: #8a5a00; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f2f0eb; color: var(--navy); min-height: 100vh; }
-  main { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+  main { max-width: 1000px; margin: 0 auto; padding: 60px 24px 60px; }
   h1 { font-size: 24px; margin: 0 0 4px; }
-  .sub { color: #888; font-size: 14px; margin-bottom: 24px; }
-  #drop { border: 3px dashed #c9c2b4; border-radius: 16px; padding: 70px 20px; text-align: center; font-size: 17px; color: #8a836f; cursor: pointer; transition: all .15s; }
-  #drop.over { border-color: var(--gold); background: #fdf8ef; color: var(--navy); }
-  #drop.busy { pointer-events: none; opacity: .6; }
-  #status { margin: 18px 0; font-size: 15px; min-height: 22px; }
-  #status .err { color: #b3261e; }
-  progress { width: 100%; height: 8px; accent-color: var(--navy); }
-  #thumbs { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 10px; }
-  .thumb { width: 160px; }
-  .thumb img { width: 160px; height: 200px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.15); display: block; }
-  .thumb .row { display: flex; justify-content: space-between; font-size: 12px; margin-top: 6px; }
-  .thumb a { color: var(--navy); font-weight: 600; text-decoration: none; }
-  button { background: var(--navy); color: #fff; border: 0; border-radius: 8px; padding: 12px 22px; font-size: 15px; cursor: pointer; margin-right: 10px; }
-  button.secondary { background: #fff; color: var(--navy); border: 1px solid #ccc; }
-  #actions { margin-top: 20px; display: none; }
+  .sub { color: #888; font-size: 14px; margin-bottom: 20px; }
   .back-btn { position: fixed; top: 18px; left: 18px; z-index: 100; display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 999px; background: rgba(255,255,255,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 4px 18px rgba(26,47,74,0.12); color: var(--navy); font-size: 14px; font-weight: 600; text-decoration: none; }
   .back-btn:hover { background: rgba(255,255,255,0.8); }
+  #controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; background: #fff; border: 1px solid #e3ded2; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; font-size: 14px; }
+  #controls label { display: flex; align-items: center; gap: 7px; color: #555; }
+  select { font-size: 14px; padding: 6px 8px; border-radius: 7px; border: 1px solid #ccc; background: #fff; color: var(--navy); }
+  .seg { display: inline-flex; border: 1px solid #ccc; border-radius: 999px; overflow: hidden; }
+  .seg button { border: 0; background: #fff; color: #777; padding: 7px 14px; font-size: 13px; cursor: pointer; margin: 0; }
+  .seg button.on { background: var(--navy); color: #fff; }
+  #qwrap { display: none; align-items: center; gap: 7px; }
+  #qwrap input { width: 90px; }
+  #drop { border: 3px dashed #c9c2b4; border-radius: 16px; padding: 46px 20px; text-align: center; font-size: 16px; color: #8a836f; cursor: pointer; transition: all .15s; }
+  #drop.over { border-color: var(--gold); background: #fdf8ef; color: var(--navy); }
+  #drop.busy { pointer-events: none; opacity: .6; }
+  #status { margin: 16px 0 6px; font-size: 14px; min-height: 20px; }
+  .err { color: var(--err); }
+  progress { width: 100%; height: 7px; accent-color: var(--navy); }
+  #actions { margin: 16px 0; display: none; gap: 10px; flex-wrap: wrap; }
+  button.act { background: var(--navy); color: #fff; border: 0; border-radius: 8px; padding: 12px 20px; font-size: 14px; cursor: pointer; }
+  button.act.secondary { background: #fff; color: var(--navy); border: 1px solid #ccc; }
+  button.act:hover { opacity: .9; }
+  .filecard { background: #fff; border: 1px solid #e3ded2; border-radius: 12px; padding: 16px 18px; margin-top: 18px; }
+  .filecard h3 { margin: 0 0 6px; font-size: 15px; word-break: break-all; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
+  .chip { font-size: 12px; padding: 4px 12px; border-radius: 999px; background: #eef2f7; color: var(--navy); font-weight: 600; }
+  .chip.warn { background: #fff3d6; color: var(--warn); }
+  .chip.bad { background: #fde7e5; color: var(--err); }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px; }
+  .thumb { width: 150px; font-size: 12px; }
+  .twrap { position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.15); }
+  .twrap img { width: 100%; display: block; }
+  .twrap.deselected { opacity: .35; }
+  .oflag { position: absolute; top: 6px; right: 6px; background: var(--err); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 999px; }
+  .sz { position: absolute; left: 0; right: 0; background: rgba(200,30,30,.22); border: 1px dashed rgba(200,30,30,.55); border-left: 0; border-right: 0; display: none; pointer-events: none; }
+  .szv { position: absolute; top: 0; bottom: 0; background: rgba(200,30,30,.22); border: 1px dashed rgba(200,30,30,.55); border-top: 0; border-bottom: 0; display: none; pointer-events: none; }
+  body.showsz .sz, body.showsz .szv { display: block; }
+  .trow { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; gap: 4px; }
+  .trow .btns { display: flex; gap: 8px; align-items: center; }
+  .trow a, .trow button { font-size: 12px; color: var(--navy); font-weight: 600; text-decoration: none; background: none; border: 0; cursor: pointer; padding: 0; }
+  .copied { color: #1b7f4d !important; }
 </style>
 </head>
 <body>
 <a class="back-btn" href="/brands/camp/">← CAMP</a>
 <main>
-  <h1>Carousel → PNG</h1>
-  <div class="sub">Drop a Claude-designed carousel .html (self-contained export) → get 1080×1350 PNGs.</div>
+  <h1>HTML → Image Exporter</h1>
+  <div class="sub">Drop Claude-designed HTML files (self-contained export) → get platform-ready images. Detects Portrait 4:5, Square 1:1, Story/Reel 9:16, and Landscape 1.91:1 automatically.</div>
 
-  <div id="drop">Drag &amp; drop the .html file here — or click to choose</div>
-  <input type="file" id="file" accept=".html,.htm" hidden>
+  <div id="controls">
+    <label>Resolution
+      <span class="seg" id="segScale">
+        <button data-v="1" class="on">1× standard</button>
+        <button data-v="2">2× HD</button>
+      </span>
+    </label>
+    <label>Format
+      <select id="force">
+        <option value="">Auto-detect</option>
+        <option value="4x5">Portrait 4:5 (1080×1350)</option>
+        <option value="1x1">Square 1:1 (1080×1080)</option>
+        <option value="9x16">Story/Reel 9:16 (1080×1920)</option>
+        <option value="wide">Landscape 1.91:1 (1200×627)</option>
+      </select>
+    </label>
+    <label>Type
+      <span class="seg" id="segImg">
+        <button data-v="png" class="on">PNG</button>
+        <button data-v="jpeg">JPEG</button>
+      </span>
+    </label>
+    <span id="qwrap">quality <input type="range" id="q" min="60" max="100" value="92" step="1"><b id="qv">92</b></span>
+    <label><input type="checkbox" id="szToggle"> Safe zones</label>
+  </div>
+
+  <div id="drop">Drag &amp; drop .html file(s) here — or click to choose<br>
+    <span style="font-size:13px">You can drop several files at once</span></div>
+  <input type="file" id="file" accept=".html,.htm" multiple hidden>
 
   <div id="status"></div>
   <progress id="bar" value="0" max="1" hidden></progress>
 
   <div id="actions">
-    <button id="zip">Download all as ZIP</button>
-    <button class="secondary" onclick="location.reload()">Load another file</button>
+    <button class="act" id="zip">Download selected as ZIP</button>
+    <button class="act" id="pdf">Download selected as PDF</button>
+    <button class="act secondary" onclick="location.reload()">Start over</button>
   </div>
-  <div id="thumbs"></div>
+
+  <div id="files"></div>
 </main>
 
 <script>
-const drop = document.getElementById('drop');
-const fileInput = document.getElementById('file');
-const statusEl = document.getElementById('status');
-const bar = document.getElementById('bar');
-const thumbs = document.getElementById('thumbs');
-const actions = document.getElementById('actions');
-let results = [], baseName = 'slide';
+const $ = id => document.getElementById(id);
+const drop = $('drop'), fileInput = $('file'), statusEl = $('status'), bar = $('bar');
+let allSlides = []; // {fname, base, key, idx, name, blob, dataURL, w, h, alt, overflow, selected}
+let expected = 0, done = 0;
+
+let scaleMult = 1, imgType = 'png';
+document.querySelectorAll('#segScale button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#segScale button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); scaleMult = Number(b.dataset.v);
+});
+document.querySelectorAll('#segImg button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#segImg button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); imgType = b.dataset.v;
+  $('qwrap').style.display = imgType === 'jpeg' ? 'inline-flex' : 'none';
+});
+$('q').oninput = () => $('qv').textContent = $('q').value;
+$('szToggle').onchange = e => document.body.classList.toggle('showsz', e.target.checked);
 
 drop.onclick = () => fileInput.click();
 drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
 drop.ondragleave = () => drop.classList.remove('over');
-drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) run(e.dataTransfer.files[0]); };
-fileInput.onchange = () => fileInput.files[0] && run(fileInput.files[0]);
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files.length) runAll([...e.dataTransfer.files]); };
+fileInput.onchange = () => fileInput.files.length && runAll([...fileInput.files]);
 
-async function callExport(html, slide, attempt = 1) {
+async function api(body, attempt = 1) {
   try {
-    const r = await fetch('/api/export', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ html, slide })
-    });
+    const r = await fetch('/api/export', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
     if (data.error) throw new Error(data.error);
     return data;
   } catch (e) {
-    if (attempt < 3) { // cold starts can time out; warm retry usually succeeds
-      statusEl.textContent = `Slide ${slide + 1}: retrying (${attempt + 1}/3)… first run wakes the server, hang on`;
-      await new Promise(r => setTimeout(r, 1500));
-      return callExport(html, slide, attempt + 1);
+    if (attempt < 3) {
+      statusEl.textContent = `Retrying (${attempt + 1}/3)… first run wakes the server, hang on`;
+      await new Promise(r => setTimeout(r, 1800));
+      return api(body, attempt + 1);
     }
     throw e;
   }
 }
 
-async function run(file) {
-  baseName = file.name.replace(/\.html?$/i, '').replace(/\s+/g, '_');
+async function runAll(files) {
+  const htmls = files.filter(f => /\.html?$/i.test(f.name));
+  if (!htmls.length) { statusEl.innerHTML = '<span class="err">No .html files among the dropped files.</span>'; return; }
+  drop.classList.add('busy');
+  bar.hidden = false; bar.value = 0;
+  for (const f of htmls) {
+    try { await runFile(f); }
+    catch (e) { statusEl.innerHTML = `<span class="err">${f.name}: ${e.message}</span>`; }
+  }
+  drop.classList.remove('busy');
+  bar.hidden = true;
+  if (allSlides.length) {
+    statusEl.textContent = `Done — ${allSlides.length} image(s) ready.`;
+    $('actions').style.display = 'flex';
+  }
+}
+
+async function runFile(file) {
+  const base = file.name.replace(/\.html?$/i, '').replace(/\s+/g, '_');
   const html = await file.text();
-  if (html.length > 5_500_000) {
-    statusEl.innerHTML = '<span class="err">File is over ~5.5&nbsp;MB — too large for the upload limit. Export this one locally with the Python script.</span>';
+  if (html.length > 5_500_000) throw new Error('file over ~5.5MB upload limit — export locally with the Python script');
+  const force = $('force').value || undefined;
+  const effType = (scaleMult === 2 && imgType === 'png') ? 'jpeg' : imgType; // payload guard
+  const quality = Number($('q').value);
+
+  statusEl.textContent = `${file.name}: inspecting… (a cold server takes ~15s to wake)`;
+  const info = await api({ html, inspect: true, force });
+
+  const card = document.createElement('div');
+  card.className = 'filecard';
+  card.innerHTML = `<h3>${file.name}</h3><div class="chips"></div><div class="thumbs"></div>`;
+  $('files').appendChild(card);
+  const chips = card.querySelector('.chips'), thumbs = card.querySelector('.thumbs');
+
+  if (!info.groups.length) {
+    chips.innerHTML = '<span class="chip bad">No slides matching a known format found — try the Format override</span>';
     return;
   }
-  drop.classList.add('busy');
-  results = []; thumbs.innerHTML = ''; actions.style.display = 'none';
-  bar.hidden = false; bar.value = 0;
+  info.groups.forEach(g => chips.insertAdjacentHTML('beforeend',
+    `<span class="chip">${g.label} — ${g.count} slide(s) → ${g.outW * scaleMult}×${g.outH * scaleMult}</span>`));
+  if (info.fontErrors.length) chips.insertAdjacentHTML('beforeend',
+    `<span class="chip bad">⚠ font failed to load: ${info.fontErrors.join(', ')} — export may look wrong</span>`);
+  if (scaleMult === 2 && imgType === 'png') chips.insertAdjacentHTML('beforeend',
+    `<span class="chip warn">2× exports use JPEG (serverless size limit)</span>`);
 
-  try {
-    statusEl.textContent = 'Exporting slide 1… (first run can take ~15s while the server wakes up)';
-    const first = await callExport(html, 0);
-    const count = first.count;
-    if (!count) { statusEl.innerHTML = '<span class="err">No 4:5 slides found in this file.</span>'; done(); return; }
-    addResult(first, count);
-
-    for (let i = 1; i < count; i++) {
-      statusEl.textContent = `Exporting slide ${i + 1} of ${count}…`;
-      addResult(await callExport(html, i), count);
+  expected += info.groups.reduce((n, g) => n + g.count, 0);
+  for (const g of info.groups) {
+    for (let i = 0; i < g.count; i++) {
+      const id = `${g.key}-${i}`;
+      statusEl.textContent = `${file.name}: exporting ${g.label} slide ${i + 1}/${g.count}…`;
+      const res = await api({ html, slide: id, scale: scaleMult, img: effType, quality, force });
+      addSlide({ fname: file.name, base, key: g.key, idx: i, res, meta: g.slides[i] }, thumbs);
+      bar.value = ++done / expected;
     }
-    statusEl.textContent = `Done — ${count} PNG(s) ready.`;
-    actions.style.display = 'block';
-  } catch (e) {
-    statusEl.innerHTML = `<span class="err">Failed: ${e.message}. Try again, or use the Python script locally.</span>`;
   }
-  done();
 }
 
-function done() { drop.classList.remove('busy'); bar.hidden = true; }
+function addSlide({ fname, base, key, idx, res, meta }, thumbs) {
+  const ext = res.img === 'jpeg' ? 'jpg' : 'png';
+  const name = `${base}_${key}_${String(idx + 1).padStart(2, '0')}.${ext}`;
+  const bytes = Uint8Array.from(atob(res.data), c => c.charCodeAt(0));
+  const blob = new Blob([bytes], { type: `image/${res.img}` });
+  const dataURL = `data:image/${res.img};base64,${res.data}`;
+  const slide = { fname, base, key, idx, name, blob, dataURL, w: res.w, h: res.h,
+    alt: meta?.alt || null, overflow: meta?.overflow || 0, selected: true };
+  allSlides.push(slide);
 
-function addResult(data, count) {
-  const name = `${baseName}_${String(data.slide + 1).padStart(2, '0')}.png`;
-  const bytes = Uint8Array.from(atob(data.png), c => c.charCodeAt(0));
-  const blob = new Blob([bytes], { type: 'image/png' });
-  results.push({ name, blob });
-  bar.value = results.length / count;
-
-  const div = document.createElement('div');
-  div.className = 'thumb';
-  const img = document.createElement('img');
-  img.src = URL.createObjectURL(blob);
-  const row = document.createElement('div');
-  row.className = 'row';
-  const a = document.createElement('a');
-  a.textContent = '↓ PNG'; a.href = img.src; a.download = name;
-  row.append(Object.assign(document.createElement('span'), { textContent: `Slide ${data.slide + 1}` }), a);
-  div.append(img, row);
-  thumbs.appendChild(div);
+  const d = document.createElement('div');
+  d.className = 'thumb';
+  const zones = key === '9x16'
+    ? '<div class="sz" style="top:0;height:13%"></div><div class="sz" style="bottom:0;height:16%"></div>'
+    : key === '4x5'
+      ? '<div class="szv" style="left:0;width:3.2%"></div><div class="szv" style="right:0;width:3.2%"></div>'
+      : '';
+  d.innerHTML = `
+    <div class="twrap"><img src="${dataURL}" alt="">${zones}
+      ${slide.overflow > 2 ? `<span class="oflag">overflows ${Math.round(slide.overflow)}px</span>` : ''}
+    </div>
+    <div class="trow">
+      <label style="display:flex;align-items:center;gap:4px"><input type="checkbox" checked> ${key} · ${idx + 1}</label>
+      <span class="btns"><button class="cp">copy</button><a href="${URL.createObjectURL(blob)}" download="${name}">↓</a></span>
+    </div>`;
+  d.querySelector('input').onchange = e => {
+    slide.selected = e.target.checked;
+    d.querySelector('.twrap').classList.toggle('deselected', !slide.selected);
+  };
+  d.querySelector('.cp').onclick = async ev => {
+    try {
+      let b = blob;
+      if (res.img !== 'png') { // clipboard requires png
+        const im = new Image(); im.src = dataURL; await im.decode();
+        const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+        c.getContext('2d').drawImage(im, 0, 0);
+        b = await new Promise(r => c.toBlob(r, 'image/png'));
+      }
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]);
+      ev.target.textContent = 'copied ✓'; ev.target.classList.add('copied');
+      setTimeout(() => { ev.target.textContent = 'copy'; ev.target.classList.remove('copied'); }, 1500);
+    } catch { ev.target.textContent = 'copy failed'; }
+  };
+  thumbs.appendChild(d);
 }
 
-document.getElementById('zip').onclick = async () => {
+$('zip').onclick = async () => {
+  const sel = allSlides.filter(s => s.selected);
+  if (!sel.length) return;
   const zip = new JSZip();
-  results.forEach(r => zip.file(r.name, r.blob));
+  sel.forEach(s => zip.file(s.name, s.blob));
+  const alts = sel.filter(s => s.alt);
+  if (alts.length) zip.file('alt-texts.txt', alts.map(s => `${s.name}: ${s.alt}`).join('\n'));
   const blob = await zip.generateAsync({ type: 'blob' });
+  dl(blob, 'export_images.zip');
+};
+
+$('pdf').onclick = async () => {
+  const sel = allSlides.filter(s => s.selected);
+  if (!sel.length) return;
+  const { jsPDF } = window.jspdf;
+  let doc = null;
+  for (const s of sel) {
+    const pw = s.w, ph = s.h, o = pw > ph ? 'l' : 'p';
+    if (!doc) doc = new jsPDF({ unit: 'px', format: [pw, ph], orientation: o, hotfixes: ['px_scaling'] });
+    else doc.addPage([pw, ph], o);
+    doc.addImage(s.dataURL, s.blob.type === 'image/png' ? 'PNG' : 'JPEG', 0, 0, pw, ph);
+  }
+  dl(doc.output('blob'), 'export_slides.pdf');
+};
+
+function dl(blob, name) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `${baseName}_png.zip`;
+  a.download = name;
   a.click();
-};
+}
 </script>
 </body>
 </html>

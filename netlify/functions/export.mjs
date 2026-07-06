@@ -1,23 +1,46 @@
-// Carousel → PNG export function
-// Boots headless Chromium, renders the posted HTML, screenshots ONE slide per call
-// (per-slide calls keep request/response under Netlify's ~6MB payload limits).
+// HTML → image export function v2
+// Modes:
+//   { html, inspect: true, force? }                          -> { groups, fontErrors }
+//   { html, slide: "4x5-2", scale?, img?, quality?, force? } -> { data: base64, img: png|jpeg }
+// One slide per render call keeps payloads under Netlify's ~6MB limits.
 
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 
-const TARGET_W = 1080;
-const TARGET_H = 1350;
-const RATIO = TARGET_W / TARGET_H;
+const FORMATS = {
+  "4x5":  { label: "Portrait 4:5",     ratio: 4 / 5,   w: 1080, h: 1350 },
+  "1x1":  { label: "Square 1:1",       ratio: 1,       w: 1080, h: 1080 },
+  "9x16": { label: "Story/Reel 9:16",  ratio: 9 / 16,  w: 1080, h: 1920 },
+  "wide": { label: "Landscape 1.91:1", ratio: 1.91,    w: 1200, h: 627 },
+};
 
-const KNOWN_SELECTORS = ["[data-slide]", ".slide", ".carousel-slide", ".post"];
+// Lambda Chromium ships with NO system fonts, so glyphs missing from the
+// design's webfonts (→ ✦ ★ …) render as tofu. Install fallback symbol fonts
+// once per instance; Chromium then borrows glyphs from them automatically,
+// exactly like a desktop browser does.
+const FALLBACK_FONTS = [
+  "https://cdnjs.cloudflare.com/ajax/libs/dejavu-fonts-ttf/2.37/ttf/DejaVuSans.ttf",
+  "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanssymbols/NotoSansSymbols%5Bwght%5D.ttf",
+  "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanssymbols2/NotoSansSymbols2%5Bwght%5D.ttf",
+];
+let fontsPromise = null;
+let browserPromise = null;
 
-let browserPromise = null; // reused across warm invocations
+function installFonts() {
+  if (!fontsPromise) {
+    fontsPromise = Promise.allSettled(FALLBACK_FONTS.map(u => chromium.font(u)))
+      .then(rs => rs.forEach((r, i) => r.status === "rejected" &&
+        console.warn("font install failed:", FALLBACK_FONTS[i], r.reason)));
+  }
+  return fontsPromise;
+}
 
 async function getBrowser() {
   if (!browserPromise) {
+    await installFonts();
     browserPromise = puppeteer.launch({
       args: chromium.args,
-      defaultViewport: { width: 1400, height: 1600, deviceScaleFactor: 1 },
+      defaultViewport: { width: 1500, height: 2100, deviceScaleFactor: 1 },
       executablePath: await chromium.executablePath(),
       headless: "shell",
     });
@@ -25,66 +48,115 @@ async function getBrowser() {
   return browserPromise;
 }
 
-async function prepare(page, html, selector) {
+const DETECT = ({ FORMATS, force }) => {
+  const tol = force ? 0.12 : 0.04;
+  const entries = force ? [[force, FORMATS[force]]] : Object.entries(FORMATS);
+  const match = el => {
+    const r = el.getBoundingClientRect();
+    if (r.width < 200 || r.height < 200) return null;
+    const ratio = r.width / r.height;
+    for (const [key, f] of entries)
+      if (Math.abs(ratio / f.ratio - 1) < tol) return key;
+    return null;
+  };
+  let cands = [...document.querySelectorAll("body *")]
+    .map(el => ({ el, key: match(el) })).filter(c => c.key);
+  const els = cands.map(c => c.el);
+  cands = cands.filter(c => !els.some(o => o !== c.el && o.contains(c.el)));
+  const byKey = {};
+  cands.forEach(c => (byKey[c.key] ??= []).push(c));
+  const groups = [];
+  for (const [key, list] of Object.entries(byKey)) {
+    list.forEach((c, i) => c.el.setAttribute("data-export-slide", `${key}-${i}`));
+    groups.push({
+      key,
+      count: list.length,
+      width: list[0].el.getBoundingClientRect().width,
+      slides: list.map(c => {
+        const sr = c.el.getBoundingClientRect();
+        let ov = 0;
+        for (const d of c.el.querySelectorAll("*")) {
+          if (![...d.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+          if (d.closest("[data-bleed]")) continue;
+          const cs = getComputedStyle(d);
+          const m = cs.color.match(/rgba?\(([^)]+)\)/);
+          const alpha = m && m[1].split(",")[3] !== undefined ? parseFloat(m[1].split(",")[3]) : 1;
+          if (parseFloat(cs.opacity) * alpha < 0.35) continue;
+          const r = d.getBoundingClientRect();
+          if (!r.width || !r.height) continue;
+          ov = Math.max(ov, r.right - sr.right, sr.left - r.left,
+            r.bottom - sr.bottom, sr.top - r.top);
+        }
+        return { overflow: Math.max(0, Math.round(ov)),
+          alt: c.el.getAttribute("data-alt") || null };
+      }),
+    });
+  }
+  groups.sort((a, b) => b.count - a.count);
+  const fontErrors = [...new Set([...document.fonts]
+    .filter(f => f.status === "error").map(f => f.family))];
+  return { groups, fontErrors };
+};
+
+async function prepare(page, html, force) {
   await page.setContent(html, { waitUntil: "networkidle0", timeout: 20000 });
   await page.evaluate(async () => {
     await document.fonts.ready;
     await Promise.all([...document.images].map(img =>
       img.complete ? null : new Promise(r => { img.onload = img.onerror = r; })));
   });
-  await new Promise(r => setTimeout(r, 300)); // let bundler scripts settle
-
-  // tag slides, return count + first slide width
-  return page.evaluate(({ selector, KNOWN_SELECTORS, RATIO }) => {
-    const fits = el => {
-      const r = el.getBoundingClientRect();
-      return r.width >= 300 && r.height >= 300 && Math.abs(r.width / r.height - RATIO) < 0.03;
-    };
-    let els = [];
-    if (selector) els = [...document.querySelectorAll(selector)];
-    if (!els.length) {
-      for (const s of KNOWN_SELECTORS) {
-        els = [...document.querySelectorAll(s)].filter(fits);
-        if (els.length) break;
-      }
-    }
-    if (!els.length) {
-      const c = [...document.querySelectorAll("body *")].filter(fits);
-      els = c.filter(el => !c.some(o => o !== el && o.contains(el)));
-    }
-    els.forEach((el, i) => el.setAttribute("data-export-slide", i));
-    return { count: els.length, width: els.length ? els[0].getBoundingClientRect().width : 0 };
-  }, { selector: selector || null, KNOWN_SELECTORS, RATIO });
+  await new Promise(r => setTimeout(r, 300));
+  return page.evaluate(DETECT, { FORMATS, force: force || null });
 }
 
 export default async (req) => {
   if (req.method !== "POST") return new Response("POST only", { status: 405 });
-
-  const { html, slide = 0, selector } = await req.json();
-  if (!html) return new Response(JSON.stringify({ error: "missing html" }), { status: 400 });
+  const { html, inspect, slide, scale = 1, img = "png", quality = 92, force } = await req.json();
+  if (!html) return Response.json({ error: "missing html" }, { status: 400 });
 
   const browser = await getBrowser();
   const page = await (await browser).newPage();
   try {
-    let info = await prepare(page, html, selector);
-    if (!info.count) {
-      return Response.json({ error: "No 4:5 slides found", count: 0 });
+    let info = await prepare(page, html, force);
+
+    if (inspect) {
+      info.groups.forEach(g => {
+        g.label = FORMATS[g.key].label;
+        g.outW = FORMATS[g.key].w;
+        g.outH = FORMATS[g.key].h;
+      });
+      return Response.json(info);
     }
 
-    // re-render at exact scale so output is 1080x1350
-    const scale = TARGET_W / info.width;
-    if (Math.abs(scale - 1) > 0.001) {
-      await page.setViewport({ width: 1400, height: 1600, deviceScaleFactor: scale });
-      info = await prepare(page, html, selector);
+    const key = String(slide).split("-")[0];
+    const fmt = FORMATS[key];
+    const group = info.groups.find(g => g.key === key);
+    if (!fmt || !group) return Response.json({ error: `no slides for format ${key}` });
+
+    const mult = Math.min(Math.max(Number(scale) || 1, 0.5), 3);
+    const dsf = (fmt.w * mult) / group.width;
+    if (Math.abs(dsf - 1) > 0.001) {
+      await page.setViewport({ width: 1500, height: 2100, deviceScaleFactor: dsf });
+      await prepare(page, html, force);
     }
 
     const el = await page.$(`[data-export-slide="${slide}"]`);
-    if (!el) return Response.json({ error: `slide ${slide} not found`, count: info.count });
+    if (!el) return Response.json({ error: `slide ${slide} not found` });
     await el.scrollIntoView();
     await new Promise(r => setTimeout(r, 100));
-    const png = await el.screenshot({ type: "png", encoding: "base64" });
 
-    return Response.json({ count: info.count, slide, png });
+    let type = img === "jpeg" ? "jpeg" : "png";
+    const opts = type === "jpeg"
+      ? { type, quality: Math.min(Math.max(Number(quality) || 92, 40), 100) }
+      : { type };
+    let data = await el.screenshot({ ...opts, encoding: "base64" });
+    let note = null;
+    if (type === "png" && data.length > 4_800_000) {
+      data = await el.screenshot({ type: "jpeg", quality: 92, encoding: "base64" });
+      type = "jpeg";
+      note = "png too large for serverless response — returned jpeg q92";
+    }
+    return Response.json({ slide, img: type, data, note, w: Math.round(fmt.w * mult), h: Math.round(fmt.h * mult) });
   } catch (e) {
     return Response.json({ error: String(e) }, { status: 500 });
   } finally {
